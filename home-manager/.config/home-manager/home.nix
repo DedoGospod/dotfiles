@@ -3,11 +3,11 @@
 {
   # Modules
   imports = [
-    # Applications
     # ./modules/neovim.nix
     # ./modules/gaming.nix
     # ./modules/wol.nix
   ];
+
   # Settings
   nixpkgs.config.allowUnfree = true;
   home.username = "dylan";
@@ -23,6 +23,5 @@
 
   # Self-Management
   programs.home-manager.enable = true;
-
 }
 
