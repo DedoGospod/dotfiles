@@ -1,10 +1,10 @@
-{ config, pkgs, ... }:
+{ pkgs, ... }:
 
 {
   # 1. packages
   home.packages = with pkgs; [
-    wol
-    ethtool
+    kdeconnect-kde
+    valent
   ];
 
 }

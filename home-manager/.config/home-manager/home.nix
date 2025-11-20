@@ -6,6 +6,7 @@
     # ./modules/neovim.nix
     # ./modules/gaming.nix
     # ./modules/wol.nix
+    # ./modules/kde-connect.nix
   ];
 
   # Settings
