@@ -283,6 +283,7 @@ if [[ "$stow_dotfiles" =~ ^[Yy]$ ]]; then
             systemd
             tmux
             home-manager
+            wayland-pipewire-idle-inhibit
         )
 
         # Stows packages (including systemd user services) and shows errors if any fail

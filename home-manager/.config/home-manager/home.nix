@@ -19,7 +19,7 @@
   home.packages = with pkgs; [
     brave
     trash-cli
-    sway-audio-idle-inhibit
+    wayland-pipewire-idle-inhibit
   ];
 
   # Self-Management
