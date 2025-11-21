@@ -231,13 +231,6 @@ slider {
   background-color: rgba(138, 173, 244, 0.8); /* 80% opacity */
 }
 
-.notification-icon {
-    min-width: 48px;
-    min-height: 48px;
-    margin-right: 10px;
-    border-radius: 50%;
-}
-
 .control-center-dnd {
   margin-top: 5px;
   border-radius: 8px;
@@ -347,4 +340,21 @@ slider {
 
 .image {
   padding-right: 0.5rem;
+}
+
+
+/* Notification icons  */
+
+.notification-icon image {
+    min-width: 250px;
+    min-height: 250px;
+    width: 250px;
+    height: 250px;
+}
+
+.notification-icon {
+    min-width: 250px;
+    min-height: 250px;
+    width: 250px;
+    height: 250px;
 }
