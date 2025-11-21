@@ -115,6 +115,7 @@ pacman_packages=(
     ttf-cascadia-code-nerd
     ttf-ubuntu-font-family
     ttf-font-awesome
+    noto-fonts-emoji
     pavucontrol
     ripgrep
     mpv
