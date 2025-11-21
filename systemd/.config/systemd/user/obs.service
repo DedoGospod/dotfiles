@@ -1,9 +1,9 @@
 [Unit]
-Description=OBS Studio
+Description=OBS Studio with Replay Buffer
 After=graphical-session.target
 
 [Service]
-ExecStart=/usr/bin/obs --disable-shutdown-check
+ExecStart=/usr/bin/obs --startreplaybuffer --disable-shutdown-check
 Restart=on-failure
 
 [Install]

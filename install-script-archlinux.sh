@@ -133,6 +133,7 @@ pacman_packages=(
     pipewire
     wireplumber
     bat
+    eza
     man
     tlp
     tmux
