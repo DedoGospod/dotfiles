@@ -29,7 +29,7 @@ mkdir -p \
 # Remove recent section from nautilus
 # gsettings set org.gnome.desktop.privacy remember-recent-files false
 
-# Stow dotfiles conditionally
+# Stow dotfiles
 echo "Setting up dotfiles with GNU Stow..."
 
     DOTFILES_DIR="$HOME/dotfiles"
@@ -77,10 +77,6 @@ echo "Setting up dotfiles with GNU Stow..."
     else
         echo "Skipping dotfile setup: Dotfiles directory **$DOTFILES_DIR** not found."
     fi
-
-# Stow system files
-echo "Stowing system files"
-sudo stow -t / systemd-system
 
 # Stowing system packages
 echo "stowing system packages"
