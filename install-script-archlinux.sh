@@ -27,7 +27,7 @@ mkdir -p \
     "${XDG_STATE_HOME}/python"
 
 # Remove recent section from nautilus
-# gsettings set org.gnome.desktop.privacy remember-recent-files false
+gsettings set org.gnome.desktop.privacy remember-recent-files false
 
 # Update the system
 echo "Updating system..."
@@ -250,48 +250,59 @@ flatpak install -y --noninteractive flathub "${flatpak_apps[@]}"
 echo "Setting zsh as the default shell..."
 chsh -s "$(which zsh)"
 
-# Stow packages
-if [ -d "$DOTFILES_DIR" ]; then
-    cd "$DOTFILES_DIR" || { echo "Failed to change directory. Aborting."; exit 1; }
-    echo "Preparing to stow dotfiles from $PWD"
+# Stow dotfiles conditionally
+if [[ "$stow_dotfiles" =~ ^[Yy]$ ]]; then
+    echo "Setting up dotfiles with GNU Stow..."
 
-    # List of directories (packages) to stow
-    stow_packages=(
-        backgrounds
-        fastfetch
-        hypridle
-        hyprland
-        hyprlock
-        hyprmocha
-        hyprpaper
-        kitty
-        mpv
-        nvim
-        starship
-        swaync
-        waybar
-        wofi
-        yazi
-        zshrc
-        systemd-user
-        tmux
-        home-manager
-        wayland-pipewire-idle-inhibit
-    )
+    DOTFILES_DIR="$HOME/dotfiles"
 
-    # Loop through all packages and attempt to stow them
-    for package in "${stow_packages[@]}"; do
-        if [ -d "$package" ]; then
-            echo -n "Stowing **$package**... "
-            stow -t "$HOME" --no-folding "$package" 2>/dev/null && echo "Done." || echo "Failed."
-        else
-            echo "   Skipping **$package**: Directory not found in $DOTFILES_DIR."
-        fi
-    done
+    if [ -d "$DOTFILES_DIR" ]; then
+        cd "$DOTFILES_DIR" || {
+            echo "Failed to change directory to $DOTFILES_DIR. Aborting."
+            exit 1
+        }
+        echo "Preparing to stow dotfiles from $PWD"
+
+        # List of directories (packages) to stow
+        stow_packages=(
+            backgrounds
+            fastfetch
+            hypridle
+            hyprland
+            hyprlock
+            hyprmocha
+            hyprpaper
+            kitty
+            mpv
+            nvim
+            starship
+            swaync
+            waybar
+            wofi
+            yazi
+            zshrc
+            systemd-user
+            tmux
+            home-manager
+            wayland-pipewire-idle-inhibit
+        )
+
+        # Loop through all packages and attempt to stow them
+        for package in "${stow_packages[@]}"; do
+            if [ -d "$package" ]; then
+                echo -n "Stowing **$package**... "
+                stow -t "$HOME" --no-folding "$package" 2>/dev/null && echo "Done." || echo "Failed."
+            else
+                echo "Skipping **$package**: Directory not found in $DOTFILES_DIR."
+            fi
+        done
+    else
+        echo "Skipping dotfile setup: Dotfiles directory **$DOTFILES_DIR** not found."
+    fi
 fi
 
-# Stowing system packages
-echo "stowing system packages"
+# Stow system files
+echo "Stowing system files"
 sudo stow -t / systemd-system
 
 # Gamescope setup for smooth performance
