@@ -27,7 +27,7 @@ mkdir -p \
     "${XDG_STATE_HOME}/python"
 
 # Remove recent section from nautilus
-gsettings set org.gnome.desktop.privacy remember-recent-files false
+# gsettings set org.gnome.desktop.privacy remember-recent-files false
 
 # Update the system
 echo "Updating system..."
