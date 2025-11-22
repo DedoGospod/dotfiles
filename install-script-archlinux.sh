@@ -337,11 +337,11 @@ TPM_PATH="$HOME/.tmux/plugins/tpm"
 
 # --- Check if tpm is already installed ---
 if [ -d "$TPM_PATH" ]; then
-    echo "✅ tpm (tmux Plugin Manager) is already installed at: $TPM_PATH"
+    echo "tpm (tmux Plugin Manager) is already installed at: $TPM_PATH"
 else
-    echo "⚠️ tpm not found. Installing now..."
+    echo "tpm not found. Installing now..."
     if ! command -v git &>/dev/null; then
-        echo "❌ Error: git is required but not found. Please install git."
+        echo "Error: git is required but not found. Please install git."
         exit 1
     fi
 
@@ -350,9 +350,9 @@ else
     git clone https://github.com/tmux-plugins/tpm "$TPM_PATH"
 
     if git clone https://github.com/tmux-plugins/tpm "$TPM_PATH"; then
-        echo "✅ tpm installed successfully!"
+        echo "tpm installed successfully!"
     else
-        echo "❌ Error during tpm installation."
+        echo "Error during tpm installation."
         exit 1
     fi
 fi

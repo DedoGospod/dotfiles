@@ -3,6 +3,12 @@
 # Enable error checking for all commands
 set -e
 
+# Update system
+sudo pacman -Syu --noconfirm
+
+# Install necessary packages if not already installed
+sudo pacman -S stow zsh --noconfirm
+
 # Set XDG paths and application specific paths
 echo "Setting XDG and application-specifc paths"
 export XDG_DATA_HOME="$HOME/.local/share"
@@ -112,13 +118,13 @@ TPM_PATH="$HOME/.tmux/plugins/tpm"
 
 # --- Check if tpm is already installed ---
 if [ -d "$TPM_PATH" ]; then
-    echo "✅ tpm (tmux Plugin Manager) is already installed at: $TPM_PATH"
+    echo "tpm (tmux Plugin Manager) is already installed at: $TPM_PATH"
 else
     # --- Install tpm if it's not found ---
-    echo "⚠️ tpm not found. Installing now..."
+    echo "tpm not found. Installing now..."
     # Ensure git is installed before running the clone command
     if ! command -v git &> /dev/null; then
-        echo "❌ Error: git is required but not found. Please install git."
+        echo "Error: git is required but not found. Please install git."
         exit 1
     fi
     
@@ -127,9 +133,9 @@ else
     git clone https://github.com/tmux-plugins/tpm "$TPM_PATH"
     
     if git clone https://github.com/tmux-plugins/tpm "$TPM_PATH"; then
-        echo "✅ tpm installed successfully!"
+        echo "tpm installed successfully!"
     else
-        echo "❌ Error during tpm installation."
+        echo "Error during tpm installation."
         exit 1
     fi
 fi
