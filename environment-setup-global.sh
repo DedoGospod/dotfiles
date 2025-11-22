@@ -84,7 +84,7 @@ sudo stow -t / systemd-system
 
 # Stowing system packages
 echo "stowing system packages"
-sudo stow -t / systemd-system
+sudo stow -t / --no-folding systemd-system
 
 # Set zsh as the default shell
 echo "Setting zsh as the default shell..."

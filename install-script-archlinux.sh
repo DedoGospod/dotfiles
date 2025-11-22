@@ -303,7 +303,7 @@ fi
 
 # Stow system files
 echo "Stowing system files"
-sudo stow -t / systemd-system
+sudo stow -t / --no-folding systemd-system
 
 # Gamescope setup for smooth performance
 if [[ "$install_gaming" =~ ^[Yy]$ ]]; then
