@@ -144,6 +144,8 @@ pacman_packages=(
     seahorse
     obsidian
     trash-cli
+    distrobox
+    podman
 )
 
 # NVIDIA driver packages
