@@ -93,6 +93,7 @@ alias pacman='sudo pacman'   # Always use sudo with pacman
 
 # Apps
 alias nv='nvim'                                        # Neovim shortcut
+alias snv='sudoedit'                                   # Allow neovim to use my configuration on system files
 alias y='yazi'                                         # Use Yazi as a terminal file manager
 alias top='btop'                                       # Modern system monitor
 alias cls='clear'                                      # Clear screen
@@ -118,7 +119,7 @@ zl() { if [ -z "$@" ]; then ls; else z "$@" && ls; fi; } # Automatically do an l
 # Configs
 alias zshrc='nvim ~/.zshrc'                            # Edit zsh config
 alias hypr='nvim ~/.config/hypr/hyprland.conf'         # Edit Hyprland config
-alias grub='sudo nvim /etc/default/grub'               # Edit GRUB config
+alias grub='sudoedit /etc/default/grub'                # Edit GRUB config
 
 # ======================
 # Auto-Start compositors 

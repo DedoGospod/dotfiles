@@ -2,6 +2,7 @@
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 vim.opt.number = true
+vim.opt.relativenumber = true --
 vim.opt.mouse = 'a'
 vim.opt.breakindent = true
 vim.opt.undofile = true

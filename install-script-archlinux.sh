@@ -76,76 +76,94 @@ read -r -p "Do you want to set up dotfiles with GNU Stow? (y/N): " stow_dotfiles
 
 # List of base pacman packages
 pacman_packages=(
-    kitty
-    uwsm
+    # ---  Window Management & Core Desktop ---
     hyprland
     hypridle
     hyprlock
     hyprpaper
     hyprshot
-    neovim
-    starship
-    waybar
-    wofi
-    yazi
-    nautilus
-    swaync
-    xdg-desktop-portal
-    xdg-desktop-portal-gtk
-    xdg-desktop-portal-hyprland
     hyprpolkitagent
     hyprland-guiutils
     hyprutils
+    uwsm
+    waybar
+    wofi
+    swaync
+    dbus
     wlsunset
+
+    # ---  Desktop Portals & Theming ---
+    xdg-desktop-portal
+    xdg-desktop-portal-gtk
+    xdg-desktop-portal-hyprland
     qt5-wayland
     qt6-wayland
-    zoxide
+    qt6ct
+    nwg-look
+    gnome-themes-extra
+
+    # ---  Applications & User Utilities ---
+    kitty            # Terminal emulator
+    neovim           # Text editor
+    nautilus         # File manager (GUI)
+    yazi             # TUI file manager
+    mpv              # Media player
+    fastfetch        # System info
+    btop             # System monitor
+    gnome-disk-utility # Disk utility
+    obsidian         # Note-taking
+    pavucontrol      # Volume mixer (GUI)
+    gnome-keyring    # Keyring
+    seahorse         # GUI frontend for gnome-keyring
+
+    # ---  Shell & CLI Enhancements ---
     zsh
     zsh-completions
     zsh-syntax-highlighting
     zsh-autosuggestions
-    fzf
-    qt6ct
-    nwg-look
-    btop
-    dbus
-    stow
-    flatpak
+    starship         # Prompt
+    fzf              # Fuzzy finder
+    zoxide           # Directory jumper
+    tmux             # Terminal multiplexer
+    stow             # Dotfile management
+    bat              # Cat clone
+    eza              # Ls replacement
+    ripgrep          # Grep alternative
+    ncdu             # Disk usage
+    trash-cli        # Safe delete
+    man              # Man pages
+
+    # ---  Networking & System Services ---
+    networkmanager
+    bluez            # Bluetooth service
+    bluez-utils      # Bluetooth utilities
+    pipewire         # Audio/Video server
+    wireplumber      # Session manager for PipeWire
+    tlp              # Power management
+    cronie           # Scheduler
+
+    # ---  System Maintenance & Utilities ---
+    reflector        # Mirrorlist utility
+    timeshift        # System backup
+    ffmpeg           # Multimedia framework
+    ffmpegthumbnailer # Thumbnailer for video files
+
+    # ---  Containerization & Virtualization ---
+    flatpak          # Universal package format
+    distrobox        # Container environments
+    podman           # Container engine
+
+    # ---  Kernel & Headers ---
+    linux-headers
+    linux-zen
+    linux-zen-headers
+
+    # ---  Fonts ---
     ttf-cascadia-code-nerd
     ttf-ubuntu-font-family
     ttf-font-awesome
     noto-fonts-emoji
-    pavucontrol
-    ripgrep
-    mpv
-    ffmpeg
-    ffmpegthumbnailer
-    fastfetch
-    linux-headers
-    linux-zen
-    linux-zen-headers
-    ncdu
-    networkmanager
-    reflector
-    timeshift
-    cronie
-    pipewire
-    wireplumber
-    bat
-    eza
-    man
-    tlp
-    tmux
-    gnome-disk-utility
-    bluez
-    bluez-utils
-    gnome-themes-extra
-    gnome-keyring
-    seahorse
-    obsidian
-    trash-cli
-    distrobox
-    podman
+
 )
 
 # NVIDIA driver packages
