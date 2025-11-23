@@ -89,7 +89,6 @@ alias update-grub="grub-mkconfig -o /boot/grub/grub.cfg"
 # Package Management
 alias yay='paru'             # Use paru as yay alternative
 alias pacman='sudo pacman'   # Always use sudo with pacman
-alias update-nix='nix-channel --update && home-manager switch'
 
 
 # Apps
@@ -117,7 +116,6 @@ s() { if [ -z "$@" ]; then interactivefzf; else z "$@" && interactivefzf; fi; } 
 zl() { if [ -z "$@" ]; then ls; else z "$@" && ls; fi; } # Automatically do an ls after each zl command
 
 # Configs
-alias nixhome='nvim ~/.config/home-manager/home.nix'  # Edit nix home manager
 alias zshrc='nvim ~/.zshrc'                            # Edit zsh config
 alias hypr='nvim ~/.config/hypr/hyprland.conf'         # Edit Hyprland config
 alias grub='sudo nvim /etc/default/grub'               # Edit GRUB config
