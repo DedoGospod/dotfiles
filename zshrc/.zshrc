@@ -84,13 +84,11 @@ export PATH="$HOME/.local/bin:$PATH"  # Add user-local binaries to PATH
 alias sudo='sudo '                # Always use sudo explicitly
 alias rb='reboot'                 # Reboot system
 alias updatemirrors='sudo reflector --verbose --country $(curl -s https://ipinfo.io/country | tr -d "\n") --protocol https --score 5 --sort rate --save /etc/pacman.d/mirrorlist'
-alias cleanflatpak='flatpak uninstall --unused && flatpak repair'
 alias update-grub="grub-mkconfig -o /boot/grub/grub.cfg"
 
 # Package Management
 alias yay='paru'             # Use paru as yay alternative
 alias pacman='sudo pacman'   # Always use sudo with pacman
-alias cleanpacman='pacman -Rns $(pacman -Qdtq)'
 alias update-nix='nix-channel --update && home-manager switch'
 
 

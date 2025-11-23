@@ -112,6 +112,20 @@ echo "Starting User Services Configuration..."
 if [ -n "$WAYLAND_DISPLAY" ] && [[ "$XDG_SESSION_DESKTOP" == "Hyprland" || -n "$HYPRLAND_INSTANCE_SIGNATURE" ]]; then
     echo "Detected Wayland/Hyprland session. Enabling Hyprland-specific services..."
 
+    # Enable wayland-pipewire-idle-inhibit
+    SERVICE="wayland-pipewire-idle-inhibit.service"
+    if user_service_exists "$SERVICE"; then
+        read -r -p "Enable $SERVICE (wayland-pipewire-idle-inhibit)? (y/N): " WAYLAND_PIPEWIRE_IDLEINHIBIT_CHOICE
+        if [[ "$WAYLAND_PIPEWIRE_IDLEINHIBIT_CHOICE}" =~ ^[Yy]$ ]]; then
+            echo "Enabling $SERVICE..."
+            systemctl --user enable --now "$SERVICE"
+        else
+            echo "Skipping enabling $SERVICE."
+        fi
+    else
+        echo "Service $SERVICE not found (user context). Skipping."
+    fi
+
     # Enable hypridle
     SERVICE="hypridle.service"
     if user_service_exists "$SERVICE"; then

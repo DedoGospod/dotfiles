@@ -1,4 +1,4 @@
 {
   "image-visibility": "when-available",
-  "notification-grouping": false,
+  "notification-grouping": true,
 }

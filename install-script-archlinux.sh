@@ -143,6 +143,7 @@ pacman_packages=(
     gnome-keyring
     seahorse
     obsidian
+    trash-cli
 )
 
 # NVIDIA driver packages
@@ -197,6 +198,8 @@ flatpak_apps=(
 # AUR packages
 aur_packages=(
     timeshift-autosnap
+    wayland-pipewire-idle-inhibit
+    brave-bin
 )
 
 # Conditionally add NVIDIA packages
