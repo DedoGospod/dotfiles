@@ -1,0 +1,26 @@
+// -*- mode: jsonc -*-
+{
+    "layer": "top", 
+    "position": "top",
+    "height": 16, 
+    "spacing": 8,    
+    "modules-left": [
+        "custom/arch",
+        "hyprland/workspaces",
+        "mpris"
+    ],
+    "modules-center": [
+        "hyprland/window"
+    ],
+    "modules-right": [
+        // "tray",
+        "network",
+        "pulseaudio",
+        "clock",
+	      "battery"
+    ],
+    //Modules configuration
+    "include": [
+		"~/.config/waybar/modules.json"
+	]
+}

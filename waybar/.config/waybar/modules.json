@@ -1,0 +1,96 @@
+{
+  "custom/arch": {
+    "format": "󰣇",
+    "tooltip": false,
+    "on-click": ""
+  },
+  "hyprland/workspaces": {
+    "disable-scroll": true,
+    "all-outputs": true,
+    "warp-on-scroll": false,
+    "format": "{name}",
+    "format-icons": {
+      "urgent": "",
+      "active": "",
+      "default": ""
+    }
+  },
+   "mpris": {
+    "player": "playerctld", 
+    "format": "{player_icon} {dynamic}",
+    "format-paused": "{player_icon} <i>{dynamic}</i>",
+    "dynamic-order": ["title", "artist"],
+    "max-length": 40, 
+    "player-icons": {
+        "spotify": "",
+        "firefox": "",
+        "default": "♪"
+    },
+    "on-click": "playerctl play-pause", 
+    "on-scroll-up": "playerctl next",
+    "on-scroll-down": "playerctl previous"
+},
+  "idle_inhibitor": {
+    "format": "{icon}",
+    "format-icons": {
+      "activated": "",
+      "deactivated": "󰒳",
+    }
+  },
+  "pulseaudio": {
+    "format": "{icon} {volume}%",
+    "format-muted": "",
+    "format-icons": {
+      "default": ["", "", ""]
+    },
+    "on-click": "pavucontrol",
+    "on-click-right": "flatpak run io.github.ebonjaeger.bluejay"
+  },
+  "network": {
+    "format-wifi": "<span size='13000' foreground='#f5e0dc'></span> {essid}",
+    "format-ethernet": "<span size='13000' foreground='#f5e0dc'></span> Ethernet",
+    "format-disconnected": "<span size='13000' foreground='#f5e0dc'>⚠</span> Disconnected",
+    "tooltip-format-wifi": "Signal Strength: {signalStrength}%",
+    "tooltip-format-ethernet": "Interface: {ifname}\nIP: {ipaddr}",
+    "on-click": "kitty nmtui"
+},
+  "cpu": {
+    "format": " {usage}%",
+    "tooltip": true
+  },
+  "memory": {
+    "format": " {}%",
+    "tooltip": true
+  },
+  "temperature": {
+    "interval": 10,
+    "hwmon-path": "/sys/devices/platform/coretemp.0/hwmon/hwmon4/temp1_input",
+    "critical-threshold": 100,
+    "format-critical": " {temperatureC}",
+    "format": " {temperatureC}°C"
+  },
+  "hyprland/language": {
+    "format": " {}",
+    "format-en": "EN",
+    "format-ru": "RU"
+  },
+  "battery": {
+    "states": {
+      "warning": 30,
+      "critical": 15
+    },
+    "format": "{icon} {capacity}%",
+    "format-full": "{icon} {capacity}%",
+    "format-charging": " {capacity}%",
+    "format-plugged": " {capacity}%",
+    "format-alt": "{time} {icon}",
+    "format-icons": ["", "", "", "", ""]
+  },
+  "battery#bat2": {
+    "bat": "BAT2"
+  },
+  "clock": {
+    "format": "<span foreground='#f5c2e7' font_size='smaller'></span> {:%a %d %H:%M}",
+    "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>"
+  }
+}

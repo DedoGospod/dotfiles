@@ -1,0 +1,14 @@
+# --- GENERAL SETTINGS ---
+
+# Set logging verbosity 
+verbosity = "WARN"
+
+# Minimum duration (in seconds) of media playback to trigger inhibition
+media_minimum_duration = 5 
+
+# --- BLACKLIST ---
+[[node_blacklist]]
+app_name = "OBS" 
+
+# [[node_blacklist]]
+# app_name = (app name here) 

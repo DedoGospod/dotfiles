@@ -1,0 +1,94 @@
+{
+    // "logo": {
+        // "type": "file",
+        // "color": {"1": "white"},
+        // "source": "~/.config/fastfetch/logo.txt",
+        // "height": 15,
+        // "width": 30,
+        // "padding": {
+            // "top": 5,
+            // "left": 3
+        // }
+    // },
+
+    "modules": [
+        "break",
+        {
+            "type": "custom",
+            "format": "\u001b[32m╭──────────────────────Hardware──────────────────────╮"
+        },
+        {
+            "type": "cpu",
+            "key": "│ ┌ CPU",
+            "keyColor": "green"
+        },
+        {
+            "type": "gpu",
+            "key": "│ ├󰍛 GPU",
+            "keyColor": "green"
+        },
+        {
+            "type": "memory",
+            "key": "│ ├󰍛 Memory",
+            "keyColor": "green"
+        },
+        {
+            "type": "display",
+            "key": "│ └󰍹 Display",
+            "keyColor": "green"
+        },
+        {
+            "type": "custom",
+            "format": "\u001b[32m╰────────────────────────────────────────────────────╯"
+        },
+        "break",
+        {
+            "type": "custom",
+            "format": "\u001b[34m╭──────────────────────Software──────────────────────╮"
+        },
+        {
+            "type": "os",
+            "key": "│ ┌ OS",
+            "keyColor": "blue"
+        },
+        {
+            "type": "kernel",
+            "key": "│ ├ Kernel",
+            "keyColor": "blue"
+        },
+        {
+            "type": "packages",
+            "key": "│ ├󰏖 Packages",
+            "keyColor": "blue"
+        },
+        {
+            "type": "shell",
+            "key": "│ └ Shell",
+            "keyColor": "blue"
+        },
+        {
+            "type": "custom",
+            "format": "\u001b[34m╰────────────────────────────────────────────────────╯"
+        },
+        "break",
+        {
+            "type": "custom",
+            "format": "\u001b[31m╭──────────────────────System────────────────────────╮"
+        },
+        {
+            "type": "uptime",
+            "key": "│ ┌󰅐 Uptime",
+            "keyColor": "red"
+        },
+        {
+            "type": "localip",
+            "key": "│ └󰒋 Local IP",
+            "keyColor": "red"
+        },
+        {
+            "type": "custom",
+            "format": "\u001b[31m╰────────────────────────────────────────────────────╯"
+        },
+        "break"
+    ]
+}
