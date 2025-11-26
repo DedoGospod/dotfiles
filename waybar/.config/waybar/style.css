@@ -71,7 +71,12 @@ window#waybar {
 #backlight,
 #wireplumber,
 #custom-media,
-#tray,
+#tray {
+    background-color: transparent;
+    border: none;
+    padding: 0px;
+    margin: 0px;
+}
 #mode,
 #scratchpad,
 #power-profiles-daemon,
