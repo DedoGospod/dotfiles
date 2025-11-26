@@ -214,6 +214,7 @@ flatpak_apps=(
     com.usebottles.bottles
     com.vysp3r.ProtonPlus
     io.github.ebonjaeger.bluejay
+    com.github.wwmm.easyeffects
 )
 
 # AUR packages
