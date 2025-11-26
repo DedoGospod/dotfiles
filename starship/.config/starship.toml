@@ -6,6 +6,8 @@ $os\
 $username\
 [](bg:surface0 fg:surface0)\
 $directory\
+$git_branch\
+$git_status\
 $c\
 $rust\
 $golang\
