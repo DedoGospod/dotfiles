@@ -1,12 +1,14 @@
 # My dotfiles for system configuration 
-
 Run install script for automatic setup (arch linux)
 - cd dotfiles
 - chmod +x install-script.sh
-- ./install-script.sh
+- ./install-script-archlinux.sh 
 
-# For manual setup install stow
+Run the systemd services setup script (any systemd distro)
+- chmod +x ./services-systemd.sh
+- ./services-systemd.sh
 
+# For manual setup install GNU stow
 Arch:
 - sudo pacman -S stow
 
@@ -19,5 +21,5 @@ Fedora:
 # Stow instructions 
 - cd dotfiles
 - ls (to list avaliable packages)
-- stow <package name> (user files)
-- sudo stow -t / <package name> (system files)
+- stow <directoryName> (user files)
+- sudo stow -t / <directoryName> (system files)
