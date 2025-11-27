@@ -111,6 +111,8 @@ pacman_packages=(
     pavucontrol      # Volume mixer (GUI)
     gnome-keyring    # Keyring
     seahorse         # GUI frontend for gnome-keyring
+    rsync            # Local or Server-to-Server file sync
+    keepassxc        # Password manager & 2FA code generator 
 
     # ---  Shell & CLI Enhancements ---
     zsh
@@ -215,6 +217,7 @@ flatpak_apps=(
     com.vysp3r.ProtonPlus
     io.github.ebonjaeger.bluejay
     com.github.wwmm.easyeffects
+    io.ente.auth
 )
 
 # AUR packages
