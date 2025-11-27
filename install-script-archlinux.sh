@@ -222,7 +222,7 @@ aur_packages=(
     timeshift-autosnap
     wayland-pipewire-idle-inhibit
     brave-bin
-    hyprwhenthen
+    hyprwhenthen-bin
 )
 
 # Conditionally add NVIDIA packages
@@ -291,13 +291,9 @@ if [[ "$stow_dotfiles" =~ ^[Yy]$ ]]; then
 
         # List of directories (packages) to stow
         stow_packages=(
+            hypr
             backgrounds
             fastfetch
-            hypridle
-            hyprland
-            hyprlock
-            hyprmocha
-            hyprpaper
             kitty
             mpv
             nvim
@@ -311,8 +307,7 @@ if [[ "$stow_dotfiles" =~ ^[Yy]$ ]]; then
             tmux
             wayland-pipewire-idle-inhibit
             kwalletrc
-            gtk
-            qt
+            theme
         )
 
         # Loop through all packages and attempt to stow them
