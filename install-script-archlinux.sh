@@ -223,6 +223,7 @@ aur_packages=(
     wayland-pipewire-idle-inhibit
     brave-bin
     hyprwhenthen-bin
+    nvibrant-bin
 )
 
 # Conditionally add NVIDIA packages
