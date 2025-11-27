@@ -125,6 +125,20 @@ if [ -n "$WAYLAND_DISPLAY" ] && [[ "$XDG_SESSION_DESKTOP" == "Hyprland" || -n "$
         echo "Service $SERVICE not found (user context). Skipping."
     fi
 
+    # Enable hypridle
+    SERVICE="hyprwhenthen.service"
+    if user_service_exists "$SERVICE"; then
+        read -r -p "Enable $SERVICE (Hyprland idle/lock manager)? (y/N): " HYPRWHENTHEN_CHOICE
+        if [[ "$HYPRWHENTHEN_CHOICE" =~ ^[Yy]$ ]]; then
+            echo "Enabling $SERVICE..."
+            systemctl --user enable --now "$SERVICE"
+        else
+            echo "Skipping enabling $SERVICE."
+        fi
+    else
+        echo "Service $SERVICE not found (user context). Skipping."
+    fi
+
     # Enable hyprpolkitagent
     SERVICE="hyprpolkitagent.service"
     if user_service_exists "$SERVICE"; then
