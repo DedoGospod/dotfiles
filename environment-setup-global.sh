@@ -43,13 +43,9 @@ echo "Setting up dotfiles with GNU Stow..."
 
         # List of directories (packages) to stow
         stow_packages=(
+            hypr
             backgrounds
             fastfetch
-            hypridle
-            hyprland
-            hyprlock
-            hyprmocha
-            hyprpaper
             kitty
             mpv
             nvim
@@ -63,8 +59,7 @@ echo "Setting up dotfiles with GNU Stow..."
             tmux
             wayland-pipewire-idle-inhibit
             kwalletrc
-            gtk
-            qt
+            theme
         )
 
         # Loop through all packages and attempt to stow them
