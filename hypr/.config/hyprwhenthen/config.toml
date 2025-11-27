@@ -1,1 +1,7 @@
+[general]
+timeout = "5s"
 
+[[handler]]
+on = ""
+when = ""
+then = ""
