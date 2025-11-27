@@ -1,0 +1,13 @@
+[Unit]
+Description=Hyprland Event Handler (hyprwhenthen)
+Wants=hyprland.service
+After=hyprland.service
+
+[Service]
+Type=exec
+ExecStart=/usr/bin/hyprwhenthen run
+Restart=on-failure 
+RestartSec=5
+
+[Install]
+WantedBy=default.target
