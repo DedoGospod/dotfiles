@@ -222,6 +222,7 @@ aur_packages=(
     timeshift-autosnap
     wayland-pipewire-idle-inhibit
     brave-bin
+    hyprwhenthen
 )
 
 # Conditionally add NVIDIA packages
