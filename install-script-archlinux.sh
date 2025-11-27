@@ -217,7 +217,6 @@ flatpak_apps=(
     com.vysp3r.ProtonPlus
     io.github.ebonjaeger.bluejay
     com.github.wwmm.easyeffects
-    io.ente.auth
 )
 
 # AUR packages
@@ -225,7 +224,6 @@ aur_packages=(
     timeshift-autosnap
     wayland-pipewire-idle-inhibit
     brave-bin
-    hyprwhenthen-bin
     nvibrant-bin
 )
 
