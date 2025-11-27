@@ -1,13 +1,14 @@
 [Unit]
-Description=Hyprland Event Handler (hyprwhenthen)
-Wants=hyprland.service
-After=hyprland.service
+Description=HyprWhenThen - React to hypr events
+After=graphical-session.target
+Wants=graphical-session.target
+PartOf=hyprland-session.target
 
 [Service]
 Type=exec
 ExecStart=/usr/bin/hyprwhenthen run
-Restart=on-failure 
+Restart=on-failure
 RestartSec=5
 
 [Install]
-WantedBy=default.target
+WantedBy=hyprland-session.target
