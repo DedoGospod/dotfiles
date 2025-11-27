@@ -26,9 +26,6 @@ mkdir -p \
     "${XDG_DATA_HOME}/gnupg" \
     "${XDG_STATE_HOME}/python"
 
-# Remove recent section from nautilus
-# gsettings set org.gnome.desktop.privacy remember-recent-files false
-
 # Stow dotfiles
 echo "Setting up dotfiles with GNU Stow..."
 
