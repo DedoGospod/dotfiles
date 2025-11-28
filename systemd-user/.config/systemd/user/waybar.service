@@ -5,7 +5,6 @@ PartOf=graphical-session.target
 
 [Service]
 ExecStart=/usr/bin/waybar
-ExecReload=/usr/bin/pkill -SIGUSR2 waybar
 Type=simple
 Restart=on-failure
 
