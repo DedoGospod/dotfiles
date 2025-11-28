@@ -168,6 +168,7 @@ pacman_packages=(
 
     # --- Build untils ---
     meson
+    ninja
 
 )
 
