@@ -1,0 +1,13 @@
+[Unit]
+Description=EasyEffects Audio Service
+After=graphical-session.target pipewire.service
+PartOf=graphical-session.target
+
+[Service]
+ExecStart=/usr/bin/flatpak run com.github.wwmm.easyeffects --gapplication-service
+Type=simple
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=graphical-session.target
