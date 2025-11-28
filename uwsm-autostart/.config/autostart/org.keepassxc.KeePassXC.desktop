@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=KeePassXC
+Comment=Secure Password Manager
+Exec=keepassxc
+Icon=keepassxc
+Terminal=false
+X-GNOME-Autostart-enabled=true
+X-KDE-Autostart-enabled=true
+StartupNotify=false
