@@ -331,9 +331,11 @@ if [[ "$stow_dotfiles" =~ ^[Yy]$ ]]; then
     fi
 fi
 
-# Stow system files
-echo "Stowing system files"
-sudo stow -t / --no-folding systemd-system
+# Copy systemd system services to the correct path
+echo "Copying systemd system services to /etc/systemd/system"
+sudo cp "$HOME"/dotfiles/systemd-system/wol.service /etc/systemd/system/
+echo "Reloading systemd daemon"
+sudo systemctl daemon-reload
 
 # Gamescope setup for smooth performance
 if [[ "$install_gaming" =~ ^[Yy]$ ]]; then
