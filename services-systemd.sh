@@ -48,7 +48,7 @@ fi
 # Enable TLP power saving
 SERVICE="tlp.service"
 if service_exists "$SERVICE"; then
-    read -r -p "Do you want to ENABLE $SERVICE for scheduled tasks? (Y/n): " TLP_CHOICE
+    read -r -p "Do you want to ENABLE $SERVICE (TLP Power saver)? (Y/n): " TLP_CHOICE
     if [[ "$CRONIE_CHOICE" =~ ^[Yy]$ || -z "$TLP_CHOICE" ]]; then
         echo "Enabling $SERVICE..."
         sudo systemctl enable --now "$SERVICE"
@@ -119,7 +119,7 @@ if [ -n "$WAYLAND_DISPLAY" ] && [[ "$XDG_SESSION_DESKTOP" == "Hyprland" || -n "$
     # Enable hypridle
     SERVICE="hypridle.service"
     if user_service_exists "$SERVICE"; then
-        read -r -p "Do you want to ENABLE $SERVICE for scheduled tasks? (Y/n): " HYPRIDLE_CHOICE
+        read -r -p "Do you want to ENABLE $SERVICE (Hypridle)? (Y/n): " HYPRIDLE_CHOICE
         if [[ "$HYPRIDLE_CHOICE" =~ ^[Yy]$ || -z "$HYPRIDLE_CHOICE" ]]; then
             echo "Enabling $SERVICE..."
             sudo systemctl --user enable --now "$SERVICE"
@@ -133,7 +133,7 @@ if [ -n "$WAYLAND_DISPLAY" ] && [[ "$XDG_SESSION_DESKTOP" == "Hyprland" || -n "$
     # Hyprpaper
     SERVICE="hyprpaper.service"
     if user_service_exists "$SERVICE"; then
-        read -r -p "Do you want to ENABLE $SERVICE for scheduled tasks? (Y/n): " HYPRPAPER_CHOICE
+        read -r -p "Do you want to ENABLE $SERVICE (Hyprpaper)? (Y/n): " HYPRPAPER_CHOICE
         if [[ "$HYPRPAPER_CHOICE" =~ ^[Yy]$ || -z "$HYPRPAPER_CHOICE" ]]; then
             echo "Enabling $SERVICE..."
             sudo systemctl --user enable --now "$SERVICE"
