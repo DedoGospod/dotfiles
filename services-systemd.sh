@@ -15,7 +15,6 @@ user_service_exists() {
 }
 
 # --- SYSTEM SERVICES ---
-
 echo "Starting System Services Configuration..."
 
 # Disable systemd-networkd-wait-online service
@@ -49,12 +48,12 @@ fi
 # Enable TLP power saving
 SERVICE="tlp.service"
 if service_exists "$SERVICE"; then
-    read -r -p "Is this system a device that requires TLP power management? (y/N): " TLP_CHOICE
-    if [[ "$TLP_CHOICE" =~ ^[Yy]$ ]]; then
+    read -r -p "Do you want to ENABLE $SERVICE for scheduled tasks? (Y/n): " TLP_CHOICE
+    if [[ "$CRONIE_CHOICE" =~ ^[Yy]$ || -z "$TLP_CHOICE" ]]; then
         echo "Enabling $SERVICE..."
         sudo systemctl enable --now "$SERVICE"
     else
-        echo "Skipping TLP service as requested."
+        echo "Skipping enabling $SERVICE."
     fi
 else
     echo "Service $SERVICE not found. Skipping."
@@ -76,16 +75,22 @@ fi
 
 # Enable grub-btrfs daemon
 SERVICE="grub-btrfsd.service"
-if service_exists "$SERVICE"; then
-    read -r -p "Do you want to ENABLE $SERVICE for grub btrfs rollbacks? (y/N): " GRUB_CHOICE
-    if [[ "$GRUB_CHOICE" =~ ^[Yy]$ ]]; then
-        echo "Enabling $SERVICE..."
-        sudo systemctl enable --now "$SERVICE"
+ROOT_FS_TYPE=$(findmnt -n -o FSTYPE /)
+if [[ "$ROOT_FS_TYPE" == "btrfs" ]]; then
+    echo "Root partition detected as Btrfs. Proceeding with grub-btrfsd check."
+    if service_exists "$SERVICE"; then
+        read -r -p "Do you want to ENABLE $SERVICE for grub btrfs rollbacks? (Y/n): " GRUB_CHOICE
+        if [[ -z "$GRUB_CHOICE" ]] || [[ "$GRUB_CHOICE" =~ ^[Yy]$ ]]; then
+            echo "Enabling $SERVICE..."
+            sudo systemctl enable --now "$SERVICE"
+        else
+            echo "Skipping enabling $SERVICE."
+        fi
     else
-        echo "Skipping enabling $SERVICE."
+        echo "Service $SERVICE not found. Skipping."
     fi
 else
-    echo "Service $SERVICE not found. Skipping."
+    echo "Root partition is not Btrfs ($ROOT_FS_TYPE). Skipping $SERVICE configuration."
 fi
 
 # Enable wol.service
@@ -114,22 +119,36 @@ if [ -n "$WAYLAND_DISPLAY" ] && [[ "$XDG_SESSION_DESKTOP" == "Hyprland" || -n "$
     # Enable hypridle
     SERVICE="hypridle.service"
     if user_service_exists "$SERVICE"; then
-        read -r -p "Enable $SERVICE (Hyprland idle/lock manager)? (y/N): " HYPRIDLE_CHOICE
-        if [[ "$HYPRIDLE_CHOICE" =~ ^[Yy]$ ]]; then
+        read -r -p "Do you want to ENABLE $SERVICE for scheduled tasks? (Y/n): " HYPRIDLE_CHOICE
+        if [[ "$HYPRIDLE_CHOICE" =~ ^[Yy]$ || -z "$HYPRIDLE_CHOICE" ]]; then
             echo "Enabling $SERVICE..."
-            systemctl --user enable --now "$SERVICE"
+            sudo systemctl --user enable --now "$SERVICE"
         else
             echo "Skipping enabling $SERVICE."
         fi
     else
-        echo "Service $SERVICE not found (user context). Skipping."
+        echo "Service $SERVICE not found. Skipping."
     fi
 
-    # Enable hypridle
-    SERVICE="hyprwhenthen.service"
+    # Hyprpaper
+    SERVICE="hyprpaper.service"
     if user_service_exists "$SERVICE"; then
-        read -r -p "Enable $SERVICE (Hyprland idle/lock manager)? (y/N): " HYPRWHENTHEN_CHOICE
-        if [[ "$HYPRWHENTHEN_CHOICE" =~ ^[Yy]$ ]]; then
+        read -r -p "Do you want to ENABLE $SERVICE for scheduled tasks? (Y/n): " HYPRPAPER_CHOICE
+        if [[ "$HYPRPAPER_CHOICE" =~ ^[Yy]$ || -z "$HYPRPAPER_CHOICE" ]]; then
+            echo "Enabling $SERVICE..."
+            sudo systemctl --user enable --now "$SERVICE"
+        else
+            echo "Skipping enabling $SERVICE."
+        fi
+    else
+        echo "Service $SERVICE not found. Skipping."
+    fi
+
+    # Waybar
+    SERVICE="waybar.service"
+    if user_service_exists "$SERVICE"; then
+        read -r -p "Enable $SERVICE (Waybar status bar)? (y/N): " WAYBAR_CHOICE
+        if [[ "$WAYBAR_CHOICE" =~ ^[Yy]$ ]]; then
             echo "Enabling $SERVICE..."
             systemctl --user enable --now "$SERVICE"
         else
@@ -139,18 +158,18 @@ if [ -n "$WAYLAND_DISPLAY" ] && [[ "$XDG_SESSION_DESKTOP" == "Hyprland" || -n "$
         echo "Service $SERVICE not found (user context). Skipping."
     fi
 
-    # Enable hyprpolkitagent
+    # Hyprpolkitagent
     SERVICE="hyprpolkitagent.service"
     if user_service_exists "$SERVICE"; then
-        read -r -p "Enable $SERVICE (Polkit authentication agent)? (y/N): " POLKIT_CHOICE
-        if [[ "$POLKIT_CHOICE" =~ ^[Yy]$ ]]; then
+        read -r -p "Do you want to ENABLE $SERVICE (Polkit authentication agent)? (Y/n): " POLKIT_CHOICE
+        if [[ "$POLKIT_CHOICE" =~ ^[Yy]$ || -z "$POLKIT_CHOICE" ]]; then
             echo "Enabling $SERVICE..."
-            systemctl --user enable --now "$SERVICE"
+            sudo systemctl --user enable --now "$SERVICE"
         else
             echo "Skipping enabling $SERVICE."
         fi
     else
-        echo "Service $SERVICE not found (user context). Skipping."
+        echo "Service $SERVICE not found. Skipping."
     fi
 else
     echo "Wayland/Hyprland environment not detected. Skipping user services (hypridle, wlsunset, etc.)."
@@ -170,11 +189,39 @@ else
     echo "Service $SERVICE not found (user context). Skipping."
 fi
 
+# Swaync
+SERVICE="swaync.service"
+if user_service_exists "$SERVICE"; then
+    read -r -p "Enable $SERVICE (Sway notification daemon)? (y/N): " SWAYNC_CHOICE
+    if [[ "$SWAYNC_CHOICE" =~ ^[Yy]$ ]]; then
+        echo "Enabling $SERVICE..."
+        systemctl --user enable --now "$SERVICE"
+    else
+        echo "Skipping enabling $SERVICE."
+    fi
+else
+    echo "Service $SERVICE not found (user context). Skipping."
+fi
+
 # Enable Blue light filter
 SERVICE="wlsunset.service"
 if user_service_exists "$SERVICE"; then
     read -r -p "Enable $SERVICE (Blue light filter/Sunset service)? (y/N): " SUNSET_CHOICE
     if [[ "$SUNSET_CHOICE" =~ ^[Yy]$ ]]; then
+        echo "Enabling $SERVICE..."
+        systemctl --user enable --now "$SERVICE"
+    else
+        echo "Skipping enabling $SERVICE."
+    fi
+else
+    echo "Service $SERVICE not found (user context). Skipping."
+fi
+
+# Enable Easyeffects
+SERVICE="easyeffects.service"
+if user_service_exists "$SERVICE"; then
+    read -r -p "Enable $SERVICE (Easyeffects pipewire audio enhancements)? (y/N): " EASYEFFECTS_CHOICE
+    if [[ "$EASYEFFECTS_CHOICE" =~ ^[Yy]$ ]]; then
         echo "Enabling $SERVICE..."
         systemctl --user enable --now "$SERVICE"
     else
