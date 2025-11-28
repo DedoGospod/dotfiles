@@ -166,6 +166,9 @@ pacman_packages=(
     noto-fonts-cjk
     noto-fonts-emoji
 
+    # --- Build untils ---
+    meson
+
 )
 
 # NVIDIA driver packages
