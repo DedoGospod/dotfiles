@@ -57,6 +57,7 @@ echo "Setting up dotfiles with GNU Stow..."
             wayland-pipewire-idle-inhibit
             kwalletrc
             theme
+            uwsm-autostart
         )
 
         # Loop through all packages and attempt to stow them
