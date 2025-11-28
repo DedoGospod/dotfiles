@@ -310,6 +310,7 @@ if [[ "$stow_dotfiles" =~ ^[Yy]$ ]]; then
             wayland-pipewire-idle-inhibit
             kwalletrc
             theme
+            uwsm-autostart
         )
 
         # Loop through all packages and attempt to stow them
