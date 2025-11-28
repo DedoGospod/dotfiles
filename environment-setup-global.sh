@@ -73,9 +73,11 @@ echo "Setting up dotfiles with GNU Stow..."
         echo "Skipping dotfile setup: Dotfiles directory **$DOTFILES_DIR** not found."
     fi
 
-# Stowing system packages
-echo "stowing system packages"
-sudo stow -t / --no-folding systemd-system
+# Copy systemd system services to the correct path
+echo "Copying systemd system services to /etc/systemd/system"
+sudo cp "$HOME"/dotfiles/systemd-system/wol.service /etc/systemd/system/
+echo "Reloading systemd daemon"
+sudo systemctl daemon-reload
 
 # Set zsh as the default shell
 echo "Setting zsh as the default shell..."
