@@ -1,17 +1,20 @@
 #!/bin/bash
+
 # Exit immediately if a command exits with a non-zero status.
 set -euo pipefail
 
-# --- Helper Functions ---
+echo "Reloading systemd daemon to detect newly installed services..."
+sudo systemctl daemon-reload
+systemctl --user daemon-reload
 
-# Function to check if a SYSTEM-LEVEL service unit file exists.
+# Function to check if a SYSTEM-LEVEL service unit file exists
 service_exists() {
-    systemctl status "$1" &>/dev/null
+    [[ "$(systemctl show -p LoadState --value "$1")" == "loaded" ]]
 }
 
-# Function to check if a USER-LEVEL service unit file exists.
+# Function to check if a USER-LEVEL service unit file exists
 user_service_exists() {
-    systemctl --user status "$1" &>/dev/null
+    [[ "$(systemctl --user show -p LoadState --value "$1")" == "loaded" ]]
 }
 
 ###########################
