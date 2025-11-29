@@ -264,7 +264,7 @@ is_root_btrfs() {
 echo "Checking root filesystem type for grub-btrfs..."
 if is_root_btrfs; then
     echo "Root filesystem is Btrfs. Adding grub-btrfs to install list."
-    pacman_packages+=(grub-btrfs)
+    pacman_packages+=(grub-btrfs **inotify-tools**)
 else
     echo "Root filesystem is NOT Btrfs (Skipping grub-btrfs installation)."
 fi
