@@ -1,0 +1,23 @@
+[Unit]
+Description=Enable Wake On LAN for Interface
+After=network-online.target
+Requires=network-online.target 
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/ethtool -s enp9s0 wol g
+
+[Install]
+WantedBy=multi-user.target
+
+# Enable WoL service
+#systemctl enable --now wol.service
+
+# Test wake on lan 
+#sudo ethtool enp9s0 | grep Wake-on
+
+# Configure TLP to allow WoL
+#sudo nv /etc/tlp.conf   (uncomment WOL_DISABLE=Y and change to =N)
+
+# Restart TLP
+#sudo tlp-stat -r 
