@@ -113,6 +113,7 @@ pacman_packages=(
     seahorse         # GUI frontend for gnome-keyring
     rsync            # Local or Server-to-Server file sync
     keepassxc        # Password manager & 2FA code generator 
+    obs-studio       # Screen recording 
 
     # ---  Shell & CLI Enhancements ---
     zsh
@@ -165,10 +166,6 @@ pacman_packages=(
     noto-fonts
     noto-fonts-cjk
     noto-fonts-emoji
-
-    # --- Build untils ---
-    meson
-    ninja
 
 )
 
@@ -229,6 +226,7 @@ aur_packages=(
     wayland-pipewire-idle-inhibit
     brave-bin
     nvibrant-bin
+    obs-vkcapture
 )
 
 # Conditionally add NVIDIA packages
