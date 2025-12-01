@@ -41,7 +41,6 @@ zshaddhistory() { whence ${${(z)1}[1]} >| /dev/null || return 1 }
 autoload -Uz compinit 
 compinit -d "${ZSH_COMPDUMP}"  # Explicitly use the custom XDG-compliant path
 
-
 # ======================
 # Shell Initialization
 # ======================
