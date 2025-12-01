@@ -253,5 +253,14 @@ else
     echo "Service $SERVICE not found (user context). Skipping."
 fi
 
+# Enable NTSYNC for gaming
+read -r -p "Enable NTSYNC for gaming? (Y/n): " NTSYNC_CHOICE
+    if [[ "$NTSYNC_CHOICE" =~ ^[Yy]$ || -z "$NTSYNC_CHOICE" ]]; then
+    echo "Enabling NTSYNC"
+    echo "ntsync" | sudo tee /etc/modules-load.d/ntsync.conf
+else
+    echo "Skipping enabling NTSYNC"
+fi
+
 # Service setup complete
 echo "Service setup complete!"
