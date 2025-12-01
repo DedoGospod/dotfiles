@@ -75,7 +75,9 @@ echo "Setting up dotfiles with GNU Stow..."
 
 # Copy systemd system services to the correct path
 echo "Copying systemd system services to /etc/systemd/system"
-sudo cp "$HOME"/dotfiles/systemd-system/wol.service /etc/systemd/system/
+sudo cp "$HOME"/dotfiles/etc/wol.service /etc/systemd/system/
+echo "Copying tlp settings to /etc/tlp.conf"
+sudo cp "$HOME"/dotfiles/etc/tlp.conf /etc
 echo "Reloading systemd daemon"
 sudo systemctl daemon-reload
 
