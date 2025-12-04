@@ -93,10 +93,7 @@ alias update-grub="grub-mkconfig -o /boot/grub/grub.cfg"
 alias yay='paru'             # Use paru as yay alternative
 alias pacman='sudo pacman'   # Always use sudo with pacman
 
-
 # Apps
-alias nv='nvim'                                        # Neovim shortcut
-alias snv='sudoedit'                                   # Allow neovim to use my configuration on system files
 alias y='yazi'                                         # Use Yazi as a terminal file manager
 alias top='btop'                                       # Modern system monitor
 alias cls='clear'                                      # Clear screen
@@ -115,7 +112,6 @@ alias h='fc -nil 1 | grep'  # Search history for a specific terminal command
 alias hist="fc -nil 1"      # Always show history with readable dates
 alias du='du -h'
 alias df='df -h'
-zl() { if [ -z "$@" ]; then ls; else z "$@" && ls; fi; } # Automatically do an ls after each zl command
 
 # Configs
 alias zshrc='nvim ~/.zshrc'                            # Edit zsh config
@@ -128,3 +124,11 @@ alias grub='sudoedit /etc/default/grub'                # Edit GRUB config
 
 [ "$(tty)" = "/dev/tty1" ] && exec uwsm start Hyprland          # Autostart hyprland on tty1
 [ "$(tty)" = "/dev/tty2" ] && ~/.local/bin/launch-gamescope.sh  # Autostart gamescope on tty6
+
+# Functions
+zl() { if [ -z "$@" ]; then ls; else z "$@" && ls; fi; } # Automatically do an ls after each zl command
+
+nv() {
+  if [ -z "$1" ]; then command nvim; return; fi
+  if [ -f "$1" ] && [ ! -O "$1" ]; then echo "Using sudoedit for root file: $1"; command sudoedit "$@"; else command nvim "$@"; fi
+}
