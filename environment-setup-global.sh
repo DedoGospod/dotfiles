@@ -64,7 +64,7 @@ echo "Setting up dotfiles with GNU Stow..."
         for package in "${stow_packages[@]}"; do
             if [ -d "$package" ]; then
                 echo -n "Stowing **$package**... "
-                stow -t "$HOME" --no-folding "$package" 2>/dev/null && echo "Done." || echo "Failed."
+                stow -t "$HOME" --restow "$package" 2>/dev/null && echo "Done." || echo "Failed."
             else
                 echo "Skipping **$package**: Directory not found in $DOTFILES_DIR."
             fi
