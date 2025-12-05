@@ -225,6 +225,20 @@ else
     echo "Service $SERVICE not found. Skipping."
 fi
 
+# Enable pyprland
+SERVICE="pyprland.service"
+if user_service_exists "$SERVICE"; then
+    read -r -p "Enable $SERVICE (pyprland)? (Y/n): " PYPRLAND_CHOICE
+    if [[ "$PYPRLAND_CHOICE" =~ ^[Yy]$ || -z "$PYPRLAND_CHOICE" ]]; then
+        echo "Enabling $SERVICE..."
+        systemctl --user enable --now "$SERVICE"
+    else
+        echo "Skipping enabling $SERVICE."
+    fi
+else
+    echo "Service $SERVICE not found. Skipping."
+fi
+
 # Enable Easyeffects
 SERVICE="easyeffects.service"
 if user_service_exists "$SERVICE"; then
