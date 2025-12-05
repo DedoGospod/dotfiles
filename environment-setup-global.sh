@@ -31,7 +31,7 @@ mkdir -p \
 # Stow Packages (Directories in your dotfiles folder)
 STOW_FOLDERS=(
     hypr backgrounds fastfetch kitty mpv nvim starship swaync waybar wofi yazi
-    zshrc systemd-user tmux wayland-pipewire-idle-inhibit kwalletrc theme uwsm-autostart
+    zsh systemd-user tmux wayland-pipewire-idle-inhibit kwalletrc theme uwsm-autostart
 )
 
 # Directory paths
