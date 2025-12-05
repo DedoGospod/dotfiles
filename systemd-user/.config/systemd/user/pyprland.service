@@ -1,0 +1,12 @@
+[Unit]
+Description=Pyprland - Hyprland-specific helper daemon
+Wants=hyprland-session.target
+After=hyprland-session.target
+
+[Service]
+ExecStart=/usr/bin/pypr
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target
