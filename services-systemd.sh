@@ -166,6 +166,20 @@ if [ -n "$WAYLAND_DISPLAY" ] && [[ "$XDG_SESSION_DESKTOP" == "Hyprland" || -n "$
         echo "Service $SERVICE not found. Skipping."
     fi
 
+    # Enable pyprland
+    SERVICE="pyprland.service"
+    if user_service_exists "$SERVICE"; then
+        read -r -p "Enable $SERVICE (pyprland)? (Y/n): " PYPRLAND_CHOICE
+        if [[ "$PYPRLAND_CHOICE" =~ ^[Yy]$ || -z "$PYPRLAND_CHOICE" ]]; then
+            echo "Enabling $SERVICE..."
+            systemctl --user enable --now "$SERVICE"
+        else
+            echo "Skipping enabling $SERVICE."
+        fi
+    else
+        echo "Service $SERVICE not found. Skipping."
+    fi
+
     # Hyprpolkitagent
     SERVICE="hyprpolkitagent.service"
     if user_service_exists "$SERVICE"; then
@@ -225,20 +239,6 @@ else
     echo "Service $SERVICE not found. Skipping."
 fi
 
-# Enable pyprland
-SERVICE="pyprland.service"
-if user_service_exists "$SERVICE"; then
-    read -r -p "Enable $SERVICE (pyprland)? (Y/n): " PYPRLAND_CHOICE
-    if [[ "$PYPRLAND_CHOICE" =~ ^[Yy]$ || -z "$PYPRLAND_CHOICE" ]]; then
-        echo "Enabling $SERVICE..."
-        systemctl --user enable --now "$SERVICE"
-    else
-        echo "Skipping enabling $SERVICE."
-    fi
-else
-    echo "Service $SERVICE not found. Skipping."
-fi
-
 # Enable Easyeffects
 SERVICE="easyeffects.service"
 if user_service_exists "$SERVICE"; then
@@ -269,7 +269,7 @@ fi
 
 # Enable NTSYNC for gaming
 read -r -p "Enable NTSYNC for gaming? (Y/n): " NTSYNC_CHOICE
-    if [[ "$NTSYNC_CHOICE" =~ ^[Yy]$ || -z "$NTSYNC_CHOICE" ]]; then
+if [[ "$NTSYNC_CHOICE" =~ ^[Yy]$ || -z "$NTSYNC_CHOICE" ]]; then
     echo "Enabling NTSYNC"
     echo "ntsync" | sudo tee /etc/modules-load.d/ntsync.conf
 else
