@@ -1,134 +1,85 @@
 #!/usr/bin/env bash
 
-# Enable error checking for all commands
+# Exit immediately if a command exits with a non-zero status
 set -e
+set -o pipefail
+
+# Colors for logging
+GREEN='\033[0;32m'
+YELLOW='\133[1;33m'
+RED='\033[0;31m'
+NC='\033[0m' # No Color
+
+# Helper Functions
+log() { echo -e "${GREEN}[INFO]${NC} $1"; }
+warn() { echo -e "${YELLOW}[WARN]${NC} $1"; }
+error() { echo -e "${RED}[ERROR]${NC} $1"; }
 
 # Set XDG paths and application specific paths
-echo "Setting XDG and application-specifc paths"
+log "Setting XDG environment variables..."
 export XDG_DATA_HOME="$HOME/.local/share"
 export XDG_CONFIG_HOME="$HOME/.config"
 export XDG_STATE_HOME="$HOME/.local/state"
 export XDG_CACHE_HOME="$HOME/.cache"
-export GNUPGHOME="$XDG_DATA_HOME/gnupg"
-export PYTHONHISTORY="$XDG_STATE_HOME/python/history"
-export HISTFILE="${XDG_STATE_HOME}/zsh/history"
-export ZSH_COMPDUMP="${XDG_CACHE_HOME}/zsh/zcompdump-${ZSH_VERSION}"
 
-# Create all Necessary XDG and application specific directories 
-echo "Creating XDG and application-specifc directories"
+log "Creating directory structure..."
 mkdir -p \
-    "$XDG_DATA_HOME" \
-    "$XDG_CONFIG_HOME" \
-    "$XDG_STATE_HOME" \
-    "$XDG_CACHE_HOME" \
-    "${XDG_STATE_HOME}/zsh" \
-    "${XDG_CACHE_HOME}/zsh" \
-    "${XDG_DATA_HOME}/gnupg" \
-    "${XDG_STATE_HOME}/python"
+    "$XDG_DATA_HOME" "$XDG_CONFIG_HOME" "$XDG_STATE_HOME" "$XDG_CACHE_HOME" \
+    "${XDG_STATE_HOME}/zsh" "${XDG_CACHE_HOME}/zsh" \
+    "${XDG_DATA_HOME}/gnupg" "${XDG_STATE_HOME}/python"
 
-# Stow dotfiles
-echo "Setting up dotfiles with GNU Stow..."
+# Stow Packages (Directories in your dotfiles folder)
+STOW_FOLDERS=(
+    hypr backgrounds fastfetch kitty mpv nvim starship swaync waybar wofi yazi
+    zshrc systemd-user tmux wayland-pipewire-idle-inhibit kwalletrc theme uwsm-autostart
+)
 
-    DOTFILES_DIR="$HOME/dotfiles"
-
-    if [ -d "$DOTFILES_DIR" ]; then
-        cd "$DOTFILES_DIR" || {
-            echo "Failed to change directory to $DOTFILES_DIR. Aborting."
-            exit 1
-        }
-        echo "Preparing to stow dotfiles from $PWD"
-
-        # List of directories (packages) to stow
-        stow_packages=(
-            hypr
-            backgrounds
-            fastfetch
-            kitty
-            mpv
-            nvim
-            starship
-            swaync
-            waybar
-            wofi
-            yazi
-            zshrc
-            systemd-user
-            tmux
-            wayland-pipewire-idle-inhibit
-            kwalletrc
-            theme
-            uwsm-autostart
-        )
-
-        # Loop through all packages and attempt to stow them
-        for package in "${stow_packages[@]}"; do
-            if [ -d "$package" ]; then
-                echo -n "Stowing **$package**... "
-                stow -t "$HOME" --restow "$package" 2>/dev/null && echo "Done." || echo "Failed."
-            else
-                echo "Skipping **$package**: Directory not found in $DOTFILES_DIR."
-            fi
-        done
-    else
-        echo "Skipping dotfile setup: Dotfiles directory **$DOTFILES_DIR** not found."
-    fi
-
-# Copy systemd system services to the correct path
-echo "Copying systemd system services to /etc/systemd/system"
-sudo cp "$HOME"/dotfiles/etc/wol.service /etc/systemd/system/
-echo "Copying tlp settings to /etc/tlp.conf"
-sudo cp "$HOME"/dotfiles/etc/tlp.conf /etc
-echo "Reloading systemd daemon"
-sudo systemctl daemon-reload
-
-# Set zsh as the default shell
-echo "Setting zsh as the default shell..."
-chsh -s "$(which zsh)"
-
-# Set maxSnapshots to 1 for system updates
-echo "Configuring autosnapshot..."
-CONFIG_FILE="/etc/timeshift-autosnap.conf"
-
-# Check if the configuration file exists
-if [ ! -f "$CONFIG_FILE" ]; then
-    echo "Error: Timeshift autosnap configuration file not found at $CONFIG_FILE." >&2
-    echo "Please check the path for your specific distribution (e.g., timeshift-autosnap-apt.conf)." >&2
-    exit 1
-fi
-
-# Use sed to find the line beginning with maxSnapshots= and change the value to 1
-sudo sed -i 's/^maxSnapshots=.*/maxSnapshots=1/' "$CONFIG_FILE"
-
-# Verify the change
-if grep -q "^maxSnapshots=1" "$CONFIG_FILE"; then
-    echo "Successfully set maxSnapshots=1 in $CONFIG_FILE."
-else
-    echo "Warning: maxSnapshots value may not have been set correctly." >&2
-fi
-
-# Install tmux pkg manager
+# Directory paths
+DOTFILES_DIR="$HOME/dotfiles"
 TPM_PATH="$HOME/.tmux/plugins/tpm"
 
-# --- Check if tpm is already installed ---
-if [ -d "$TPM_PATH" ]; then
-    echo "tpm (tmux Plugin Manager) is already installed at: $TPM_PATH"
+# Dotfiles
+if [ -d "$DOTFILES_DIR" ]; then
+    log "Stowing dotfiles..."
+    cd "$DOTFILES_DIR" || exit 1
+
+    for folder in "${STOW_FOLDERS[@]}"; do
+        if [ -d "$folder" ]; then
+            echo -n "Stowing $folder... "
+            stow -t "$HOME" --restow "$folder" 2>/dev/null && echo "Done." || echo "Failed."
+        else
+            warn "Skipping $folder (directory not found)."
+        fi
+    done
+    cd - >/dev/null
 else
-    # --- Install tpm if it's not found ---
-    echo "tpm not found. Installing now..."
-    # Ensure git is installed before running the clone command
-    if ! command -v git &> /dev/null; then
-        echo "Error: git is required but not found. Please install git."
-        exit 1
-    fi
-    
-    # Install tmux pkg manager
-    echo "Installing tmux pkg manager from GitHub..."
+    error "Dotfiles directory not found at $DOTFILES_DIR."
+fi
+
+# Copy systemd service if it exists (Manual copy for system-wide services)
+if [ -f "$DOTFILES_DIR/systemd-system/wol.service" ]; then
+    log "Installing wol.service..."
+    sudo cp "$DOTFILES_DIR/systemd-system/wol.service" /etc/systemd/system/
+    sudo systemctl daemon-reload
+fi
+
+# Shell
+if [[ "$SHELL" != *"zsh"* ]]; then
+    log "Changing default shell to zsh..."
+    chsh -s "$(which zsh)"
+fi
+
+# Timeshift Autosnap Config
+TS_CONFIG="/etc/timeshift-autosnap.conf"
+if [ -f "$TS_CONFIG" ]; then
+    log "Configuring Timeshift maxSnapshots..."
+    sudo sed -i 's/^maxSnapshots=.*/maxSnapshots=1/' "$TS_CONFIG"
+fi
+
+# Tmux Plugin Manager
+if [ ! -d "$TPM_PATH" ]; then
+    log "Installing Tmux Plugin Manager..."
     git clone https://github.com/tmux-plugins/tpm "$TPM_PATH"
-    
-    if git clone https://github.com/tmux-plugins/tpm "$TPM_PATH"; then
-        echo "tpm installed successfully!"
-    else
-        echo "Error during tpm installation."
-        exit 1
-    fi
+else
+    log "TPM already installed."
 fi
