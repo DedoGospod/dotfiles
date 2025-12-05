@@ -1,69 +1,100 @@
--- ----------------
---   KEYMAPPINGS
--- ----------------
+-- Set default options for keymaps
+local opts = { silent = true, noremap = true }
 
--- Telescope
-local builtin = require('telescope.builtin')
-vim.keymap.set('n', '<C-p>', builtin.find_files, { desc = 'Find files' })
-vim.keymap.set('n', '<C-g>', builtin.live_grep, { desc = 'Live grep' })
-vim.keymap.set('n', '<C-b>', builtin.buffers, { desc = 'Buffers' })
-vim.keymap.set('n', '<leader>fh', builtin.help_tags, { desc = 'Help tags' })
-
--- Neotree
-vim.keymap.set('n', '<C-n>', ':Neotree toggle<CR>', {
-    noremap = true,
-    silent = true,
-    desc = 'Toggle Neo-tree'
-})
-
-vim.keymap.set('n', '<C-o>', ':Neotree focus<CR>', {
-    noremap = true,
-    silent = true,
-    desc = 'Focus Neo-tree'
-})
-
--- Compiler.nvim
-vim.keymap.set('n', '<F9>', "<cmd>CompilerOpen<cr>", { desc = 'Open compiler' })
-vim.keymap.set('n', '<F10>', "<cmd>CompilerToggleResults<cr>", { desc = 'Toggle compiler results' })
-
--- trouble.nvim
-local trouble_keys = {
-    { "<leader>xx", "<cmd>Trouble diagnostics toggle<cr>",                        desc = "Diagnostics (Trouble)" },
-    { "<leader>xX", "<cmd>Trouble diagnostics toggle filter.buf=0<cr>",           desc = "Buffer Diagnostics (Trouble)" },
-    { "<leader>cs", "<cmd>Trouble symbols toggle focus=false<cr>",                desc = "Symbols (Trouble)" },
-    { "<leader>cl", "<cmd>Trouble lsp toggle focus=false win.position=right<cr>", desc = "LSP Definitions / references / ... (Trouble)" },
-    { "<leader>xL", "<cmd>Trouble loclist toggle<cr>",                            desc = "Location List (Trouble)" },
-    { "<leader>xQ", "<cmd>Trouble qflist toggle<cr>",                             desc = "Quickfix List (Trouble)" },
-}
-
-for _, mapping in ipairs(trouble_keys) do
-    vim.keymap.set('n', mapping[1], mapping[2], { desc = mapping.desc })
+-- Utility function to set multiple mappings
+local function map(mode, lhs, rhs, options)
+    vim.keymap.set(mode, lhs, rhs, options or opts)
 end
 
--- Comment.nvim
-local CommentAPI = require('Comment.api')
-vim.keymap.set('n', '<C-c>', function() CommentAPI.toggle.linewise.current() end, { desc = 'Toggle line comment' })
+-- ------------------------------
+-- 1. Telescope 🔭
+-- ------------------------------
+do
+    local builtin = require('telescope.builtin')
+    local t_opts = { desc = "Telescope | " }
 
--- Jump to end of line
-vim.api.nvim_set_keymap('i', '<C-a>', '<End>', { silent = true, noremap = true }) -- ctrl + a (while in insert mode)
-vim.api.nvim_set_keymap('i', '<C-e>', '<End>', { silent = true, noremap = true }) -- ctrl + e (while in insert mode)
-vim.api.nvim_set_keymap('n', '<C-a>', '<End>', { silent = true, noremap = true }) -- ctrl + a (while in normal mode)
-vim.api.nvim_set_keymap('n', '<C-e>', '<End>', { silent = true, noremap = true }) -- ctrl + e (while in normal mode)
+    map('n', '<C-p>', builtin.find_files, { desc = t_opts.desc .. 'Find files' })
+    map('n', '<C-g>', builtin.live_grep, { desc = t_opts.desc .. 'Live grep' })
+    map('n', '<C-b>', builtin.buffers, { desc = t_opts.desc .. 'Buffers' })
+    map('n', '<leader>fh', builtin.help_tags, { desc = t_opts.desc .. 'Help tags' })
+end
 
--- Zoxide
-vim.cmd [[cnoreabbrev <expr> z ((getcmdtype() == ':' && getcmdline() == 'z') ? ' Z' : 'z')]]
+-- ------------------------------
+-- 2. Neo-tree 🌳
+-- ------------------------------
+do
+    local nt_opts = { desc = "Neo-tree | " }
 
--- Keybinding for formatting the current buffer
-vim.keymap.set("n", "<Leader>f", function()
-  require("conform").format({ bufnr = vim.api.nvim_get_current_buf() })
-end, { desc = "Format current buffer with conform" })
+    map('n', '<C-n>', '<cmd>Neotree toggle<cr>', { desc = nt_opts.desc .. 'Toggle' })
+    map('n', '<C-o>', '<cmd>Neotree focus<cr>', { desc = nt_opts.desc .. 'Focus' })
+end
 
--- Harpoon
-local harpoon = require("harpoon")
-vim.keymap.set("n", "<leader>a", function() harpoon:list():add() end)
-vim.keymap.set("n", "<Leader>ls", function() harpoon.ui:toggle_quick_menu(harpoon:list()) end)
+-- ------------------------------
+-- 3. Compiler.nvim ⚙️
+-- ------------------------------
+do
+    local c_opts = { desc = "Compiler | " }
 
-vim.keymap.set("n", "<leader>1", function() harpoon:list():select(1) end)
-vim.keymap.set("n", "<leader>2", function() harpoon:list():select(2) end)
-vim.keymap.set("n", "<leader>3", function() harpoon:list():select(3) end)
-vim.keymap.set("n", "<leader>4", function() harpoon:list():select(4) end)
+    map('n', '<F9>', '<cmd>CompilerOpen<cr>', { desc = c_opts.desc .. 'Open' })
+    map('n', '<F10>', '<cmd>CompilerToggleResults<cr>', { desc = c_opts.desc .. 'Toggle results' })
+end
+
+-- ------------------------------
+-- 4. trouble.nvim 🚨
+-- ------------------------------
+do
+    local t_opts = { desc = "Trouble | " }
+    local trouble_keys = {
+        -- Global Diagnostics
+        { "<leader>xx", "diagnostics toggle", "Diagnostics (Global)" },
+        -- Buffer Diagnostics
+        { "<leader>xX", "diagnostics toggle filter.buf=0", "Diagnostics (Buffer)" },
+        -- LSP utilities
+        { "<leader>cs", "symbols toggle focus=false", "Symbols" },
+        { "<leader>cl", "lsp toggle focus=false win.position=right", "LSP Definitions/References" },
+        -- Lists
+        { "<leader>xL", "loclist toggle", "Location List" },
+        { "<leader>xQ", "qflist toggle", "Quickfix List" },
+    }
+
+    for _, mapping in ipairs(trouble_keys) do
+        -- Prepend <cmd>Trouble and append <cr> for command execution
+        map('n', mapping[1], string.format('<cmd>Trouble %s<cr>', mapping[2]),
+            { desc = t_opts.desc .. mapping[3] })
+    end
+end
+
+-- ------------------------------
+-- 5. Utility & Harpoon Mappings 📌
+-- ------------------------------
+do
+    -- Comment.nvim
+    local CommentAPI = require('Comment.api')
+    map('n', '<C-c>', function() CommentAPI.toggle.linewise.current() end, { desc = 'Toggle line comment' })
+
+    -- Harpoon
+    local harpoon = require("harpoon")
+    map('n', '<leader>a', function() harpoon:list():add() end, { desc = 'Harpoon | Add file' })
+    map('n', '<Leader>ls', function() harpoon.ui:toggle_quick_menu(harpoon:list()) end, { desc = 'Harpoon | Quick menu' })
+    for i = 1, 4 do
+        map('n', string.format('<leader>%d', i), function() harpoon:list():select(i) end,
+            { desc = string.format('Harpoon | Go to item %d', i) })
+    end
+
+    -- Conform.nvim (Formatter)
+    map("n", "<Leader>f", function()
+        require("conform").format({ bufnr = vim.api.nvim_get_current_buf() })
+    end, { desc = "Format current buffer (Conform)" })
+end
+
+-- ------------------------------
+-- 6. Core/Non-Plugin Mappings ⌨️
+-- ------------------------------
+do
+    -- Jump to end of line (using <End> key)
+    map({'i', 'n'}, '<C-a>', '<End>', { desc = 'Go to end of line' })
+    map({'i', 'n'}, '<C-e>', '<End>', { desc = 'Go to end of line' })
+
+    -- Zoxide (Autocommand Abbreviation)
+    vim.cmd [[cnoreabbrev <expr> z ((getcmdtype() == ':' && getcmdline() == 'z') ? ' Z' : 'z')]]
+end
