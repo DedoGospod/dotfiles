@@ -106,7 +106,7 @@ alias mv='mv -i'            # Interactive move
 alias rm='trash -v'         # Safe delete using trash-cli
 alias mkdir='mkdir -p'      # Create parent directories automatically
 alias ls='ls -1 --color=always --group-directories-first'  # Colorized ls output
-alias ll='eza -l'           # Long listing
+alias ll='eza -l --group-directories-first'                # Long listing
 alias lsh='ls -A'           # Show all files including hidden
 alias h='fc -nil 1 | grep'  # Search history for a specific terminal command
 alias hist="fc -nil 1"      # Always show history with readable dates
