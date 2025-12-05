@@ -82,11 +82,3 @@ alias df='df -h'
 alias zshrc='nvim ~/.zshrc'                            # Edit zsh config
 alias hypr='nvim ~/.config/hypr/hyprland.conf'         # Edit Hyprland config
 alias grub='sudoedit /etc/default/grub'                # Edit GRUB config
-
-# Functions
-# zl() { if [ -z "$@" ]; then ls; else z "$@" && ls; fi; } # Automatically do an ls after each zl command
-#
-# nv() {
-  # if [ -z "$1" ]; then command nvim; return; fi
-  # if [ -f "$1" ] && [ ! -O "$1" ]; then echo "Using sudoedit for root file: $1"; command sudoedit "$@"; else command nvim "$@"; fi
-# }
