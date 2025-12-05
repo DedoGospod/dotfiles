@@ -7,4 +7,10 @@ plugins = [
 animation = "fromTop"
 command = "kitty --class kitty-dropterm"
 class = "kitty-dropterm"
-size = "75% 60%"
+size = "75% 75%"
+
+[scratchpads.obsidian]
+animation = "fromTop" 
+command = "obsidian"
+class = "obsidian" 
+size = "75% 75%"
