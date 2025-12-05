@@ -1,216 +1,85 @@
 #!/bin/bash
+# Arch Linux Hyprland Setup Script
+# Combined and Optimized
 
-# Enable error checking for all commands
+# --- PRELIMINARY SETUP & CONSTANTS ---
+
+# Exit immediately if a command exits with a non-zero status
 set -e
+set -o pipefail
 
-# Set XDG paths and application specific paths
-echo "Setting XDG and application-specifc paths"
-export XDG_DATA_HOME="$HOME/.local/share"
-export XDG_CONFIG_HOME="$HOME/.config"
-export XDG_STATE_HOME="$HOME/.local/state"
-export XDG_CACHE_HOME="$HOME/.cache"
-export GNUPGHOME="$XDG_DATA_HOME/gnupg"
-export PYTHONHISTORY="$XDG_STATE_HOME/python/history"
-export HISTFILE="${XDG_STATE_HOME}/zsh/history"
-export ZSH_COMPDUMP="${XDG_CACHE_HOME}/zsh/zcompdump-${ZSH_VERSION}"
+# Colors for logging
+GREEN='\033[0;32m'
+YELLOW='\133[1;33m'
+RED='\033[0;31m'
+NC='\033[0m' # No Color
 
-# Create all Necessary XDG and application specific directories
-echo "Creating XDG and application-specifc directories"
-mkdir -p \
-    "$XDG_DATA_HOME" \
-    "$XDG_CONFIG_HOME" \
-    "$XDG_STATE_HOME" \
-    "$XDG_CACHE_HOME" \
-    "${XDG_STATE_HOME}/zsh" \
-    "${XDG_CACHE_HOME}/zsh" \
-    "${XDG_DATA_HOME}/gnupg" \
-    "${XDG_STATE_HOME}/python"
+# Helper Functions
+log() { echo -e "${GREEN}[INFO]${NC} $1"; }
+warn() { echo -e "${YELLOW}[WARN]${NC} $1"; }
+error() { echo -e "${RED}[ERROR]${NC} $1"; }
 
-# Update the system
-echo "Updating system..."
-sudo pacman -Syu --noconfirm
-
-# Install rustup if not already installed
-if ! command -v rustup &>/dev/null; then
-    echo "Installing rustup using pacman..."
-    if sudo pacman -S --noconfirm rustup; then
-        echo "Rustup installed successfully via pacman."
-
-        # Install the stable toolchain by default
-        rustup default stable
-        echo "Stable toolchain installed."
-    else
-        echo "Failed to install rustup using pacman.  Exiting."
-        exit 1
-    fi
-else
-    echo "Rustup is already installed."
+# Check if running as root (Don't do this!)
+if [ "$EUID" -eq 0 ]; then
+    error "Please do not run this script as root."
+    error "Run it as a normal user. You will be prompted for sudo password when needed."
+    exit 1
 fi
 
-# Install paru if not already installed
-if ! command -v paru &>/dev/null; then
-    echo "Installing paru..."
-    sudo pacman -S --needed --noconfirm base-devel git
-    git clone https://aur.archlinux.org/paru.git /tmp/paru
-    (cd /tmp/paru && makepkg -si --noconfirm)
-    rm -rf /tmp/paru
-fi
+# Ask for sudo upfront to prevent timeouts later
+log "Requesting sudo privileges upfront..."
+sudo -v
+while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
 
-# Ask if gaming-related packages should be installed
-read -r -p "Do you want to install gaming-related packages? (y/N): " install_gaming
+# --- CONFIGURATION & PACKAGE LISTS ---
 
-# Ask if NVIDIA drivers should be installed
-read -r -p "Do you want to install NVIDIA drivers? (y/N): " install_nvidia
+# Directory paths
+DOTFILES_DIR="$HOME/dotfiles"
+TPM_PATH="$HOME/.tmux/plugins/tpm"
 
-# Ask if Neovim related packages should be installed
-read -r -p "Do you want to install Neovim related packages? (y/N): " install_neovim
+# Base Pacman Packages
+PACMAN_PACKAGES=(
+    # Core Desktop
+    hyprland hypridle hyprlock hyprpaper hyprshot hyprpolkitagent 
+    hyprland-guiutils hyprutils uwsm waybar wofi swaync dbus wlsunset
 
-# Ask if Extra packages should be installed
-read -r -p "Do you want to install wakeonlan packages? (y/N): " install_wakeonlan
+    # Portals & Theming
+    xdg-desktop-portal xdg-desktop-portal-gtk xdg-desktop-portal-hyprland
+    qt5-wayland qt6-wayland qt6ct gnome-themes-extra
 
-# Ask if dotfiles should be stowed
-read -r -p "Do you want to set up dotfiles with GNU Stow? (y/N): " stow_dotfiles
+    # Apps & Utils
+    kitty neovim nautilus yazi mpv fastfetch btop gnome-disk-utility 
+    obsidian pavucontrol gnome-keyring seahorse rsync keepassxc
 
-# List of base pacman packages
-pacman_packages=(
-    # ---  Window Management & Core Desktop ---
-    hyprland
-    hypridle
-    hyprlock
-    hyprpaper
-    hyprshot
-    hyprpolkitagent
-    hyprland-guiutils
-    hyprutils
-    uwsm
-    waybar
-    wofi
-    swaync
-    dbus
-    wlsunset
+    # Shell & CLI
+    zsh zsh-completions zsh-syntax-highlighting zsh-autosuggestions starship 
+    fzf zoxide fd tmux stow bat eza ripgrep ncdu trash-cli man-db
 
-    # ---  Desktop Portals & Theming ---
-    xdg-desktop-portal
-    xdg-desktop-portal-gtk
-    xdg-desktop-portal-hyprland
-    qt5-wayland
-    qt6-wayland
-    qt6ct
-    gnome-themes-extra
+    # Network & Services
+    networkmanager bluez bluez-utils pipewire wireplumber tlp cronie
 
-    # ---  Applications & User Utilities ---
-    kitty            # Terminal emulator
-    neovim           # Text editor
-    nautilus         # File manager (GUI)
-    yazi             # TUI file manager
-    mpv              # Media player
-    fastfetch        # System info
-    btop             # System monitor
-    gnome-disk-utility # Disk utility
-    obsidian         # Note-taking
-    pavucontrol      # Volume mixer (GUI)
-    gnome-keyring    # Keyring
-    seahorse         # GUI frontend for gnome-keyring
-    rsync            # Local or Server-to-Server file sync
-    keepassxc        # Password manager & 2FA code generator 
-    obs-studio       # Screen recording 
+    # Maintenance
+    reflector timeshift ffmpeg ffmpegthumbnailer
 
-    # ---  Shell & CLI Enhancements ---
-    zsh
-    zsh-completions
-    zsh-syntax-highlighting
-    zsh-autosuggestions
-    starship         # Prompt
-    fzf              # Fuzzy finder
-    zoxide           # Directory jumper
-    fd               # Find files
-    tmux             # Terminal multiplexer
-    stow             # Dotfile management
-    bat              # Cat clone
-    eza              # Ls replacement
-    ripgrep          # Grep alternative
-    ncdu             # Disk usage
-    trash-cli        # Safe delete
-    man              # Man pages
+    # Containerization
+    flatpak
 
-    # ---  Networking & System Services ---
-    networkmanager
-    bluez            # Bluetooth service
-    bluez-utils      # Bluetooth utilities
-    pipewire         # Audio/Video server
-    wireplumber      # Session manager for PipeWire
-    tlp              # Power management
-    cronie           # Scheduler
+    # Kernel & Headers
+    linux-headers linux-zen linux-zen-headers
 
-    # ---  System Maintenance & Utilities ---
-    reflector        # Mirrorlist utility
-    timeshift        # System backup
-    ffmpeg           # Multimedia framework
-    ffmpegthumbnailer # Thumbnailer for video files
-
-    # ---  Containerization & Virtualization ---
-    flatpak          # Universal package format
-
-    # ---  Kernel & Headers ---
-    linux-headers
-    linux-zen
-    linux-zen-headers
-
-    # ---  Fonts ---
-    ttf-cascadia-code-nerd
-    ttf-ubuntu-font-family
-    ttf-font-awesome
-    ttf-dejavu
-    ttf-liberation
-    ttf-croscore
-    noto-fonts
-    noto-fonts-cjk
-    noto-fonts-emoji
-
+    # Fonts
+    ttf-cascadia-code-nerd ttf-ubuntu-font-family ttf-font-awesome 
+    ttf-dejavu ttf-liberation ttf-croscore noto-fonts noto-fonts-cjk noto-fonts-emoji
 )
 
-# NVIDIA driver packages
-nvidia_packages=(
-    libva-nvidia-driver
-    nvidia-open-dkms
-    nvidia-utils
-    lib32-nvidia-utils
-    nvidia-settings
-    egl-wayland
-)
+# Optional Groups
+NVIDIA_PACKAGES=(libva-nvidia-driver nvidia-open-dkms nvidia-utils lib32-nvidia-utils nvidia-settings egl-wayland)
+GAMING_PACKAGES=(gamemode gamescope mangohud)
+NEOVIM_DEPS=(npm nodejs unzip clang go shellcheck zig luarocks dotnet-sdk cmake gcc imagemagick)
+WAKEONLAN_PACKAGES=(wol ethtool)
 
-# Gaming-related packages
-gaming_packages=(
-    gamemode
-    gamescope
-    mangohud
-)
-
-# Neovim related packages
-neovim_packages=(
-    npm
-    nodejs
-    unzip
-    clang
-    go
-    shellcheck
-    zig
-    luarocks
-    dotnet-sdk
-    cmake
-    gcc
-    imagemagick
-
-)
-
-# Install WakeOnLan
-wakeonlan=(
-    wol
-    ethtool
-)
-
-# Flatpak apps
-flatpak_apps=(
+# Flatpaks
+FLATPAK_APPS=(
     it.mijorus.gearlever
     com.github.tchx84.Flatseal
     com.stremio.Stremio
@@ -220,189 +89,164 @@ flatpak_apps=(
     com.github.wwmm.easyeffects
 )
 
-# AUR packages
-aur_packages=(
+# AUR Packages
+AUR_PACKAGES=(
     timeshift-autosnap
     wayland-pipewire-idle-inhibit
     brave-bin
     nvibrant-bin
-    obs-vkcapture
     pyprland
 )
 
-# Conditionally add NVIDIA packages
-if [[ "$install_nvidia" =~ ^[Yy]$ ]]; then
-    pacman_packages+=("${nvidia_packages[@]}")
-fi
+# Stow Packages (Directories in your dotfiles folder)
+STOW_FOLDERS=(
+    hypr backgrounds fastfetch kitty mpv nvim starship swaync waybar wofi yazi 
+    zshrc systemd-user tmux wayland-pipewire-idle-inhibit kwalletrc theme uwsm-autostart
+)
 
-# Conditionally add gaming packages
-if [[ "$install_gaming" =~ ^[Yy]$ ]]; then
-    pacman_packages+=("${gaming_packages[@]}")
-fi
+# --- ENVIRONMENT SETUP ---
 
-# Conditionally add Neovim packages
-if [[ "$install_neovim" =~ ^[Yy]$ ]]; then
-    pacman_packages+=("${neovim_packages[@]}")
-fi
+log "Setting XDG environment variables..."
+export XDG_DATA_HOME="$HOME/.local/share"
+export XDG_CONFIG_HOME="$HOME/.config"
+export XDG_STATE_HOME="$HOME/.local/state"
+export XDG_CACHE_HOME="$HOME/.cache"
 
-# Conditionally install wakeonlan packages
-if [[ "$install_wakeonlan" =~ ^[Yy]$ ]]; then
-    pacman_packages+=("${wakeonlan[@]}")
-fi
+log "Creating directory structure..."
+mkdir -p \
+    "$XDG_DATA_HOME" "$XDG_CONFIG_HOME" "$XDG_STATE_HOME" "$XDG_CACHE_HOME" \
+    "${XDG_STATE_HOME}/zsh" "${XDG_CACHE_HOME}/zsh" \
+    "${XDG_DATA_HOME}/gnupg" "${XDG_STATE_HOME}/python"
 
-# Check if root file system is btrfs
-is_root_btrfs() {
-    if findmnt -n -o FSTYPE --target / | grep -q "btrfs"; then
-        return 0
-    else
-        return 1
-    fi
-}
+# --- USER INTERACTION ---
 
-# Install grub-btrfs if the filesystem is btrfs
-echo "Checking root filesystem type for grub-btrfs..."
-if is_root_btrfs; then
-    echo "Root filesystem is Btrfs. Adding grub-btrfs to install list."
-    pacman_packages+=(grub-btrfs **inotify-tools**)
+echo ""
+log "--- Configuration Questions ---"
+read -r -p "Install Gaming packages? (y/N): " install_gaming
+read -r -p "Install NVIDIA drivers? (y/N): " install_nvidia
+read -r -p "Install Neovim dev tools? (y/N): " install_neovim
+read -r -p "Install WakeOnLan tools? (y/N): " install_wakeonlan
+read -r -p "Set up dotfiles with GNU Stow? (y/N): " stow_dotfiles
+echo ""
+
+# Modify Package Lists based on answers
+if [[ "$install_nvidia" =~ ^[Yy]$ ]]; then PACMAN_PACKAGES+=("${NVIDIA_PACKAGES[@]}"); fi
+if [[ "$install_gaming" =~ ^[Yy]$ ]]; then PACMAN_PACKAGES+=("${GAMING_PACKAGES[@]}"); fi
+if [[ "$install_neovim" =~ ^[Yy]$ ]]; then PACMAN_PACKAGES+=("${NEOVIM_DEPS[@]}"); fi
+if [[ "$install_wakeonlan" =~ ^[Yy]$ ]]; then PACMAN_PACKAGES+=("${WAKEONLAN_PACKAGES[@]}"); fi
+
+# Check for BTRFS Root
+if findmnt -n -o FSTYPE --target / | grep -q "btrfs"; then
+    log "Btrfs root detected. Adding grub-btrfs and inotify-tools."
+    PACMAN_PACKAGES+=(grub-btrfs inotify-tools)
 else
-    echo "Root filesystem is NOT Btrfs (Skipping grub-btrfs installation)."
+    log "Root is not Btrfs. Skipping grub-btrfs."
 fi
 
-echo "Installing pacman packages..."
-sudo pacman -S --needed --noconfirm "${pacman_packages[@]}"
+# --- INSTALLATION PHASE ---
 
-echo "Installing AUR packages..."
-paru -S --needed --noconfirm "${aur_packages[@]}"
+log "Updating system..."
+sudo pacman -Syu --noconfirm
 
-echo "Installing Flatpak apps..."
-flatpak install -y --noninteractive flathub "${flatpak_apps[@]}"
+# Rustup
+if ! command -v rustup &>/dev/null; then
+    log "Installing rustup..."
+    sudo pacman -S --noconfirm rustup
+    rustup default stable
+else
+    log "Rustup is already installed."
+fi
 
-# Set zsh as the default shell
-echo "Setting zsh as the default shell..."
-chsh -s "$(which zsh)"
+# Paru (AUR Helper)
+if ! command -v paru &>/dev/null; then
+    log "Installing Paru..."
+    sudo pacman -S --needed --noconfirm base-devel git
+    git clone https://aur.archlinux.org/paru.git /tmp/paru
+    (cd /tmp/paru && makepkg -si --noconfirm)
+    rm -rf /tmp/paru
+else
+    log "Paru is already installed."
+fi
 
-# Stow dotfiles conditionally
+log "Installing Official Packages..."
+sudo pacman -S --needed --noconfirm "${PACMAN_PACKAGES[@]}"
+
+log "Installing AUR Packages..."
+paru -S --needed --noconfirm "${AUR_PACKAGES[@]}"
+
+log "Installing Flatpak Apps..."
+flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+flatpak install -y --noninteractive flathub "${FLATPAK_APPS[@]}"
+
+# --- SYSTEM CONFIGURATION ---
+
+# Shell
+if [[ "$SHELL" != *"zsh"* ]]; then
+    log "Changing default shell to zsh..."
+    chsh -s "$(which zsh)"
+fi
+
+# Dotfiles
 if [[ "$stow_dotfiles" =~ ^[Yy]$ ]]; then
-    echo "Setting up dotfiles with GNU Stow..."
-
-    DOTFILES_DIR="$HOME/dotfiles"
-
     if [ -d "$DOTFILES_DIR" ]; then
-        cd "$DOTFILES_DIR" || {
-            echo "Failed to change directory to $DOTFILES_DIR. Aborting."
-            exit 1
-        }
-        echo "Preparing to stow dotfiles from $PWD"
-
-        # List of directories (packages) to stow
-        stow_packages=(
-            hypr
-            backgrounds
-            fastfetch
-            kitty
-            mpv
-            nvim
-            starship
-            swaync
-            waybar
-            wofi
-            yazi
-            zshrc
-            systemd-user
-            tmux
-            wayland-pipewire-idle-inhibit
-            kwalletrc
-            theme
-            uwsm-autostart
-        )
-
-        # Loop through all packages and attempt to stow them
-        for package in "${stow_packages[@]}"; do
-            if [ -d "$package" ]; then
-                echo -n "Stowing **$package**... "
-                stow -t "$HOME" --restow "$package" 2>/dev/null && echo "Done." || echo "Failed."
+        log "Stowing dotfiles..."
+        cd "$DOTFILES_DIR" || exit 1
+        
+        for folder in "${STOW_FOLDERS[@]}"; do
+            if [ -d "$folder" ]; then
+                echo -n "Stowing $folder... "
+                stow -t "$HOME" --restow "$folder" 2>/dev/null && echo "Done." || echo "Failed."
             else
-                echo "Skipping **$package**: Directory not found in $DOTFILES_DIR."
+                warn "Skipping $folder (directory not found)."
             fi
         done
+        cd - > /dev/null
     else
-        echo "Skipping dotfile setup: Dotfiles directory **$DOTFILES_DIR** not found."
+        error "Dotfiles directory not found at $DOTFILES_DIR."
+    fi
+    
+    # Copy systemd service if it exists (Manual copy for system-wide services)
+    if [ -f "$DOTFILES_DIR/systemd-system/wol.service" ]; then
+        log "Installing wol.service..."
+        sudo cp "$DOTFILES_DIR/systemd-system/wol.service" /etc/systemd/system/
+        sudo systemctl daemon-reload
     fi
 fi
 
-# Copy systemd system services to the correct path
-echo "Copying systemd system services to /etc/systemd/system"
-sudo cp "$HOME"/dotfiles/systemd-system/wol.service /etc/systemd/system/
-echo "Reloading systemd daemon"
-sudo systemctl daemon-reload
-
-# Gamescope setup for smooth performance
+# Gamescope Cap
 if [[ "$install_gaming" =~ ^[Yy]$ ]]; then
-    echo "Setting up gamescope for smooth performance..."
-    sudo setcap 'cap_sys_nice=+ep' "$(which gamescope)"
-fi
-
-# Set maxSnapshots to 1 for system updates
-echo "Configuring autosnapshot..."
-CONFIG_FILE="/etc/timeshift-autosnap.conf"
-
-# Check if the configuration file exists
-if [ ! -f "$CONFIG_FILE" ]; then
-    echo "Error: Timeshift autosnap configuration file not found at $CONFIG_FILE." >&2
-    echo "Please check the path for your specific distribution (e.g., timeshift-autosnap-apt.conf)." >&2
-    exit 1
-fi
-
-# Use sed to find the line beginning with maxSnapshots= and change the value to 1
-sudo sed -i 's/^maxSnapshots=.*/maxSnapshots=1/' "$CONFIG_FILE"
-
-# Verify the change
-if grep -q "^maxSnapshots=1" "$CONFIG_FILE"; then
-    echo "Successfully set maxSnapshots=1 in $CONFIG_FILE."
-else
-    echo "Warning: maxSnapshots value may not have been set correctly." >&2
-fi
-
-# Check if tmux pkg manager exists already
-TPM_PATH="$HOME/.tmux/plugins/tpm"
-
-# --- Check if tpm is already installed ---
-if [ -d "$TPM_PATH" ]; then
-    echo "tpm (tmux Plugin Manager) is already installed at: $TPM_PATH"
-else
-    echo "tpm not found. Installing now..."
-    if ! command -v git &>/dev/null; then
-        echo "Error: git is required but not found. Please install git."
-        exit 1
+    if command -v gamescope &>/dev/null; then
+        log "Setting CAP_SYS_NICE for Gamescope..."
+        sudo setcap 'cap_sys_nice=+ep' "$(which gamescope)"
     fi
+fi
 
-    # Install tmux pkg manager
-    echo "Installing tmux pkg manager from GitHub..."
+# Timeshift Autosnap Config
+TS_CONFIG="/etc/timeshift-autosnap.conf"
+if [ -f "$TS_CONFIG" ]; then
+    log "Configuring Timeshift maxSnapshots..."
+    sudo sed -i 's/^maxSnapshots=.*/maxSnapshots=1/' "$TS_CONFIG"
+fi
+
+# Tmux Plugin Manager
+if [ ! -d "$TPM_PATH" ]; then
+    log "Installing Tmux Plugin Manager..."
     git clone https://github.com/tmux-plugins/tpm "$TPM_PATH"
-
-    if git clone https://github.com/tmux-plugins/tpm "$TPM_PATH"; then
-        echo "tpm installed successfully!"
-    else
-        echo "Error during tpm installation."
-        exit 1
-    fi
+else
+    log "TPM already installed."
 fi
 
-# Finalizing the script with a reboot prompt
+# --- FINISH ---
+
 echo ""
 echo "------------------------------------------------------"
-echo "Installation and configuration tasks are complete! 🎉"
-echo "A system reboot is highly recommended to apply all changes (e.g., kernel, drivers, shell change)."
+log "Installation Complete! 🎉"
 echo "------------------------------------------------------"
 
-# Ask for a reboot
 read -r -p "Would you like to reboot now? (Y/n): " reboot_now
-
 if [[ "$reboot_now" =~ ^[Yy]$ || -z "$reboot_now" ]]; then
-    echo "Rebooting in 5 seconds..."
-    sleep 5
+    log "Rebooting..."
     sudo reboot
 else
-    echo "Reboot declined. Please manually reboot your system at your earliest convenience for changes to take full effect."
-    echo "To start your new desktop environment, you may need to log out and log back in, or manually execute the 'Hyprland' session from your display manager."
+    log "Please reboot manually to apply all changes."
 fi
