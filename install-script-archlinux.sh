@@ -227,6 +227,7 @@ aur_packages=(
     brave-bin
     nvibrant-bin
     obs-vkcapture
+    pyprland
 )
 
 # Conditionally add NVIDIA packages
