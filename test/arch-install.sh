@@ -33,7 +33,7 @@ while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
 
 # --- CONFIGURATION & PACKAGE LISTS ---
 
-# XDG Directories
+# Directories
 DOTFILES_DIR="$HOME/dotfiles"
 TPM_PATH="$HOME/.tmux/plugins/tpm"
 
@@ -173,10 +173,9 @@ log "Installing Official Packages..."
 sudo pacman -S --needed --noconfirm "${PACMAN_PACKAGES[@]}"
 
 log "Installing AUR Packages..."
-paru -S --needed --noconfirm "${AUR_PACKAGES[@]}"
+echo "" | paru -S --needed --noconfirm "${AUR_PACKAGES[@]}"
 
 log "Installing Flatpak Apps..."
-# Ensure flathub repo exists
 flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 flatpak install -y --noninteractive flathub "${FLATPAK_APPS[@]}"
 
