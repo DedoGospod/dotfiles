@@ -99,7 +99,6 @@ alias top='btop'                                       # Modern system monitor
 alias cls='clear'                                      # Clear screen
 alias kssh='kitty +kitten ssh'                         # SSH with kitty terminal features
 alias cat='bat'                                        # Use bat instead of cat
-alias lg='lazygit'
 
 # Files
 alias cp='cp -i'            # Interactive copy
