@@ -44,6 +44,15 @@ bindkey -s '^Z' 'zi\n'
 [ -f /usr/share/fzf/key-bindings.zsh ] && source /usr/share/fzf/key-bindings.zsh
 [ -f /usr/share/fzf/completion.zsh ] && source /usr/share/fzf/completion.zsh
 
+# Add user-installed binaries located in the standard XDG path to the start of the PATH variable
+export PATH="$HOME/.local/bin:$PATH"
+
+# Editor preferences
+export EDITOR="nvim"                  # Set Neovim as default editor
+export SUDO_EDITOR="$EDITOR"          # Editor for sudo operations
+export VISUAL="$EDITOR"               # Set VISUAL to nvim for applications that prefer this
+export MANPAGER='nvim +Man!'          # Use Neovim for man pages
+
 # ======================
 # Aliases 
 # ======================
