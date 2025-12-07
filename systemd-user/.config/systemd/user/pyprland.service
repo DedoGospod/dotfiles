@@ -1,7 +1,7 @@
 [Unit]
 Description=Pyprland - Hyprland-specific helper daemon
-Wants=hyprland-session.target
-After=hyprland-session.target
+Wants=graphical-session.target
+After=graphical-session.target
 
 [Service]
 ExecStart=/usr/bin/pypr
@@ -9,4 +9,4 @@ Restart=on-failure
 RestartSec=5
 
 [Install]
-WantedBy=default.target
+WantedBy=graphical-session.target
