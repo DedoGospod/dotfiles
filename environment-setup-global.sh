@@ -38,6 +38,9 @@ STOW_FOLDERS=(
 DOTFILES_DIR="$HOME/dotfiles"
 TPM_PATH="$HOME/.tmux/plugins/tpm"
 
+# Delete 'user' directory so it will be properly symlinked
+rm -rf ~/.config/systemd/user
+
 # Dotfiles
 if [ -d "$DOTFILES_DIR" ]; then
     log "Stowing dotfiles..."
@@ -54,13 +57,6 @@ if [ -d "$DOTFILES_DIR" ]; then
     cd - >/dev/null
 else
     error "Dotfiles directory not found at $DOTFILES_DIR."
-fi
-
-# Copy systemd service if it exists (Manual copy for system-wide services)
-if [ -f "$DOTFILES_DIR/systemd-system/wol.service" ]; then
-    log "Installing wol.service..."
-    sudo cp "$DOTFILES_DIR/systemd-system/wol.service" /etc/systemd/system/
-    sudo systemctl daemon-reload
 fi
 
 # Shell
