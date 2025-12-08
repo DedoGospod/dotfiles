@@ -31,7 +31,7 @@ mkdir -p \
 # Stow Packages (Directories in your dotfiles folder)
 STOW_FOLDERS=(
     hypr backgrounds fastfetch kitty mpv nvim starship swaync waybar wofi yazi
-    zsh systemd-user tmux wayland-pipewire-idle-inhibit kwalletrc theme uwsm-autostart
+    zsh tmux wayland-pipewire-idle-inhibit kwalletrc theme uwsm-autostart
 )
 
 # Directory paths
@@ -47,6 +47,7 @@ if [ -d "$DOTFILES_DIR" ]; then
         if [ -d "$folder" ]; then
             echo -n "Stowing $folder... "
             stow -t "$HOME" --restow "$folder" 2>/dev/null && echo "Done." || echo "Failed."
+            stow -t "$HOME" --restow --no-folding systemd-user
             warn "Skipping $folder (directory not found)."
         fi
     done
