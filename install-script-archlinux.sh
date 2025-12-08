@@ -186,6 +186,9 @@ if [[ "$SHELL" != *"zsh"* ]]; then
     chsh -s "$(which zsh)"
 fi
 
+# Delete 'user' directory so it will be properly symlinked
+rm -rf ~/.config/systemd/user
+
 # Dotfiles
 if [[ "$stow_dotfiles" =~ ^[Yy]$ ]]; then
     if [ -d "$DOTFILES_DIR" ]; then
