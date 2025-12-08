@@ -199,7 +199,6 @@ if [[ "$stow_dotfiles" =~ ^[Yy]$ ]]; then
             if [ -d "$folder" ]; then
                 echo -n "Stowing $folder... "
                 stow -t "$HOME" --restow "$folder" 2>/dev/null && echo "Done." || echo "Failed."
-                stow -t "$HOME" --restow --no-folding systemd-user
             else
                 warn "Skipping $folder (directory not found)."
             fi
