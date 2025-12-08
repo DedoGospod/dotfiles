@@ -47,7 +47,6 @@ if [ -d "$DOTFILES_DIR" ]; then
         if [ -d "$folder" ]; then
             echo -n "Stowing $folder... "
             stow -t "$HOME" --restow "$folder" 2>/dev/null && echo "Done." || echo "Failed."
-        else
             warn "Skipping $folder (directory not found)."
         fi
     done
