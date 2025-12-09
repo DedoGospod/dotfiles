@@ -6,9 +6,9 @@ set -o pipefail
 
 # Colors for logging
 GREEN='\033[0;32m'
-YELLOW='\133[1;33m'
+YELLOW='\033[1;33m'
 RED='\033[0;31m'
-NC='\033[0m' # No Color
+NC='\033[0m'
 
 # Helper Functions
 log() { echo -e "${GREEN}[INFO]${NC} $1"; }
@@ -43,17 +43,37 @@ if [ -d "$DOTFILES_DIR" ]; then
     log "Stowing dotfiles..."
     cd "$DOTFILES_DIR" || exit 1
 
+    if [ -d "systemd-user" ]; then
+        echo -n "Stowing systemd-user (no-folding)... "
+        stow -t "$HOME" --restow --no-folding systemd-user 2>/dev/null && echo "Done." || echo "Failed."
+    fi
+
     for folder in "${STOW_FOLDERS[@]}"; do
         if [ -d "$folder" ]; then
             echo -n "Stowing $folder... "
             stow -t "$HOME" --restow "$folder" 2>/dev/null && echo "Done." || echo "Failed."
-            stow -t "$HOME" --restow --no-folding systemd-user
-            warn "Skipping $folder (directory not found)."
+        else
+            warn "Skipping $folder (directory not found in $DOTFILES_DIR)."
         fi
     done
+
     cd - >/dev/null
 else
     error "Dotfiles directory not found at $DOTFILES_DIR."
+fi
+
+# Gamescope Cap
+if command -v gamescope &>/dev/null; then
+    log "Setting CAP_SYS_NICE for Gamescope..."
+    sudo setcap 'cap_sys_nice=+ep' "$(which gamescope)"
+fi
+
+# Gamemode setup
+if command -v gamemoded &>/dev/null; then
+    log "Adding user to gamemode group"
+    sudo usermod -aG gamemode "$USER"
+else
+    log "'gamemoded' command not found. Skipping user group modification."
 fi
 
 # Shell
