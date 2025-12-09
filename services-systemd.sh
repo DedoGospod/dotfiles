@@ -29,7 +29,7 @@ service_exists() {
     
     # We use 'systemctl list-unit-files' to check existence rather than LoadState
     # because a service might not be loaded yet but still exists on disk.
-    if systemctl $scope list-unit-files "$service" &>/dev/null; then
+    if systemctl "$scope" list-unit-files "$service" &>/dev/null; then
         return 0
     else
         return 1
