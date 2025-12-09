@@ -111,9 +111,9 @@ manage_service "systemd-networkd-wait-online.service" "" "disable" "potentially 
 
 # Standard Services
 manage_service "cronie.service"    "" "enable" "Scheduled tasks" "Y"
-manage_service "tlp.service"       "" "enable" "TLP Power Saver" "Y"
 manage_service "bluetooth.service" "" "enable" "Bluetooth connectivity" "n"
 manage_service "wol.service"       "" "enable" "Wake on LAN" "n"
+manage_service "power-profiles-daemon.service" "" "enable" "Power profiles" "Y"
 
 # Special Logic: Grub Btrfs
 ROOT_FS=$(findmnt -n -o FSTYPE /)
