@@ -56,7 +56,7 @@ PACMAN_PACKAGES=(
     fzf zoxide fd tmux stow bat eza ripgrep ncdu trash-cli man-db
 
     # Network & Services
-    networkmanager bluez bluez-utils pipewire wireplumber tlp cronie
+    networkmanager bluez bluez-utils pipewire wireplumber cronie power-profiles-daemon
 
     # Maintenance
     reflector timeshift ffmpeg ffmpegthumbnailer
