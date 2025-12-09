@@ -10,9 +10,9 @@ set -o pipefail
 
 # Colors for logging
 GREEN='\033[0;32m'
-YELLOW='\133[1;33m'
+YELLOW='\033[1;33m'
 RED='\033[0;31m'
-NC='\033[0m' # No Color
+NC='\033[0m'
 
 # Helper Functions
 log() { echo -e "${GREEN}[INFO]${NC} $1"; }
@@ -190,31 +190,27 @@ fi
 rm -rf ~/.config/systemd/user
 
 # Dotfiles
-if [[ "$stow_dotfiles" =~ ^[Yy]$ ]]; then
-    if [ -d "$DOTFILES_DIR" ]; then
-        log "Stowing dotfiles..."
-        cd "$DOTFILES_DIR" || exit 1
-        
-        for folder in "${STOW_FOLDERS[@]}"; do
-            if [ -d "$folder" ]; then
-                echo -n "Stowing $folder... "
-                stow -t "$HOME" --restow "$folder" 2>/dev/null && echo "Done." || echo "Failed."
-                stow -t "$HOME" --restow --no-folding systemd-user
-            else
-                warn "Skipping $folder (directory not found)."
-            fi
-        done
-        cd - > /dev/null
-    else
-        error "Dotfiles directory not found at $DOTFILES_DIR."
+if [ -d "$DOTFILES_DIR" ]; then
+    log "Stowing dotfiles..."
+    cd "$DOTFILES_DIR" || exit 1
+
+    if [ -d "systemd-user" ]; then
+        echo -n "Stowing systemd-user (no-folding)... "
+        stow -t "$HOME" --restow --no-folding systemd-user 2>/dev/null && echo "Done." || echo "Failed."
     fi
-    
-    # Copy systemd service if it exists (Manual copy for system-wide services)
-    if [ -f "$DOTFILES_DIR/systemd-system/wol.service" ]; then
-        log "Installing wol.service..."
-        sudo cp "$DOTFILES_DIR/systemd-system/wol.service" /etc/systemd/system/
-        sudo systemctl daemon-reload
-    fi
+
+    for folder in "${STOW_FOLDERS[@]}"; do
+        if [ -d "$folder" ]; then
+            echo -n "Stowing $folder... "
+            stow -t "$HOME" --restow "$folder" 2>/dev/null && echo "Done." || echo "Failed."
+        else
+            warn "Skipping $folder (directory not found in $DOTFILES_DIR)."
+        fi
+    done
+
+    cd - >/dev/null
+else
+    error "Dotfiles directory not found at $DOTFILES_DIR."
 fi
 
 # Gamescope Cap
@@ -222,6 +218,16 @@ if [[ "$install_gaming" =~ ^[Yy]$ ]]; then
     if command -v gamescope &>/dev/null; then
         log "Setting CAP_SYS_NICE for Gamescope..."
         sudo setcap 'cap_sys_nice=+ep' "$(which gamescope)"
+    fi
+fi
+
+# Gamemode setup
+if [[ "$install_gaming" =~ ^[Yy]$ ]]; then
+    if command -v gamemoded &>/dev/null; then
+        log "Adding user to gamemode group"
+        sudo usermod -aG gamemode "$USER"
+    else
+        log "'gamemoded' command not found. Skipping user group modification."
     fi
 fi
 
