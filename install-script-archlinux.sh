@@ -87,6 +87,7 @@ FLATPAK_APPS=(
     com.vysp3r.ProtonPlus
     io.github.ebonjaeger.bluejay
     com.github.wwmm.easyeffects
+    com.dec05eba.gpu_screen_recorder
 )
 
 # AUR Packages
