@@ -61,17 +61,13 @@ require("catppuccin").setup({
     },
 })
 
-
-
 -- Filetype detection for Hyprland
 vim.filetype.add({
     pattern = { [".*/hypr/.*%.conf"] = "hyprlang" },
 })
 
--- Formatting on Save
---vim.api.nvim_create_autocmd("BufWritePre", {
---    group = vim.api.nvim_create_augroup("LspFormat", { clear = true }),
---    callback = function()
---        vim.lsp.buf.format({ async = false }) -- Set async to false for synchronous formatting
---    end,
---})
+vim.api.nvim_set_hl(0, "Comment", {
+    fg = "#6a737d",
+    italic = true,
+    bold = true,
+})
