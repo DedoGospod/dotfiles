@@ -1,0 +1,21 @@
+[Unit]
+Description=GPU Screen Recorder Replay Buffer Service
+After=graphical-session.target
+PartOf=graphical-session.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/flatpak run --command=gpu-screen-recorder com.dec05eba.gpu_screen_recorder -w screen -a default_output -c mp4 -r 300 -o %h/Videos/Replays
+# Customization Notes:
+# -w screen: captures the entire screen/monitor.
+# -a default_output: uses the default audio output source.
+# -c mp4: sets the container/codec.
+# -r 60: sets the replay buffer duration to 60 seconds.
+# -o %h/Videos/Replays: sets the output directory (creates it if needed).
+
+# Restart the process if it fails
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=graphical-session.target
