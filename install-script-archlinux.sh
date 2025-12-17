@@ -87,7 +87,6 @@ FLATPAK_APPS=(
     com.vysp3r.ProtonPlus
     io.github.ebonjaeger.bluejay
     com.github.wwmm.easyeffects
-    com.dec05eba.gpu_screen_recorder
 )
 
 # AUR Packages
@@ -97,6 +96,7 @@ AUR_PACKAGES=(
     brave-bin
     nvibrant-bin
     pyprland
+    gpu-screen-recorder
 )
 
 # Stow Packages (Directories in your dotfiles folder)
