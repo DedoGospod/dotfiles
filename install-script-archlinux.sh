@@ -96,7 +96,6 @@ AUR_PACKAGES=(
     brave-bin
     nvibrant-bin
     pyprland
-    gpu-screen-recorder
 )
 
 # Stow Packages (Directories in your dotfiles folder)
