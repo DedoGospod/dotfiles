@@ -102,7 +102,7 @@ AUR_PACKAGES=(
 # Stow Packages (Directories in your dotfiles folder)
 STOW_FOLDERS=(
     hypr backgrounds fastfetch kitty mpv nvim starship swaync waybar wofi yazi 
-    zsh tmux wayland-pipewire-idle-inhibit kwalletrc theme uwsm-autostart
+    zsh tmux wayland-pipewire-idle-inhibit kwalletrc theme uwsm-autostart mangohud
 )
 
 # --- ENVIRONMENT SETUP ---
@@ -186,9 +186,6 @@ if [[ "$SHELL" != *"zsh"* ]]; then
     log "Changing default shell to zsh..."
     chsh -s "$(which zsh)"
 fi
-
-# Delete 'user' directory so it will be properly symlinked
-rm -rf ~/.config/systemd/user
 
 # Dotfiles
 if [ -d "$DOTFILES_DIR" ]; then
