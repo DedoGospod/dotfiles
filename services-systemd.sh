@@ -163,10 +163,11 @@ else
     echo "  [User] Not in Hyprland. Skipping Hyprland-specific services."
 fi
 
-# General Wayland/Audio/Video User Services
+# General user services
 manage_service "wayland-pipewire-idle-inhibit.service" "--user" "enable" "Prevent sleep when playing audio" "Y"
 manage_service "easyeffects.service"                   "--user" "enable" "Audio effects/Equalizer" "n"
 manage_service "obs.service"                           "--user" "enable" "OBS Studio" "n"
+manage_service "gpu-screen-recorder-replay.service"    "--user" "enable" "GPU Screen recorder" "n"
 
 echo ""
 log_success "Configuration complete!"
