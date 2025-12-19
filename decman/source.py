@@ -101,13 +101,13 @@ decman.packages += (
     SHELL_CLI
 )
 
-# Declare installed aur packages
+# Declare installed aur packages (NEEDS FIX)
 decman.aur_packages += [
     "decman", "timeshift-autosnap", "wayland-pipewire-idle-inhibit", "brave-bin", "nvibrant-bin",
     "pyprland", "obs-vkcapture",
 ]
 
-# System-wide packages (accessible by all users)
+# System-wide packages (accessible by all users) (NEEDS FIX)
 decman.flatpak_packages += [
     "com.github.tchx84.Flatseal",
     "io.github.ebonjaeger.bluejay",
@@ -115,7 +115,7 @@ decman.flatpak_packages += [
 
 ]
 
-# User-specific packages
+# User-specific packages (NEEDS FIX)
 decman.flatpak_user_packages[USER] = [
     "it.mijorus.gearlever",
     "com.stremio.Stremio",
@@ -168,7 +168,7 @@ decman.enabled_systemd_units += [
     "grub-btrfsd.service",
 ]
 
-# User specific units
+# User specific units (NEEDS FIX)
 # decman.systemd.enabled_user_units.setdefault(USER, set()).update({
     # "syncthing.service",
     # "hypridle.service",
