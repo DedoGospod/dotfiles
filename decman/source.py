@@ -129,15 +129,13 @@ decman.files["/etc/vconsole.conf"] = File(content="KEYMAP=us")
 decman.files["/etc/systemd/system/wol.service"] = File(source_file=f"{DOTDIR}/etc/wol.service")
 decman.files["/etc/pacman.conf"] = File(source_file=f"{DOTDIR}/etc/pacman.conf")
 
-
 decman.files[f"{HOME}/.config/starship.toml"] = File(source_file=f"{DOTDIR}/starship/.config/starship.toml")
 decman.files[f"{HOME}/.config/kwalletrc"] = File(source_file=f"{DOTDIR}/kwalletrc/.config/kwalletrc")
-decman.files[f"{HOME}/.config/gtkrc-2.0"] = File(source_file=f"{DOTDIR}/theme/gtkrc-2.0/.config/gtkrc-2.0")
+decman.files[f"{HOME}/.gtkrc-2.0"] = File(source_file=f"{DOTDIR}/theme/.gtkrc-2.0")
 decman.files[f"{HOME}/.zprofile"] = File(source_file=f"{DOTDIR}/zsh/.zprofile")
 decman.files[f"{HOME}/.zshrc"] = File(source_file=f"{DOTDIR}/zsh/.zshrc")
 
 # Declare a whole directory
-
 decman.directories[f"{HOME}/.config/backgrounds"] = Directory(source_directory=f"{DOTDIR}/backgrounds/.config/backgrounds", owner=USER)
 decman.directories[f"{HOME}/.config/fastfetch"] = Directory(source_directory=f"{DOTDIR}/fastfetch/.config/fastfetch", owner=USER)
 decman.directories[f"{HOME}/.config/hypr"] = Directory(source_directory=f"{DOTDIR}/hypr/.config/hypr", owner=USER)
@@ -168,19 +166,22 @@ decman.enabled_systemd_units += [
     "wol.service",
     "power-profiles-daemon.service",
     "grub-btrfsd.service",
-
-    # User Services (prefixed with the user)
-    #hypridle.service",
-    #hyprpaper.service",
-    #waybar.service",
-    #pyprland.service",
-    #hyprpolkitagent.service",
-    #wlsunset.service",
-    #swaync.service",
-    #wayland-pipewire-idle-inhibit.service",
-    #easyeffects.service",
-    #obs.service",
 ]
+
+# User specific units
+decman.systemd.enabled_user_units.setdefault(USER, set()).update({
+    "syncthing.service",
+    "hypridle.service",
+    "hyprpaper.service",
+    "waybar.service",
+    "pyprland.service",
+    "hyprpolkitagent.service",
+    "wlsunset.service",
+    "swaync.service",
+    "wayland-pipewire-idle-inhibit.service",
+    "easyeffects.service",
+    "obs.service",
+})
 
 # Added to ignored_packages to prevent 'failed to set explicit'
 decman.ignored_packages += [
@@ -193,5 +194,10 @@ decman.ignored_packages += [
     "woff2-font-awesome",
 
 ]
+
+# decman.aur.ignored_packages |= {
+    # "paru",
+# }
+
 
 # Packages installed via helper script
