@@ -54,14 +54,12 @@ MAINTENANCE = [
     "flatpak", "power-profiles-daemon"
 ]
 
-# --- FONTS ---
 FONTS = [
     "ttf-cascadia-code-nerd", "ttf-ubuntu-font-family", "ttf-font-awesome",
     "ttf-dejavu", "ttf-liberation", "ttf-croscore", "noto-fonts", 
     "noto-fonts-cjk", "noto-fonts-emoji", "woff2-font-awesome"
 ]
 
-# --- YOUR SPECIALIST MODULES ---
 NVIDIA = [
     "libva-nvidia-driver", "nvidia-open-dkms", "nvidia-utils", 
     "lib32-nvidia-utils", "nvidia-settings", "egl-wayland"
@@ -172,16 +170,16 @@ decman.enabled_systemd_units += [
     "grub-btrfsd.service",
 
     # User Services (prefixed with the user)
-    f"{USER}:hypridle.service",
-    f"{USER}:hyprpaper.service",
-    f"{USER}:waybar.service",
-    f"{USER}:pyprland.service",
-    f"{USER}:hyprpolkitagent.service",
-    f"{USER}:wlsunset.service",
-    f"{USER}:swaync.service",
-    f"{USER}:wayland-pipewire-idle-inhibit.service",
-    f"{USER}:easyeffects.service",
-    f"{USER}:obs.service",
+    #hypridle.service",
+    #hyprpaper.service",
+    #waybar.service",
+    #pyprland.service",
+    #hyprpolkitagent.service",
+    #wlsunset.service",
+    #swaync.service",
+    #wayland-pipewire-idle-inhibit.service",
+    #easyeffects.service",
+    #obs.service",
 ]
 
 # Added to ignored_packages to prevent 'failed to set explicit'
@@ -190,5 +188,8 @@ decman.ignored_packages += [
     "base-devel", 
     "linux", 
     "linux-zen",
-    "linux-firmware"
+    "linux-firmware",
+    "ttf-font-awesome",
+    "woff2-font-awesome",
+
 ]
