@@ -92,3 +92,4 @@ alias df='df -h'
 alias zshrc='nvim ~/.zshrc'                            # Edit zsh config
 alias hypr='nvim ~/.config/hypr/hyprland.conf'         # Edit Hyprland config
 alias grub='sudoedit /etc/default/grub'                # Edit GRUB config
+alias decmanconf='nvim ~/dotfiles/decman/source.py'    # Edit Decman config
