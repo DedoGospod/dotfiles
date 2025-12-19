@@ -62,6 +62,7 @@ alias sudo='sudo '                # Always use sudo explicitly
 alias rb='reboot'                 # Reboot system
 alias updatemirrors='sudo reflector --verbose --country $(curl -s https://ipinfo.io/country | tr -d "\n") --protocol https --score 5 --sort rate --save /etc/pacman.d/mirrorlist'
 alias update-grub="grub-mkconfig -o /boot/grub/grub.cfg"
+alias decman-update="sudo decman --source ~/dotfiles/decman/source.py"
 
 # Package Management
 alias yay='paru'             # Use paru as yay alternative
