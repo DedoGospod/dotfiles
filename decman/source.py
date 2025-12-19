@@ -183,7 +183,7 @@ decman.enabled_systemd_units += [
     # "obs.service",
 # })
 
-# Added to ignored_packages to prevent 'failed to set explicit'
+# Ignored Packages
 decman.ignored_packages += [
     "base", 
     "base-devel", 
@@ -193,12 +193,8 @@ decman.ignored_packages += [
     "ttf-font-awesome",
     "woff2-font-awesome",
     "paru",
+    "decman",
 
 ]
-
-# decman.aur.ignored_packages |= {
-    # "paru",
-# }
-
 
 # Packages installed via helper script
