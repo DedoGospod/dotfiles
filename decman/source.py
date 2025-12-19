@@ -169,19 +169,19 @@ decman.enabled_systemd_units += [
 ]
 
 # User specific units
-decman.systemd.enabled_user_units.setdefault(USER, set()).update({
-    "syncthing.service",
-    "hypridle.service",
-    "hyprpaper.service",
-    "waybar.service",
-    "pyprland.service",
-    "hyprpolkitagent.service",
-    "wlsunset.service",
-    "swaync.service",
-    "wayland-pipewire-idle-inhibit.service",
-    "easyeffects.service",
-    "obs.service",
-})
+# decman.systemd.enabled_user_units.setdefault(USER, set()).update({
+    # "syncthing.service",
+    # "hypridle.service",
+    # "hyprpaper.service",
+    # "waybar.service",
+    # "pyprland.service",
+    # "hyprpolkitagent.service",
+    # "wlsunset.service",
+    # "swaync.service",
+    # "wayland-pipewire-idle-inhibit.service",
+    # "easyeffects.service",
+    # "obs.service",
+# })
 
 # Added to ignored_packages to prevent 'failed to set explicit'
 decman.ignored_packages += [
@@ -192,6 +192,7 @@ decman.ignored_packages += [
     "linux-firmware",
     "ttf-font-awesome",
     "woff2-font-awesome",
+    "paru",
 
 ]
 
