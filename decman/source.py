@@ -193,3 +193,5 @@ decman.ignored_packages += [
     "woff2-font-awesome",
 
 ]
+
+# Packages installed via helper script
