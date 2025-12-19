@@ -17,7 +17,7 @@ KERNEL = [
 SYSTEM_UTILS = [
     "btrfs-progs", "grub", "efibootmgr", "os-prober", "grub-btrfs",
     "ntfs-3g", "zram-generator", "sudo", "wget", "git", "rsync",
-    "paru", "paru-debug", "man-db"
+    "paru", "man-db"
 ]
 
 # --- AUDIO & NETWORK ---
@@ -103,8 +103,6 @@ decman.packages += (
     SHELL_CLI
 )
 
-
-
 # Declare installed aur packages
 decman.aur_packages += [
     "decman", "timeshift-autosnap", "wayland-pipewire-idle-inhibit", "brave-bin", "nvibrant-bin",
@@ -136,7 +134,7 @@ decman.files["/etc/pacman.conf"] = File(source_file=f"{DOTDIR}/etc/pacman.conf")
 
 decman.files[f"{HOME}/.config/starship.toml"] = File(source_file=f"{DOTDIR}/starship/.config/starship.toml")
 decman.files[f"{HOME}/.config/kwalletrc"] = File(source_file=f"{DOTDIR}/kwalletrc/.config/kwalletrc")
-decman.files[f"{HOME}/.config/gtkrc-2.0"] = File(source_file=f"{DOTDIR}/gtkrc-2.0/.config/gtkrc-2.0")
+decman.files[f"{HOME}/.config/gtkrc-2.0"] = File(source_file=f"{DOTDIR}/theme/gtkrc-2.0/.config/gtkrc-2.0")
 decman.files[f"{HOME}/.zprofile"] = File(source_file=f"{DOTDIR}/zsh/.zprofile")
 decman.files[f"{HOME}/.zshrc"] = File(source_file=f"{DOTDIR}/zsh/.zshrc")
 
@@ -184,4 +182,13 @@ decman.enabled_systemd_units += [
     f"{USER}:wayland-pipewire-idle-inhibit.service",
     f"{USER}:easyeffects.service",
     f"{USER}:obs.service",
+]
+
+# Added to ignored_packages to prevent 'failed to set explicit'
+decman.ignored_packages += [
+    "base", 
+    "base-devel", 
+    "linux", 
+    "linux-zen",
+    "linux-firmware"
 ]
