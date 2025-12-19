@@ -58,36 +58,5 @@ flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.f
 log "Installing AUR Package 'decman' ..."
 paru -S --needed --noconfirm decman
 
-# Shell
-log "Installing zsh shell"
-sudo pacman -S --needed --noconfirm zsh
-log "Setting zsh as default shell"
-if [[ "$SHELL" != *"zsh"* ]]; then
-    log "Changing default shell to zsh..."
-    chsh -s "$(which zsh)"
-fi
-
-# Tmux Plugin Manager
-if [ ! -d "$TPM_PATH" ]; then
-    log "Installing Tmux Plugin Manager..."
-    git clone https://github.com/tmux-plugins/tpm "$TPM_PATH"
-else
-    log "TPM already installed."
-fi
-
-# Gamescope Cap
-if command -v gamescope &>/dev/null; then
-    log "Setting CAP_SYS_NICE for Gamescope..."
-    sudo setcap 'cap_sys_nice=+ep' "$(which gamescope)"
-fi
-
-# Gamemode setup
-if command -v gamemoded &>/dev/null; then
-    log "Adding user to gamemode group"
-    sudo usermod -aG gamemode "$USER"
-else
-    log "'gamemoded' command not found. Skipping user group modification."
-fi
-
 # Run decman
 sudo decman --source ~/dotfiles/decman/source.py
