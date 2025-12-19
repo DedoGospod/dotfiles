@@ -49,13 +49,14 @@ else
 fi
 
 # Install flatpak
-log "Installing Flatpak Apps..."
+log "Installing Flatpak"
+sudo pacman -S --needed --noconfirm flatpak
+log "Installing Flathub Repo..."
 flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-flatpak install -y --noninteractive flathub "${FLATPAK_APPS[@]}"
 
 # Installing decman
 log "Installing AUR Package 'decman' ..."
 paru -S --needed --noconfirm decman
 
 # Run decman
-decman --source ~/dotfiles/decman/source.py
+sudo decman --source ~/dotfiles/decman/source.py
