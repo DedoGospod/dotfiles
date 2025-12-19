@@ -56,3 +56,6 @@ flatpak install -y --noninteractive flathub "${FLATPAK_APPS[@]}"
 # Installing decman
 log "Installing AUR Package 'decman' ..."
 paru -S --needed --noconfirm decman
+
+# Run decman
+decman --source ~/dotfiles/decman/source.py
