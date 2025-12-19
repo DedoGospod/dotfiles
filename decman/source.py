@@ -8,65 +8,20 @@ DOTDIR = f"{HOME}/dotfiles"
 
 decman.config.enable_flatpak = True
 
-# --- SYSTEM & KERNEL ---
-KERNEL = [
-    "linux", "linux-headers", "linux-zen", "linux-zen-headers", "linux-firmware", "amd-ucode", "base", "base-devel"
-]
-
-SYSTEM_UTILS = [
-    "btrfs-progs", "grub", "efibootmgr", "os-prober", "grub-btrfs", "ntfs-3g", "zram-generator", "sudo", "wget", "git", "rsync", "paru", "man-db"
-]
-
-# --- AUDIO & NETWORK ---
-AUDIO = [
-    "pipewire", "pipewire-pulse", "pipewire-alsa", "pipewire-jack", "wireplumber", "libpulse", "gst-plugin-pipewire", "pavucontrol"
-]
-
-NETWORK = [
-    "networkmanager", "bluez", "bluez-utils", "syncthing", "kdeconnect", "cronie"
-]
-
-# --- DISPLAY & DESKTOP ---
-HYPRLAND = [
-    "hyprland", "hypridle", "hyprlock", "hyprpaper", "hyprshot", "hyprpolkitagent", "hyprland-guiutils", "hyprutils", "uwsm", "waybar", "wofi", "swaync", "dbus", "wlsunset"
-]
-
-THEMING_PORTALS = [
-    "xdg-desktop-portal", "xdg-desktop-portal-gtk", "xdg-desktop-portal-hyprland","qt5-wayland", "qt6-wayland", "qt6ct", "gnome-themes-extra"
-]
-
-# --- APPLICATIONS & TOOLS ---
-APPS = [
-    "kitty", "nautilus", "yazi", "mpv", "obsidian", "keepassxc","gnome-disk-utility", "gnome-keyring", "seahorse", "fastfetch", "btop"
-]
-
-MAINTENANCE = [
-    "reflector", "timeshift", "ffmpeg", "ffmpegthumbnailer", "flatpak", "power-profiles-daemon"
-]
-
-FONTS = [
-    "ttf-cascadia-code-nerd", "ttf-ubuntu-font-family", "ttf-font-awesome","ttf-dejavu", "ttf-liberation", "ttf-croscore", "noto-fonts", "noto-fonts-cjk", "noto-fonts-emoji", "woff2-font-awesome"
-]
-
-NVIDIA = [
-    "libva-nvidia-driver", "nvidia-open-dkms", "nvidia-utils", "lib32-nvidia-utils", "nvidia-settings", "egl-wayland"
-]
-
-NEOVIM = [
-    "neovim", "npm", "nodejs", "unzip", "clang", "go", "shellcheck", "zig", "luarocks", "dotnet-sdk", "cmake", "gcc", "imagemagick", "rustup"
-]
-
-GAMING = [
-    "steam", "gamemode", "gamescope", "mangohud"
-]
-
-WOL = [
-    "wol", "ethtool"
-]
-
-SHELL_CLI = [
-    "zsh", "zsh-completions", "zsh-syntax-highlighting", "zsh-autosuggestions", "starship", "fzf", "zoxide", "fd", "tmux", "stow", "bat", "eza", "ripgrep", "ncdu", "trash-cli"
-]
+KERNEL = [ "linux", "linux-headers", "linux-zen", "linux-zen-headers", "linux-firmware", "amd-ucode", "base", "base-devel" ]
+SYSTEM_UTILS = [ "btrfs-progs", "grub", "efibootmgr", "os-prober", "grub-btrfs", "ntfs-3g", "zram-generator", "sudo", "wget", "git", "rsync", "paru", "man-db" ]
+AUDIO = [ "pipewire", "pipewire-pulse", "pipewire-alsa", "pipewire-jack", "wireplumber", "libpulse", "gst-plugin-pipewire", "pavucontrol" ]
+NETWORK = [ "networkmanager", "bluez", "bluez-utils", "syncthing", "kdeconnect", "cronie" ]
+HYPRLAND = [ "hyprland", "hypridle", "hyprlock", "hyprpaper", "hyprshot", "hyprpolkitagent", "hyprland-guiutils", "hyprutils", "uwsm", "waybar", "wofi", "swaync", "dbus", "wlsunset" ]
+THEMING_PORTALS = [ "xdg-desktop-portal", "xdg-desktop-portal-gtk", "xdg-desktop-portal-hyprland","qt5-wayland", "qt6-wayland", "qt6ct", "gnome-themes-extra" ]
+APPS = [ "kitty", "nautilus", "yazi", "mpv", "obsidian", "keepassxc","gnome-disk-utility", "gnome-keyring", "seahorse", "fastfetch", "btop" ]
+MAINTENANCE = [ "reflector", "timeshift", "ffmpeg", "ffmpegthumbnailer", "flatpak", "power-profiles-daemon" ]
+FONTS = [ "ttf-cascadia-code-nerd", "ttf-ubuntu-font-family", "ttf-font-awesome","ttf-dejavu", "ttf-liberation", "ttf-croscore", "noto-fonts", "noto-fonts-cjk", "noto-fonts-emoji", "woff2-font-awesome" ]
+NVIDIA = [ "libva-nvidia-driver", "nvidia-open-dkms", "nvidia-utils", "lib32-nvidia-utils", "nvidia-settings", "egl-wayland" ]
+NEOVIM = [ "neovim", "npm", "nodejs", "unzip", "clang", "go", "shellcheck", "zig", "luarocks", "dotnet-sdk", "cmake", "gcc", "imagemagick", "rustup" ]
+GAMING = [ "steam", "gamemode", "gamescope", "mangohud" ]
+WOL = [ "wol", "ethtool" ]
+SHELL_CLI = [ "zsh", "zsh-completions", "zsh-syntax-highlighting", "zsh-autosuggestions", "starship", "fzf", "zoxide", "fd", "tmux", "stow", "bat", "eza", "ripgrep", "ncdu", "trash-cli" ]
 
 decman.packages += (
     KERNEL + 
@@ -87,7 +42,13 @@ decman.packages += (
 
 # Declare installed aur packages (NEEDS FIX)
 decman.aur_packages += [
-    "decman", "timeshift-autosnap", "wayland-pipewire-idle-inhibit", "brave-bin", "nvibrant-bin", "pyprland", "obs-vkcapture",
+    "decman",
+    "timeshift-autosnap",
+    "wayland-pipewire-idle-inhibit",
+    "brave-bin",
+    "nvibrant-bin",
+    "pyprland",
+    "obs-vkcapture",
 ]
 
 # System-wide packages (accessible by all users) (NEEDS FIX)
