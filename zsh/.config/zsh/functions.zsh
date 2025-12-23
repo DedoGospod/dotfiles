@@ -30,9 +30,9 @@ nv() {
 
 # Decman Add
 dm-add() {
-    ~/.local/bin/dm "$1" && sudo decman --source ~/dotfiles/decman/source.py
+    ~/.local/bin/dm.sh "$1" && sudo decman --source ~/dotfiles/decman/source.py
 }
 
 dm-del() {
-    ~/.local/bin/dm remove "$1" && sudo decman --source ~/dotfiles/decman/source.py
+    ~/.local/bin/dm.sh remove "$1" && sudo decman --source ~/dotfiles/decman/source.py
 }
