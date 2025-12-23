@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Check if hypridle is running
 HYPRIDLE_RUNNING=$(pgrep -x "hypridle")
