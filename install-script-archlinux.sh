@@ -101,8 +101,7 @@ AUR_PACKAGES=(
 # Stow Packages
 STOW_FOLDERS=(
     hypr backgrounds fastfetch kitty mpv nvim starship swaync waybar wofi yazi
-    zsh tmux wayland-pipewire-idle-inhibit kwalletrc theme uwsm-autostart mangohud
-    arch-config
+    zsh tmux wayland-pipewire-idle-inhibit kwalletrc theme uwsm-autostart arch-config
 )
 
 # --- ENVIRONMENT SETUP ---
