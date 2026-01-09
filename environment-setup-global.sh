@@ -119,20 +119,34 @@ read -r -p "Setup NVIDIA? (y/N): " setup_nvidia
 
 # Enable NVIDIA KMS
 if [[ "$setup_nvidia" =~ ^[Yy]$ ]]; then
-    log "Enabling NVIDIA Kernel Mode Setting (KMS)..."
-    echo "options nvidia-drm modeset=1" | sudo tee /etc/modprobe.d/nvidia.conf >/dev/null
+    CONF_FILE="/etc/modprobe.d/nvidia.conf"
+    SETTING="options nvidia-drm modeset=1"
+
+    if [ ! -f "$CONF_FILE" ] || ! grep -Fxq "$SETTING" "$CONF_FILE"; then
+        log "Enabling NVIDIA Kernel Mode Setting (KMS)..."
+        echo "$SETTING" | sudo tee "$CONF_FILE" >/dev/null
+    else
+        log "NVIDIA KMS already configured."
+    fi
 fi
 
 # Inject NVIDIA modules into mkinitcpio for initramfs regeneration
+# Inject NVIDIA modules into mkinitcpio for initramfs regeneration
 if [[ "$setup_nvidia" =~ ^[Yy]$ ]]; then
-    log "Adding NVIDIA modules to mkinitcpio..."
+    MK_CONF="/etc/mkinitcpio.conf"
+    
+    # Check if nvidia_drm is already in the MODULES array (even if commented out)
+    if ! grep -E "^MODULES=.*nvidia_drm" "$MK_CONF" >/dev/null 2>&1 && \
+       ! grep -E "^MODULES\+=\(.*\bnvidia_drm\b.*\)" "$MK_CONF" >/dev/null 2>&1; then
+        
+        # Append the new modules line
+        log "Injecting NVIDIA modules into mkinitcpio..."
+        echo -e "\n# Added by setup script\nMODULES+=(nvidia nvidia_modeset nvidia_uvm nvidia_drm)" | sudo tee -a "$MK_CONF" >/dev/null
 
-    if ! grep -E "^[^#]*nvidia_drm" /etc/mkinitcpio.conf >/dev/null; then
-        log "Injecting NVIDIA modules ..."
-        echo -e "\n# NVIDIA Setup Script\nMODULES+=(nvidia nvidia_modeset nvidia_uvm nvidia_drm)" | sudo tee -a /etc/mkinitcpio.conf >/dev/null
-
-        log "Regenerating initramfs..."
+        log "Regenerating initramfs (this may take a moment)..."
         sudo mkinitcpio -P
+    else
+        log "NVIDIA modules already present in mkinitcpio. Skipping regeneration."
     fi
 fi
 
