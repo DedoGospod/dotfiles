@@ -224,10 +224,12 @@ fi
 # Inject NVIDIA modules into mkinitcpio for initramfs regeneration
 if [[ "$install_nvidia" =~ ^[Yy]$ ]]; then
     log "Adding NVIDIA modules to mkinitcpio..."
-    sudo sed -i 's/^MODULES=(/MODULES=(nvidia nvidia_modeset nvidia_uvm nvidia_drm /' /etc/mkinitcpio.conf
 
-    log "Regenerating initramfs..."
-    sudo mkinitcpio -P
+    if ! grep -q "nvidia_drm" /etc/mkinitcpio.conf; then
+        sudo sed -i 's/^MODULES=(/MODULES=(nvidia nvidia_modeset nvidia_uvm nvidia_drm /' /etc/mkinitcpio.conf
+        log "Regenerating initramfs..."
+        sudo mkinitcpio -P
+    fi
 fi
 
 # UWSM General & Hyprland Environment
