@@ -32,7 +32,7 @@ files:
     target: "~/.config/mpv"
 
     # Starship
-  - source: "/home/dylan/dotfiles/starship/.config/starship.toml/"
+  - source: "/home/dylan/dotfiles/starship/.config/starship.toml"
     target: "~/.config/starship.toml"
 
     # User scripts
