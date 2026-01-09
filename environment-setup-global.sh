@@ -14,6 +14,7 @@ NC='\033[0m'
 log() { echo -e "${GREEN}[INFO]${NC} $1"; }
 warn() { echo -e "${YELLOW}[WARN]${NC} $1"; }
 error() { echo -e "${RED}[ERROR]${NC} $1"; }
+success() { echo -e "${GREEN}[OK]${NC} $1"; }
 
 # Set XDG paths and application specific paths
 log "Setting XDG environment variables..."
@@ -21,6 +22,7 @@ export XDG_DATA_HOME="$HOME/.local/share"
 export XDG_CONFIG_HOME="$HOME/.config"
 export XDG_STATE_HOME="$HOME/.local/state"
 export XDG_CACHE_HOME="$HOME/.cache"
+success "Directory structure initialized."
 
 log "Creating directory structure..."
 mkdir -p \
@@ -131,7 +133,6 @@ if [[ "$setup_nvidia" =~ ^[Yy]$ ]]; then
 fi
 
 # Inject NVIDIA modules into mkinitcpio for initramfs regeneration
-# Inject NVIDIA modules into mkinitcpio for initramfs regeneration
 if [[ "$setup_nvidia" =~ ^[Yy]$ ]]; then
     MK_CONF="/etc/mkinitcpio.conf"
     
@@ -191,4 +192,8 @@ EOF
     if ! grep -q "env-nvidia" "$HOME/.config/uwsm/env" 2>/dev/null; then
         echo "export-include env-nvidia" >>"$HOME/.config/uwsm/env"
     fi
+    success "NVIDIA UWSM environment set up."
 fi
+
+echo -e "\n---"
+success "Setup complete! Please restart your session."
