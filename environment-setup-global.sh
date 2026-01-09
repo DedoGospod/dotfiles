@@ -108,12 +108,17 @@ else
 fi
 
 # Tmux Plugin Manager
-TPM_PATH="${TPM_PATH:-$HOME/.tmux/plugins/tpm}" # Default path if not set
-if [ ! -d "$TPM_PATH" ]; then
-    log "Installing Tmux Plugin Manager..."
-    git clone --depth 1 https://github.com/tmux-plugins/tpm "$TPM_PATH"
+if command -v tmux >/dev/null 2>&1; then
+    TPM_PATH="${TPM_PATH:-$HOME/.tmux/plugins/tpm}"
+
+    if [ ! -d "$TPM_PATH" ]; then
+        log "Tmux found. Installing Tmux Plugin Manager..."
+        git clone --depth 1 https://github.com/tmux-plugins/tpm "$TPM_PATH" && success "TPM installed."
+    else
+        log "TPM already installed."
+    fi
 else
-    log "TPM already installed."
+    warn "Tmux is not installed. Skipping TPM setup."
 fi
 
 # Ask to setup nvidia
