@@ -12,6 +12,15 @@ zl() {
     fi;
 }
 
+zlh() {
+    if [ -z "$@" ]; then
+        ls -1A --color=always --group-directories-first
+    else 
+        z "$@" && \
+        ls -1A --color=always --group-directories-first
+    fi
+}
+
 # nv works for root and user files
 nv() {
     if [ -z "$1" ]; then
@@ -26,6 +35,10 @@ nv() {
     else
         command nvim "$@"
     fi
+}
+
+ga() {
+    git add . && git status
 }
 
 # Decman Add
