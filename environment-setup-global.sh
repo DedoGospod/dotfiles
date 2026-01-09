@@ -96,26 +96,34 @@ else
     error "Dotfiles directory not found at $DOTFILES_DIR."
 fi
 
-# Define your source and target
-SYSTEM_SRC="$DOTFILES_DIR/system-scripts"
+# System Scripts
+SYSTEM_SRC="$DOTFILES_DIR/scripts/system-scripts"
 
-log "Syncing system scripts..."
+if [ -d "$SYSTEM_SRC" ]; then
+    log "Syncing system scripts..."
 
-# This function mimics 'stow' logic
-sync_system_file() {
-    local src_path="$1"
-    local target_path="$2"
+    # Define the files to sync ( Format: "source_relative_to_SYSTEM_SRC|target_absolute_path")
+    SYSTEM_FILES=(
+        "etc/cron.weekly/btrfs-clean-job|/etc/cron.weekly/btrfs-clean-job"
+        "etc/cron.weekly/clean-pkg-managers|/etc/cron.weekly/clean-pkg-managers"
+        "usr/local/bin/reboot-to-windows|/usr/local/bin/reboot-to-windows"
+    )
 
-    if [ -f "$src_path" ]; then
-        echo -n "Installing $target_path... "
-        sudo install -Dm 755 "$src_path" "$target_path" && echo "Done." || echo "Failed."
-    fi
-}
+    for entry in "${SYSTEM_FILES[@]}"; do
+        src="${entry%%|*}"
+        target="${entry##*|}"
+        full_src="$SYSTEM_SRC/$src"
 
-# Now just list your files like a "manifest"
-sync_system_file "$SYSTEM_SRC/etc/cron.weekly/btrfs-clean-job" "/etc/cron.weekly/btrfs-clean-job"
-sync_system_file "$SYSTEM_SRC/etc/cron.weekly/clean-pkg-managers" "/etc/cron.weekly/clean-pkg-managers"
-sync_system_file "$SYSTEM_SRC/usr/local/bin/reboot-to-windows" "/usr/local/bin/reboot-to-windows"
+        if [ -f "$full_src" ]; then
+            log_task "Installing $target"
+            sudo install -Dm 755 "$full_src" "$target" && echo -e "${GREEN}Done.${NC}" || echo -e "${RED}Failed.${NC}"
+        else
+            warn "Source file not found: $src"
+        fi
+    done
+else
+    warn "System scripts directory not found at $SYSTEM_SRC."
+fi
 
 # Gamescope Cap
 if command -v gamescope >/dev/null 2>&1; then
