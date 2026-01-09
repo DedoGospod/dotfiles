@@ -1,0 +1,104 @@
+name: Dotfiles
+description: "dotfiles configuration"
+
+
+files:
+    # Arch-config (dcli)
+  - source: "/home/dylan/dotfiles/arch-config/.config/arch-config/"
+    target: "~/.config/arch-config"
+
+    # Backgrounds
+  - source: "/home/dylan/dotfiles/backgrounds/.config/backgrounds/"
+    target: "~/.config/backgrounds"
+
+    # Fastfetch
+  - source: "/home/dylan/dotfiles/fastfetch/.config/fastfetch/"
+    target: "~/.config/fastfetch"
+
+    # Hypr
+  - source: "/home/dylan/dotfiles/hypr/.config/hypr/"
+    target: "~/.config/hypr"
+
+    # Kitty
+  - source: "/home/dylan/dotfiles/kitty/.config/kitty/"
+    target: "~/.config/kitty"
+
+    # Kwalletrc
+  - source: "/home/dylan/dotfiles/kwalletrc/.config/kwalletrc/"
+    target: "~/.config/kwalletrc"
+
+    # MPV
+  - source: "/home/dylan/dotfiles/mpv/.config/mpv/"
+    target: "~/.config/mpv"
+
+    # Starship
+  - source: "/home/dylan/dotfiles/starship/.config/starship.toml/"
+    target: "~/.config/starship.toml"
+
+    # User scripts
+  - source: "/home/dylan/dotfiles/scripts/user-scripts/.local/bin"
+    target: "~/.local/bin"
+
+    # SwayNC
+  - source: "/home/dylan/dotfiles/swaync/.config/swaync/"
+    target: "~/.config/swaync"
+
+    # Systemd user 
+  - source: "/home/dylan/dotfiles/systemd-user/.config/systemd/user/"
+    target: "~/.config/systemd/user/"
+
+    # Theme (GTKRC 2.0)
+  - source: "/home/dylan/dotfiles/theme/.gtkrc-2.0"
+    target: "~/.gtkrc-2.0"
+
+    # Theme (GTKRC 3.0)
+  - source: "/home/dylan/dotfiles/theme/.config/gtk-3.0/"
+    target: "~/.config/gtk-3.0"
+
+    # Theme (GTKRC 4.0)
+  - source: "/home/dylan/dotfiles/theme/.config/gtk-4.0/"
+    target: "~/.config/gtk-4.0"
+
+    # Theme (qt5ct)
+  - source: "/home/dylan/dotfiles/theme/.config/qt5ct/"
+    target: "~/.config/qt5ct"
+
+    # Theme (qt6ct)
+  - source: "/home/dylan/dotfiles/theme/.config/qt6ct/"
+    target: "~/.config/qt6ct"
+
+    # Tmux
+  - source: "/home/dylan/dotfiles/tmux/.config/tmux/"
+    target: "~/.config/tmux"
+
+    # UWSM-AUTOSTART
+  - source: "/home/dylan/dotfiles/uwsm-autostart/.config/autostart/"
+    target: "~/.config/autostart"
+
+    # Waybar
+  - source: "/home/dylan/dotfiles/waybar/.config/waybar/"
+    target: "~/.config/waybar"
+
+    # Wayland-pipewire-idle-inhibit
+  - source: "/home/dylan/dotfiles/wayland-pipewire-idle-inhibit/.config/wayland-pipewire-idle-inhibit/"
+    target: "~/.config/wayland-pipewire-idle-inhibit"
+
+    # Wofi
+  - source: "/home/dylan/dotfiles/wofi/.config/wofi/"
+    target: "~/.config/wofi"
+
+    # Yazi
+  - source: "/home/dylan/dotfiles/yazi/.config/yazi/"
+    target: "~/.config/yazi"
+
+    # Zsh (zprofile)
+  - source: "/home/dylan/dotfiles/zsh/.zprofile"
+    target: "~/.zprofile"
+
+    # Zsh (zshrc)
+  - source: "/home/dylan/dotfiles/zsh/.zshrc"
+    target: "~/.zshrc"
+
+    # Zsh (functions)
+  - source: "/home/dylan/dotfiles/zsh/.config/zsh/functions.zsh"
+    target: "~/.config/zsh/functions.zsh"
