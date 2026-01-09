@@ -97,16 +97,23 @@ else
     log "TPM already installed."
 fi
 
+# Ask to setup nvidia
+read -r -p "Setup NVIDIA? (y/N): " setup_nvidia
+
 # Enable NVIDIA KMS
-log "Enabling NVIDIA Kernel Mode Setting (KMS)..."
-echo "options nvidia-drm modeset=1" | sudo tee /etc/modprobe.d/nvidia.conf >/dev/null
+if [[ "$setup_nvidia" =~ ^[Yy]$ ]]; then
+    log "Enabling NVIDIA Kernel Mode Setting (KMS)..."
+    echo "options nvidia-drm modeset=1" | sudo tee /etc/modprobe.d/nvidia.conf >/dev/null
+fi
 
 # Inject NVIDIA modules into mkinitcpio for initramfs regeneration
-log "Adding NVIDIA modules to mkinitcpio..."
-sudo sed -i 's/^MODULES=(/MODULES=(nvidia nvidia_modeset nvidia_uvm nvidia_drm /' /etc/mkinitcpio.conf
+if [[ "$setup_nvidia" =~ ^[Yy]$ ]]; then
+    log "Adding NVIDIA modules to mkinitcpio..."
+    sudo sed -i 's/^MODULES=(/MODULES=(nvidia nvidia_modeset nvidia_uvm nvidia_drm /' /etc/mkinitcpio.conf
 
-log "Regenerating initramfs..."
-sudo mkinitcpio -P
+    log "Regenerating initramfs..."
+    sudo mkinitcpio -P
+fi
 
 # UWSM General & Hyprland Environment
 log "Creating general UWSM environment configuration..."
@@ -137,14 +144,17 @@ if ! grep -q "env-hyprland" "$HOME/.config/uwsm/env" 2>/dev/null; then
 fi
 
 # --- NVIDIA Specifics (Modified) ---
-log "Creating UWSM environment configuration for NVIDIA..."
-cat <<EOF >"$HOME/.config/uwsm/env-nvidia"
+if [[ "$setup_nvidia" =~ ^[Yy]$ ]]; then
+    log "Creating UWSM environment configuration for NVIDIA..."
+    cat <<EOF >"$HOME/.config/uwsm/env-nvidia"
 export LIBVA_DRIVER_NAME=nvidia
 export __GLX_VENDOR_LIBRARY_NAME=nvidia
 export NVD_BACKEND=direct
 export ELECTRON_OZONE_PLATFORM_HINT=auto
 EOF
 
-if ! grep -q "env-nvidia" "$HOME/.config/uwsm/env" 2>/dev/null; then
-    echo "export-include env-nvidia" >>"$HOME/.config/uwsm/env"
+    if ! grep -q "env-nvidia" "$HOME/.config/uwsm/env" 2>/dev/null; then
+        echo "export-include env-nvidia" >>"$HOME/.config/uwsm/env"
+    fi
 fi
+
