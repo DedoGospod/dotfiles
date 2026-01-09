@@ -14,6 +14,7 @@ NC='\033[0m'
 log() { echo -e "${GREEN}[INFO]${NC} $1"; }
 warn() { echo -e "${YELLOW}[WARN]${NC} $1"; }
 error() { echo -e "${RED}[ERROR]${NC} $1"; }
+log_task() { echo -ne "${GREEN}[INFO]${NC} $1... "; }
 
 # Check if running as root (Don't do this!)
 if [ "$EUID" -eq 0 ]; then
@@ -57,7 +58,6 @@ mkdir -p \
 STOW_FOLDERS=(
     hypr backgrounds fastfetch kitty mpv nvim starship swaync waybar wofi yazi
     zsh tmux wayland-pipewire-idle-inhibit kwalletrc theme uwsm-autostart arch-config
-    user-scripts
 )
 
 # Directory paths
@@ -69,17 +69,25 @@ if [ -d "$DOTFILES_DIR" ]; then
     log "Stowing dotfiles..."
     cd "$DOTFILES_DIR" || exit 1
 
+    # Handle systemd-user
     if [ -d "systemd-user" ]; then
-        echo -n "Stowing systemd-user (no-folding)... "
-        stow -t "$HOME" --restow --no-folding systemd-user 2>/dev/null && echo "Done." || echo "Failed."
+        log_task "Stowing systemd-user (no-folding)"
+        stow -t "$HOME" --restow --no-folding systemd-user && echo -e "${GREEN}Done.${NC}" || echo -e "${RED}Failed.${NC}"
     fi
 
+    # Handle user-scripts specifically
+    if [ -d "scripts/user-scripts" ]; then
+        log_task "Stowing user scripts"
+        stow -d "scripts" -t "$HOME" --restow user-scripts && echo -e "${GREEN}Done.${NC}" || echo -e "${RED}Failed.${NC}"
+    fi
+
+    # Handle standard folders
     for folder in "${STOW_FOLDERS[@]}"; do
         if [ -d "$folder" ]; then
-            echo -n "Stowing $folder... "
-            stow -t "$HOME" --restow "$folder" 2>/dev/null && echo "Done." || echo "Failed."
+            log_task "Stowing $folder"
+            stow -t "$HOME" --restow "$folder" && echo -e "${GREEN}Done.${NC}" || echo -e "${RED}Failed.${NC}"
         else
-            warn "Skipping $folder (directory not found in $DOTFILES_DIR)."
+            warn "Skipping $folder (directory not found)."
         fi
     done
 
@@ -97,7 +105,7 @@ log "Syncing system scripts..."
 sync_system_file() {
     local src_path="$1"
     local target_path="$2"
-    
+
     if [ -f "$src_path" ]; then
         echo -n "Installing $target_path... "
         sudo install -Dm 755 "$src_path" "$target_path" && echo "Done." || echo "Failed."
