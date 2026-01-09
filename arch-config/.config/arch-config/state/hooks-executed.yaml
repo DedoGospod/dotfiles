@@ -24,3 +24,8 @@ hooks:
   script: /home/dylan/.config/arch-config/scripts/setup-nvidia.sh
   script_hash: '7501802525880796115'
   status: executed
+- executed_at: 2026-01-09T14:59:52.312436061+00:00
+  module: network
+  script: /home/dylan/.config/arch-config/scripts/setup-network.sh
+  script_hash: '7057173345737988926'
+  status: executed
