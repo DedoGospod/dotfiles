@@ -29,7 +29,11 @@ fi
 # Ask for sudo upfront to prevent timeouts later
 log "Requesting sudo privileges upfront..."
 sudo -v
-while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
+while true; do
+    sudo -n true
+    sleep 60
+    kill -0 "$$" || exit
+done 2>/dev/null &
 
 # --- CONFIGURATION & PACKAGE LISTS ---
 
@@ -40,7 +44,7 @@ TPM_PATH="$HOME/.tmux/plugins/tpm"
 # Base Pacman Packages
 PACMAN_PACKAGES=(
     # Core Desktop
-    hyprland hypridle hyprlock hyprpaper hyprshot hyprpolkitagent 
+    hyprland hypridle hyprlock hyprpaper hyprshot hyprpolkitagent
     hyprland-guiutils hyprutils uwsm waybar wofi swaync dbus wlsunset
 
     # Portals & Theming
@@ -48,18 +52,19 @@ PACMAN_PACKAGES=(
     qt5-wayland qt6-wayland qt6ct gnome-themes-extra
 
     # Apps & Utils
-    kitty neovim nautilus yazi mpv fastfetch btop gnome-disk-utility 
+    neovim nautilus yazi mpv fastfetch btop gnome-disk-utility
     obsidian pavucontrol gnome-keyring seahorse rsync keepassxc
+    ffmpeg ffmpegthumbnailer
 
     # Shell & CLI
-    zsh zsh-completions zsh-syntax-highlighting zsh-autosuggestions starship 
+    kitty zsh zsh-completions zsh-syntax-highlighting zsh-autosuggestions starship
     fzf zoxide fd tmux stow bat eza ripgrep ncdu trash-cli man-db
 
     # Network & Services
     networkmanager bluez bluez-utils pipewire wireplumber cronie power-profiles-daemon
 
     # Maintenance
-    reflector timeshift ffmpeg ffmpegthumbnailer
+    reflector timeshift
 
     # Containerization
     flatpak
@@ -68,7 +73,7 @@ PACMAN_PACKAGES=(
     linux-headers linux-zen linux-zen-headers
 
     # Fonts
-    ttf-cascadia-code-nerd ttf-ubuntu-font-family ttf-font-awesome 
+    ttf-cascadia-code-nerd ttf-ubuntu-font-family ttf-font-awesome
     ttf-dejavu ttf-liberation ttf-croscore noto-fonts noto-fonts-cjk noto-fonts-emoji
 )
 
@@ -98,9 +103,9 @@ AUR_PACKAGES=(
     pyprland
 )
 
-# Stow Packages (Directories in your dotfiles folder)
+# Stow Packages
 STOW_FOLDERS=(
-    hypr backgrounds fastfetch kitty mpv nvim starship swaync waybar wofi yazi 
+    hypr backgrounds fastfetch kitty mpv nvim starship swaync waybar wofi yazi
     zsh tmux wayland-pipewire-idle-inhibit kwalletrc theme uwsm-autostart mangohud
 )
 
@@ -126,7 +131,7 @@ read -r -p "Install Gaming packages? (y/N): " install_gaming
 read -r -p "Install NVIDIA drivers? (y/N): " install_nvidia
 read -r -p "Install Neovim dev tools? (y/N): " install_neovim
 read -r -p "Install WakeOnLan tools? (y/N): " install_wakeonlan
-read -r -p "Set up dotfiles with GNU Stow? (y/N): " stow_dotfiles
+# read -r -p "Set up dotfiles with GNU Stow? (y/N): " stow_dotfiles
 echo ""
 
 # Modify Package Lists based on answers
@@ -208,6 +213,64 @@ if [ -d "$DOTFILES_DIR" ]; then
     cd - >/dev/null
 else
     error "Dotfiles directory not found at $DOTFILES_DIR."
+fi
+
+# Enable NVIDIA KMS
+if [[ "$install_nvidia" =~ ^[Yy]$ ]]; then
+    log "Enabling NVIDIA Kernel Mode Setting (KMS)..."
+    echo "options nvidia-drm modeset=1" | sudo tee /etc/modprobe.d/nvidia.conf >/dev/null
+fi
+
+# Inject NVIDIA modules into mkinitcpio for initramfs regeneration
+if [[ "$install_nvidia" =~ ^[Yy]$ ]]; then
+    log "Adding NVIDIA modules to mkinitcpio..."
+    sudo sed -i 's/^MODULES=(/MODULES=(nvidia nvidia_modeset nvidia_uvm nvidia_drm /' /etc/mkinitcpio.conf
+
+    log "Regenerating initramfs..."
+    sudo mkinitcpio -P
+fi
+
+# UWSM General & Hyprland Environment
+log "Creating general UWSM environment configuration..."
+mkdir -p "$HOME/.config/uwsm"
+
+# Create/Overwrite the Hyprland-specific environment file
+cat <<EOF >"$HOME/.config/uwsm/env-hyprland"
+# Session Identity
+export XDG_CURRENT_DESKTOP=Hyprland
+export XDG_SESSION_DESKTOP=Hyprland
+export XDG_SESSION_TYPE=wayland
+
+# Toolkit Backends
+export GDK_BACKEND=wayland,x11
+export QT_QPA_PLATFORM="wayland;xcb"
+export SDL_VIDEODRIVER=wayland
+export CLUTTER_BACKEND=wayland
+
+# Theming
+export QT_QPA_PLATFORMTHEME=qt6ct
+export XCURSOR_THEME=Adwaita
+export XCURSOR_SIZE=24
+EOF
+
+# Ensure the main env file includes our new hyprland env
+if ! grep -q "env-hyprland" "$HOME/.config/uwsm/env" 2>/dev/null; then
+    echo "export-include env-hyprland" >>"$HOME/.config/uwsm/env"
+fi
+
+# --- NVIDIA Specifics (Modified) ---
+if [[ "$install_nvidia" =~ ^[Yy]$ ]]; then
+    log "Creating UWSM environment configuration for NVIDIA..."
+    cat <<EOF >"$HOME/.config/uwsm/env-nvidia"
+export LIBVA_DRIVER_NAME=nvidia
+export __GLX_VENDOR_LIBRARY_NAME=nvidia
+export NVD_BACKEND=direct
+export ELECTRON_OZONE_PLATFORM_HINT=auto
+EOF
+
+    if ! grep -q "env-nvidia" "$HOME/.config/uwsm/env" 2>/dev/null; then
+        echo "export-include env-nvidia" >>"$HOME/.config/uwsm/env"
+    fi
 fi
 
 # Gamescope Cap
