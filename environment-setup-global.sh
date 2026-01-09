@@ -60,11 +60,8 @@ STOW_FOLDERS=(
     zsh tmux wayland-pipewire-idle-inhibit kwalletrc theme uwsm-autostart arch-config
 )
 
-# Directory paths
-DOTFILES_DIR="$HOME/dotfiles"
-TPM_PATH="$HOME/.tmux/plugins/tpm"
-
 # Dotfiles
+DOTFILES_DIR="$HOME/dotfiles"
 if [ -d "$DOTFILES_DIR" ]; then
     log "Stowing dotfiles..."
     cd "$DOTFILES_DIR" || exit 1
@@ -96,9 +93,8 @@ else
     error "Dotfiles directory not found at $DOTFILES_DIR."
 fi
 
-# System Scripts
+# Change directory to scripts dir if not in it already
 SYSTEM_SRC="$DOTFILES_DIR/scripts/system-scripts"
-
 if [ -d "$SYSTEM_SRC" ]; then
     log "Syncing system scripts..."
 
@@ -169,6 +165,7 @@ else
 fi
 
 # Tmux Plugin Manager
+TPM_PATH="$HOME/.tmux/plugins/tpm"
 if command -v tmux >/dev/null 2>&1; then
     TPM_PATH="${TPM_PATH:-$HOME/.tmux/plugins/tpm}"
 
