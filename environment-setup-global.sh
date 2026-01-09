@@ -95,14 +95,21 @@ fi
 # Timeshift Autosnap Config
 TS_CONFIG="/etc/timeshift-autosnap.conf"
 if [ -f "$TS_CONFIG" ]; then
-    log "Configuring Timeshift maxSnapshots..."
-    sudo sed -i 's/^maxSnapshots=.*/maxSnapshots=1/' "$TS_CONFIG"
+    if ! grep -q "^maxSnapshots=1$" "$TS_CONFIG"; then
+        log "Configuring Timeshift maxSnapshots to 1..."
+        sudo sed -i 's/^maxSnapshots=.*/maxSnapshots=1/' "$TS_CONFIG"
+    else
+        log "Timeshift maxSnapshots is already set to 1."
+    fi
+else
+    warn "Timeshift config not found at $TS_CONFIG. Skipping."
 fi
 
 # Tmux Plugin Manager
+TPM_PATH="${TPM_PATH:-$HOME/.tmux/plugins/tpm}" # Default path if not set
 if [ ! -d "$TPM_PATH" ]; then
     log "Installing Tmux Plugin Manager..."
-    git clone https://github.com/tmux-plugins/tpm "$TPM_PATH"
+    git clone --depth 1 https://github.com/tmux-plugins/tpm "$TPM_PATH"
 else
     log "TPM already installed."
 fi
