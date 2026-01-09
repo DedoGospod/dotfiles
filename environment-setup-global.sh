@@ -15,6 +15,32 @@ log() { echo -e "${GREEN}[INFO]${NC} $1"; }
 warn() { echo -e "${YELLOW}[WARN]${NC} $1"; }
 error() { echo -e "${RED}[ERROR]${NC} $1"; }
 
+# Check if running as root (Don't do this!)
+if [ "$EUID" -eq 0 ]; then
+    error "Please do not run this script as root."
+    error "Run it as a normal user. You will be prompted for sudo password when needed."
+    exit 1
+fi
+
+# Ask for sudo upfront to prevent timeouts later
+sudo -v
+
+# This runs in the background for the duration of the script.
+keep_sudo_alive() {
+    while true; do
+        sudo -n true
+        sleep 60
+        kill -0 "$$" || exit
+    done
+}
+
+log "Requesting sudo privileges upfront..."
+keep_sudo_alive &
+SUDO_PID=$!
+
+# Ensure the background process dies when the script exits
+trap 'kill $SUDO_PID' EXIT
+
 # Set XDG paths and application specific paths
 log "Setting XDG environment variables..."
 export XDG_DATA_HOME="$HOME/.local/share"
