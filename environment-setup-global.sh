@@ -135,11 +135,11 @@ fi
 # Inject NVIDIA modules into mkinitcpio for initramfs regeneration
 if [[ "$setup_nvidia" =~ ^[Yy]$ ]]; then
     MK_CONF="/etc/mkinitcpio.conf"
-    
+
     # Check if nvidia_drm is already in the MODULES array (even if commented out)
-    if ! grep -E "^MODULES=.*nvidia_drm" "$MK_CONF" >/dev/null 2>&1 && \
-       ! grep -E "^MODULES\+=\(.*\bnvidia_drm\b.*\)" "$MK_CONF" >/dev/null 2>&1; then
-        
+    if ! grep -E "^MODULES=.*nvidia_drm" "$MK_CONF" >/dev/null 2>&1 &&
+        ! grep -E "^MODULES\+=\(.*\bnvidia_drm\b.*\)" "$MK_CONF" >/dev/null 2>&1; then
+
         # Append the new modules line
         log "Injecting NVIDIA modules into mkinitcpio..."
         echo -e "\n# Added by setup script\nMODULES+=(nvidia nvidia_modeset nvidia_uvm nvidia_drm)" | sudo tee -a "$MK_CONF" >/dev/null
@@ -196,4 +196,4 @@ EOF
 fi
 
 echo -e "\n---"
-success "Setup complete! Please restart your session."
+success "Setup complete! You may need to restart your session."
