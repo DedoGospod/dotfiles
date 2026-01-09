@@ -25,6 +25,10 @@ fi
 # Ask for sudo upfront to prevent timeouts later
 sudo -v
 
+# Optional setups
+read -r -p "Setup NVIDIA? (y/N): " setup_nvidia
+read -r -p "Setup WakeOnLan? (y/N): " setup_wakeonlan
+
 # Paru (AUR Helper)
 if ! command -v paru &>/dev/null; then
     log "Installing Paru..."
@@ -140,9 +144,6 @@ else
     warn "Tmux is not installed. Skipping TPM setup."
 fi
 
-# Ask to setup nvidia
-read -r -p "Setup NVIDIA? (y/N): " setup_nvidia
-
 # Create UWSM directory if it doesnt already exist
 if command -v uwsm >/dev/null 2>&1; then
     log "UWSM found. Preparing configuration directory..."
@@ -222,5 +223,36 @@ EOF
 
     if ! grep -q "env-nvidia" "$HOME/.config/uwsm/env" 2>/dev/null; then
         echo "export-include env-nvidia" >>"$HOME/.config/uwsm/env"
+    fi
+fi
+
+# WoL setup
+if [[ "$setup_wakeonlan" =~ ^[Yy]$ ]]; then
+    # Only detect the interface if we actually need it
+    INTERFACE=$(ip route | grep default | awk '{print $5}' | head -n1)
+
+    # Check if detection worked
+    if [ -z "$INTERFACE" ]; then
+        error "Could not detect a network interface. WoL service not created."
+    else
+        log "Detected interface: $INTERFACE"
+        SERVICE_FILE="/etc/systemd/system/wol.service"
+
+        # Create the service file
+        cat <<EOF | sudo tee $SERVICE_FILE >/dev/null
+[Unit]
+Description=Enable Wake On LAN for $INTERFACE
+After=network-online.target
+Requires=network-online.target 
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/ethtool -s $INTERFACE wol g
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+        log "WoL service enabled for $INTERFACE."
     fi
 fi
