@@ -57,6 +57,7 @@ mkdir -p \
 STOW_FOLDERS=(
     hypr backgrounds fastfetch kitty mpv nvim starship swaync waybar wofi yazi
     zsh tmux wayland-pipewire-idle-inhibit kwalletrc theme uwsm-autostart arch-config
+    user-scripts
 )
 
 # Directory paths
@@ -86,6 +87,27 @@ if [ -d "$DOTFILES_DIR" ]; then
 else
     error "Dotfiles directory not found at $DOTFILES_DIR."
 fi
+
+# Define your source and target
+SYSTEM_SRC="$DOTFILES_DIR/system-scripts"
+
+log "Syncing system scripts..."
+
+# This function mimics 'stow' logic
+sync_system_file() {
+    local src_path="$1"
+    local target_path="$2"
+    
+    if [ -f "$src_path" ]; then
+        echo -n "Installing $target_path... "
+        sudo install -Dm 755 "$src_path" "$target_path" && echo "Done." || echo "Failed."
+    fi
+}
+
+# Now just list your files like a "manifest"
+sync_system_file "$SYSTEM_SRC/etc/cron.weekly/btrfs-clean-job" "/etc/cron.weekly/btrfs-clean-job"
+sync_system_file "$SYSTEM_SRC/etc/cron.weekly/clean-pkg-managers" "/etc/cron.weekly/clean-pkg-managers"
+sync_system_file "$SYSTEM_SRC/usr/local/bin/reboot-to-windows" "/usr/local/bin/reboot-to-windows"
 
 # Gamescope Cap
 if command -v gamescope >/dev/null 2>&1; then
