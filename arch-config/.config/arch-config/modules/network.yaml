@@ -1,0 +1,9 @@
+description: Network packages
+
+packages:
+  - networkmanager
+  - ethtool
+  - wol
+
+post_install_hook: #scripts/setup-gaming.sh
+hook_behavior: #ask

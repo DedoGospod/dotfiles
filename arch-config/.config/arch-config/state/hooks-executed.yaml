@@ -1,0 +1,6 @@
+hooks:
+- executed_at: 2026-01-09T13:02:29.289405864+00:00
+  module: cli-tools
+  script: /home/dylan/.config/arch-config/scripts/setup-cli.sh
+  script_hash: '15359230525330078229'
+  status: executed

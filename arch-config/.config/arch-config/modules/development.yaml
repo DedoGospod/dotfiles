@@ -1,0 +1,25 @@
+description: Dev packages
+
+packages:
+  - neovim
+  - rustup
+  - go
+  - nodejs
+  - npm
+  - dotnet-sdk
+  - zig
+  - luarocks
+  - clang
+  - gcc
+  - cmake
+  - git
+  - stow
+  - shellcheck
+  - inotify-tools
+  - imagemagick
+  - unzip
+
+    
+
+post_install_hook: #scripts/setup-gaming.sh
+hook_behavior: #ask

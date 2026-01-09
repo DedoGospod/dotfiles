@@ -1,0 +1,12 @@
+description: Filesystem packages
+
+packages:
+  - btrfs-progs
+  - ntfs-3g
+  - grub-btrfs
+  - timeshift
+  - timeshift-autosnap
+
+post_install_hook: scripts/setup-filesystem.sh
+hook_behavior: #ask
+

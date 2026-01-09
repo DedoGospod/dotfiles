@@ -1,0 +1,50 @@
+host: archlinux
+description: dylans pc
+import: []
+enabled_modules:
+- applications
+- audio-media
+- cli-tools
+- development
+- filesystem
+- fonts-themes
+- gaming
+- hyprland
+- virtual-machine
+- network
+- nvidia
+packages:
+- dcli-arch-git
+- base
+- base-devel
+- linux-firmware
+- linux
+- linux-headers
+- linux-zen
+- linux-zen-headers
+- grub
+- os-prober
+- efibootmgr
+- power-profiles-daemon
+- reflector
+- cronie
+- amd-ucode
+- xorg-xhost
+exclude: []
+additional_packages: []
+flatpak_scope: user
+auto_prune: false
+config_backups:
+  enabled: true
+  max_backups: 3
+system_backups:
+  enabled: true
+  backup_on_sync: true
+  backup_on_update: true
+  tool: timeshift
+  snapper_config: root
+services:
+  enabled: []
+  disabled: []
+editor: nvim
+aur_helper: paru
