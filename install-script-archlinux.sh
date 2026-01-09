@@ -111,6 +111,7 @@ STOW_FOLDERS=(
 
 # --- ENVIRONMENT SETUP ---
 
+# Set XDG paths and application specific paths
 log "Setting XDG environment variables..."
 export XDG_DATA_HOME="$HOME/.local/share"
 export XDG_CONFIG_HOME="$HOME/.config"
@@ -186,9 +187,9 @@ flatpak install -y --noninteractive flathub "${FLATPAK_APPS[@]}"
 # --- SYSTEM CONFIGURATION ---
 
 # Shell
-if [[ "$SHELL" != *"zsh"* ]]; then
+if command -v zsh >/dev/null 2>&1; then
     log "Changing default shell to zsh..."
-    chsh -s "$(which zsh)"
+    chsh -s "$(command -v zsh)"
 fi
 
 # Dotfiles
@@ -215,31 +216,18 @@ else
     error "Dotfiles directory not found at $DOTFILES_DIR."
 fi
 
-# Enable NVIDIA KMS
-if [[ "$install_nvidia" =~ ^[Yy]$ ]]; then
-    log "Enabling NVIDIA Kernel Mode Setting (KMS)..."
-    echo "options nvidia-drm modeset=1" | sudo tee /etc/modprobe.d/nvidia.conf >/dev/null
+# Create UWSM directory if it doesnt already exist
+if command -v uwsm >/dev/null 2>&1; then
+    log "UWSM found. Preparing configuration directory..."
+    mkdir -p "$HOME/.config/uwsm"
+else
+    warn "UWSM not detected. Skipping uwsm directory configuration ..."
+
 fi
 
-# Inject NVIDIA modules into mkinitcpio for initramfs regeneration
-if [[ "$install_nvidia" =~ ^[Yy]$ ]]; then
-    log "Adding NVIDIA modules to mkinitcpio..."
-
-        if ! grep -E "^[^#]*nvidia_drm" /etc/mkinitcpio.conf >/dev/null; then
-        log "Injecting NVIDIA modules ..."
-        echo -e "\n# NVIDIA Setup Script\nMODULES+=(nvidia nvidia_modeset nvidia_uvm nvidia_drm)" | sudo tee -a /etc/mkinitcpio.conf >/dev/null
-
-        log "Regenerating initramfs..."
-        sudo mkinitcpio -P
-    fi
-fi
-
-# UWSM General & Hyprland Environment
-log "Creating general UWSM environment configuration..."
-mkdir -p "$HOME/.config/uwsm"
-
-# Create/Overwrite the Hyprland-specific environment file
-cat <<EOF >"$HOME/.config/uwsm/env-hyprland"
+# Create/Overwrite the Hyprland-specific uwsm environment file
+if command -v uwsm >/dev/null 2>&1; then
+    cat <<EOF >"$HOME/.config/uwsm/env-hyprland"
 # Session Identity
 export XDG_CURRENT_DESKTOP=Hyprland
 export XDG_SESSION_DESKTOP=Hyprland
@@ -257,12 +245,45 @@ export XCURSOR_THEME=Adwaita
 export XCURSOR_SIZE=24
 EOF
 
-# Ensure the main env file includes our new hyprland env
-if ! grep -q "env-hyprland" "$HOME/.config/uwsm/env" 2>/dev/null; then
-    echo "export-include env-hyprland" >>"$HOME/.config/uwsm/env"
+    # Ensure the main env file includes our new hyprland env
+    if ! grep -q "env-hyprland" "$HOME/.config/uwsm/env" 2>/dev/null; then
+        echo "export-include env-hyprland" >>"$HOME/.config/uwsm/env"
+    fi
 fi
 
-# --- NVIDIA Specifics (Modified) ---
+# Enable NVIDIA KMS
+if [[ "$install_nvidia" =~ ^[Yy]$ ]]; then
+    CONF_FILE="/etc/modprobe.d/nvidia.conf"
+    SETTING="options nvidia-drm modeset=1"
+
+    if [ ! -f "$CONF_FILE" ] || ! grep -Fxq "$SETTING" "$CONF_FILE"; then
+        log "Enabling NVIDIA Kernel Mode Setting (KMS)..."
+        echo "$SETTING" | sudo tee "$CONF_FILE" >/dev/null
+    else
+        log "NVIDIA KMS already configured."
+    fi
+fi
+
+# Inject NVIDIA modules into mkinitcpio for initramfs regeneration
+if [[ "$install_nvidia" =~ ^[Yy]$ ]]; then
+    MK_CONF="/etc/mkinitcpio.conf"
+
+    # Check if nvidia_drm is already in the MODULES array (even if commented out)
+    if ! grep -E "^MODULES=.*nvidia_drm" "$MK_CONF" >/dev/null 2>&1 &&
+        ! grep -E "^MODULES\+=\(.*\bnvidia_drm\b.*\)" "$MK_CONF" >/dev/null 2>&1; then
+
+        # Append the new modules line
+        log "Injecting NVIDIA modules into mkinitcpio..."
+        echo -e "\n# Added by setup script\nMODULES+=(nvidia nvidia_modeset nvidia_uvm nvidia_drm)" | sudo tee -a "$MK_CONF" >/dev/null
+
+        log "Regenerating initramfs (this may take a moment)..."
+        sudo mkinitcpio -P
+    else
+        log "NVIDIA modules already present in mkinitcpio. Skipping regeneration."
+    fi
+fi
+
+# NVIDIA uwsm env variables
 if [[ "$install_nvidia" =~ ^[Yy]$ ]]; then
     log "Creating UWSM environment configuration for NVIDIA..."
     cat <<EOF >"$HOME/.config/uwsm/env-nvidia"
@@ -278,36 +299,54 @@ EOF
 fi
 
 # Gamescope Cap
-if [[ "$install_gaming" =~ ^[Yy]$ ]]; then
-    if command -v gamescope &>/dev/null; then
+if command -v gamescope >/dev/null 2>&1; then
+    GAMESCOPE_PATH=$(command -v gamescope)
+
+    # Check if the capability is already present
+    if ! getcap "$GAMESCOPE_PATH" | grep -q "cap_sys_nice+ep"; then
         log "Setting CAP_SYS_NICE for Gamescope..."
-        sudo setcap 'cap_sys_nice=+ep' "$(which gamescope)"
+        sudo setcap 'cap_sys_nice=+ep' "$GAMESCOPE_PATH"
     fi
+else
+    warn "Gamescope not found. Skipping capability setup."
 fi
 
 # Gamemode setup
-if [[ "$install_gaming" =~ ^[Yy]$ ]]; then
-    if command -v gamemoded &>/dev/null; then
-        log "Adding user to gamemode group"
+if command -v gamemoded >/dev/null 2>&1; then
+    if ! id -nG "$USER" | grep -qw "gamemode"; then
+        log "Adding user to gamemode group..."
         sudo usermod -aG gamemode "$USER"
-    else
-        log "'gamemoded' command not found. Skipping user group modification."
+        log "NOTE: You may need to log out and back in for group changes to apply."
     fi
+else
+    warn "'gamemoded' command not found. Skipping user group modification."
 fi
 
 # Timeshift Autosnap Config
 TS_CONFIG="/etc/timeshift-autosnap.conf"
 if [ -f "$TS_CONFIG" ]; then
-    log "Configuring Timeshift maxSnapshots..."
-    sudo sed -i 's/^maxSnapshots=.*/maxSnapshots=1/' "$TS_CONFIG"
+    if ! grep -q "^maxSnapshots=1$" "$TS_CONFIG"; then
+        log "Configuring Timeshift maxSnapshots to 1..."
+        sudo sed -i 's/^maxSnapshots=.*/maxSnapshots=1/' "$TS_CONFIG"
+    else
+        log "Timeshift maxSnapshots is already set to 1."
+    fi
+else
+    warn "Timeshift config not found at $TS_CONFIG. Skipping."
 fi
 
 # Tmux Plugin Manager
-if [ ! -d "$TPM_PATH" ]; then
-    log "Installing Tmux Plugin Manager..."
-    git clone https://github.com/tmux-plugins/tpm "$TPM_PATH"
+if command -v tmux >/dev/null 2>&1; then
+    TPM_PATH="${TPM_PATH:-$HOME/.tmux/plugins/tpm}"
+
+    if [ ! -d "$TPM_PATH" ]; then
+        log "Tmux found. Installing Tmux Plugin Manager..."
+        git clone --depth 1 https://github.com/tmux-plugins/tpm "$TPM_PATH"
+    else
+        log "TPM already installed."
+    fi
 else
-    log "TPM already installed."
+    warn "Tmux is not installed. Skipping TPM setup."
 fi
 
 # --- FINISH ---
