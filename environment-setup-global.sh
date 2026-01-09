@@ -14,7 +14,6 @@ NC='\033[0m'
 log() { echo -e "${GREEN}[INFO]${NC} $1"; }
 warn() { echo -e "${YELLOW}[WARN]${NC} $1"; }
 error() { echo -e "${RED}[ERROR]${NC} $1"; }
-success() { echo -e "${GREEN}[OK]${NC} $1"; }
 
 # Set XDG paths and application specific paths
 log "Setting XDG environment variables..."
@@ -22,7 +21,6 @@ export XDG_DATA_HOME="$HOME/.local/share"
 export XDG_CONFIG_HOME="$HOME/.config"
 export XDG_STATE_HOME="$HOME/.local/state"
 export XDG_CACHE_HOME="$HOME/.cache"
-success "Directory structure initialized."
 
 log "Creating directory structure..."
 mkdir -p \
@@ -113,7 +111,7 @@ if command -v tmux >/dev/null 2>&1; then
 
     if [ ! -d "$TPM_PATH" ]; then
         log "Tmux found. Installing Tmux Plugin Manager..."
-        git clone --depth 1 https://github.com/tmux-plugins/tpm "$TPM_PATH" && success "TPM installed."
+        git clone --depth 1 https://github.com/tmux-plugins/tpm "$TPM_PATH"
     else
         log "TPM already installed."
     fi
@@ -123,6 +121,41 @@ fi
 
 # Ask to setup nvidia
 read -r -p "Setup NVIDIA? (y/N): " setup_nvidia
+
+# Create UWSM directory if it doesnt already exist
+if command -v uwsm >/dev/null 2>&1; then
+    log "UWSM found. Preparing configuration directory..."
+    mkdir -p "$HOME/.config/uwsm"
+else
+    warn "UWSM not detected. Skipping uwsm directory configuration ..."
+
+fi
+
+# Create/Overwrite the Hyprland-specific uwsm environment file
+if command -v uwsm >/dev/null 2>&1; then
+    cat <<EOF >"$HOME/.config/uwsm/env-hyprland"
+# Session Identity
+export XDG_CURRENT_DESKTOP=Hyprland
+export XDG_SESSION_DESKTOP=Hyprland
+export XDG_SESSION_TYPE=wayland
+
+# Toolkit Backends
+export GDK_BACKEND=wayland,x11
+export QT_QPA_PLATFORM="wayland;xcb"
+export SDL_VIDEODRIVER=wayland
+export CLUTTER_BACKEND=wayland
+
+# Theming
+export QT_QPA_PLATFORMTHEME=qt6ct
+export XCURSOR_THEME=Adwaita
+export XCURSOR_SIZE=24
+EOF
+
+    # Ensure the main env file includes our new hyprland env
+    if ! grep -q "env-hyprland" "$HOME/.config/uwsm/env" 2>/dev/null; then
+        echo "export-include env-hyprland" >>"$HOME/.config/uwsm/env"
+    fi
+fi
 
 # Enable NVIDIA KMS
 if [[ "$setup_nvidia" =~ ^[Yy]$ ]]; then
@@ -156,35 +189,7 @@ if [[ "$setup_nvidia" =~ ^[Yy]$ ]]; then
     fi
 fi
 
-# UWSM General & Hyprland Environment
-log "Creating general UWSM environment configuration..."
-mkdir -p "$HOME/.config/uwsm"
-
-# Create/Overwrite the Hyprland-specific environment file
-cat <<EOF >"$HOME/.config/uwsm/env-hyprland"
-# Session Identity
-export XDG_CURRENT_DESKTOP=Hyprland
-export XDG_SESSION_DESKTOP=Hyprland
-export XDG_SESSION_TYPE=wayland
-
-# Toolkit Backends
-export GDK_BACKEND=wayland,x11
-export QT_QPA_PLATFORM="wayland;xcb"
-export SDL_VIDEODRIVER=wayland
-export CLUTTER_BACKEND=wayland
-
-# Theming
-export QT_QPA_PLATFORMTHEME=qt6ct
-export XCURSOR_THEME=Adwaita
-export XCURSOR_SIZE=24
-EOF
-
-# Ensure the main env file includes our new hyprland env
-if ! grep -q "env-hyprland" "$HOME/.config/uwsm/env" 2>/dev/null; then
-    echo "export-include env-hyprland" >>"$HOME/.config/uwsm/env"
-fi
-
-# --- NVIDIA Specifics (Modified) ---
+# NVIDIA uwsm env variables
 if [[ "$setup_nvidia" =~ ^[Yy]$ ]]; then
     log "Creating UWSM environment configuration for NVIDIA..."
     cat <<EOF >"$HOME/.config/uwsm/env-nvidia"
@@ -197,8 +202,4 @@ EOF
     if ! grep -q "env-nvidia" "$HOME/.config/uwsm/env" 2>/dev/null; then
         echo "export-include env-nvidia" >>"$HOME/.config/uwsm/env"
     fi
-    success "NVIDIA UWSM environment set up."
 fi
-
-echo -e "\n---"
-success "Setup complete! You may need to restart your session."
