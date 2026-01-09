@@ -19,6 +19,7 @@ enabled_modules:
   - filesystem
   - network
   - system-scripts
+  - dotfiles
 
   # Hardware & Virtualization
   - nvidia
