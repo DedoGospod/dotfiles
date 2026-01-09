@@ -344,8 +344,38 @@ else
     warn "Tmux is not installed. Skipping TPM setup."
 fi
 
-# --- FINISH ---
+# WoL setup
+if [[ "$setup_wakeonlan" =~ ^[Yy]$ ]]; then
+    # Only detect the interface if we actually need it
+    INTERFACE=$(ip route | grep default | awk '{print $5}' | head -n1)
 
+    # Check if detection worked
+    if [ -z "$INTERFACE" ]; then
+        error "Could not detect a network interface. WoL service not created."
+    else
+        log "Detected interface: $INTERFACE"
+        SERVICE_FILE="/etc/systemd/system/wol.service"
+
+        # Create the service file
+        cat <<EOF | sudo tee $SERVICE_FILE >/dev/null
+[Unit]
+Description=Enable Wake On LAN for $INTERFACE
+After=network-online.target
+Requires=network-online.target 
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/ethtool -s $INTERFACE wol g
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+        log "WoL service enabled for $INTERFACE."
+    fi
+fi
+
+# --- FINISH ---
 echo ""
 echo "------------------------------------------------------"
 log "Installation Complete! 🎉"
