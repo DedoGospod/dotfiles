@@ -27,13 +27,23 @@ if [ "$EUID" -eq 0 ]; then
 fi
 
 # Ask for sudo upfront to prevent timeouts later
-log "Requesting sudo privileges upfront..."
 sudo -v
-while true; do
-    sudo -n true
-    sleep 60
-    kill -0 "$$" || exit
-done 2>/dev/null &
+
+# This runs in the background for the duration of the script.
+keep_sudo_alive() {
+    while true; do
+        sudo -n true
+        sleep 60
+        kill -0 "$$" || exit
+    done
+}
+
+log "Requesting sudo privileges upfront..."
+keep_sudo_alive &
+SUDO_PID=$!
+
+# Ensure the background process dies when the script exits
+trap 'kill $SUDO_PID' EXIT
 
 # --- CONFIGURATION & PACKAGE LISTS ---
 
