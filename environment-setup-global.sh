@@ -25,22 +25,6 @@ fi
 # Ask for sudo upfront to prevent timeouts later
 sudo -v
 
-# This runs in the background for the duration of the script.
-keep_sudo_alive() {
-    while true; do
-        sudo -n true
-        sleep 60
-        kill -0 "$$" || exit
-    done
-}
-
-log "Requesting sudo privileges upfront..."
-keep_sudo_alive &
-SUDO_PID=$!
-
-# Ensure the background process dies when the script exits
-trap 'kill $SUDO_PID' EXIT
-
 # Paru (AUR Helper)
 if ! command -v paru &>/dev/null; then
     log "Installing Paru..."
