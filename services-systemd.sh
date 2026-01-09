@@ -25,11 +25,12 @@ log_error() { echo -e "${RED}[ERROR]${NC} $1"; }
 # Usage: service_exists "service_name" "scope (--user or empty)"
 service_exists() {
     local service="$1"
-    local scope="${2:-}"
+    local scope_arg="$2"
     
-    # We use 'systemctl list-unit-files' to check existence rather than LoadState
-    # because a service might not be loaded yet but still exists on disk.
-    if systemctl "$scope" list-unit-files "$service" &>/dev/null; then
+    local systemctl_args=()
+    [[ -n "$scope_arg" ]] && systemctl_args+=("$scope_arg")
+
+    if systemctl "${systemctl_args[@]}" list-unit-files "$service" | grep -q "$service"; then
         return 0
     else
         return 1
@@ -106,13 +107,11 @@ systemctl --user daemon-reload
 echo ""
 log_info "--- Configuring System Services ---"
 
-# Disable Wait Online (Speed up boot)
-manage_service "systemd-networkd-wait-online.service" "" "disable" "potentially faster boot" "n"
-
 # Standard Services
 manage_service "cronie.service"    "" "enable" "Scheduled tasks" "Y"
 manage_service "bluetooth.service" "" "enable" "Bluetooth connectivity" "n"
 manage_service "wol.service"       "" "enable" "Wake on LAN" "n"
+manage_service "ratbagd.service"   "" "enable" "Piper mouse configuration" "Y"
 manage_service "power-profiles-daemon.service" "" "enable" "Power profiles" "Y"
 
 # Special Logic: Grub Btrfs
@@ -154,17 +153,17 @@ fi
 if $IS_HYPRLAND; then
     manage_service "hypridle.service"        "--user" "enable" "Idle daemon" "Y"
     manage_service "hyprpaper.service"       "--user" "enable" "Wallpaper daemon" "Y"
-    manage_service "waybar.service"          "--user" "enable" "Status bar" "Y"
     manage_service "pyprland.service"        "--user" "enable" "Pyprland plugins" "Y"
     manage_service "hyprpolkitagent.service" "--user" "enable" "Polkit Authentication" "Y"
-    manage_service "wlsunset.service"        "--user" "enable" "Blue light filter" "Y"
-    manage_service "swaync.service"          "--user" "enable" "Notification daemon" "Y"
 else
     echo "  [User] Not in Hyprland. Skipping Hyprland-specific services."
 fi
 
 # General user services
 manage_service "wayland-pipewire-idle-inhibit.service" "--user" "enable" "Prevent sleep when playing audio" "Y"
+manage_service "waybar.service"          "--user" "enable" "Status bar" "Y"
+manage_service "wlsunset.service"        "--user" "enable" "Blue light filter" "Y"
+manage_service "swaync.service"          "--user" "enable" "Notification daemon" "Y"
 manage_service "easyeffects.service"                   "--user" "enable" "Audio effects/Equalizer" "n"
 manage_service "obs.service"                           "--user" "enable" "OBS Studio" "n"
 
