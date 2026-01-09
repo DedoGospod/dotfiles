@@ -1,6 +1,4 @@
 #!/bin/bash
-# Arch Linux Hyprland Setup Script
-# Combined and Optimized
 
 # --- PRELIMINARY SETUP & CONSTANTS ---
 
@@ -124,7 +122,7 @@ read -r -p "Install Gaming packages? (y/N): " install_gaming
 read -r -p "Install NVIDIA drivers? (y/N): " install_nvidia
 read -r -p "Install Neovim dev tools? (y/N): " install_neovim
 read -r -p "Install WakeOnLan tools? (y/N): " install_wakeonlan
-# read -r -p "Set up dotfiles with GNU Stow? (y/N): " stow_dotfiles
+read -r -p "Set up dotfiles with GNU Stow? (y/N): " stow_dotfiles
 echo ""
 
 # Modify Package Lists based on answers
@@ -186,35 +184,37 @@ fi
 
 # Dotfiles
 DOTFILES_DIR="$HOME/dotfiles"
-if [ -d "$DOTFILES_DIR" ]; then
-    log "Stowing dotfiles..."
-    cd "$DOTFILES_DIR" || exit 1
+if [[ "$stow_dotfiles" =~ ^[Yy]$ ]]; then
+    if [ -d "$DOTFILES_DIR" ]; then
+        log "Stowing dotfiles..."
+        cd "$DOTFILES_DIR" || exit 1
 
-    # Handle systemd-user
-    if [ -d "systemd-user" ]; then
-        log_task "Stowing systemd-user (no-folding)"
-        stow -t "$HOME" --restow --no-folding systemd-user && echo -e "${GREEN}Done.${NC}" || echo -e "${RED}Failed.${NC}"
-    fi
-
-    # Handle user-scripts specifically
-    if [ -d "scripts/user-scripts" ]; then
-        log_task "Stowing user scripts"
-        stow -d "scripts" -t "$HOME" --restow user-scripts && echo -e "${GREEN}Done.${NC}" || echo -e "${RED}Failed.${NC}"
-    fi
-
-    # Handle standard folders
-    for folder in "${STOW_FOLDERS[@]}"; do
-        if [ -d "$folder" ]; then
-            log_task "Stowing $folder"
-            stow -t "$HOME" --restow "$folder" && echo -e "${GREEN}Done.${NC}" || echo -e "${RED}Failed.${NC}"
-        else
-            warn "Skipping $folder (directory not found)."
+        # Handle systemd-user
+        if [ -d "systemd-user" ]; then
+            log_task "Stowing systemd-user (no-folding)"
+            stow -t "$HOME" --restow --no-folding systemd-user && echo -e "${GREEN}Done.${NC}" || echo -e "${RED}Failed.${NC}"
         fi
-    done
 
-    cd - >/dev/null
-else
-    error "Dotfiles directory not found at $DOTFILES_DIR."
+        # Handle user-scripts specifically
+        if [ -d "scripts/user-scripts" ]; then
+            log_task "Stowing user scripts"
+            stow -d "scripts" -t "$HOME" --restow user-scripts && echo -e "${GREEN}Done.${NC}" || echo -e "${RED}Failed.${NC}"
+        fi
+
+        # Handle standard folders
+        for folder in "${STOW_FOLDERS[@]}"; do
+            if [ -d "$folder" ]; then
+                log_task "Stowing $folder"
+                stow -t "$HOME" --restow "$folder" && echo -e "${GREEN}Done.${NC}" || echo -e "${RED}Failed.${NC}"
+            else
+                warn "Skipping $folder (directory not found)."
+            fi
+        done
+
+        cd - >/dev/null
+    else
+        error "Dotfiles directory not found at $DOTFILES_DIR."
+    fi
 fi
 
 # System Scripts
