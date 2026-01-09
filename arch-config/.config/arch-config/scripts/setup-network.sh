@@ -41,5 +41,5 @@ ExecStart=/usr/bin/ethtool -s $INTERFACE wol g
 WantedBy=multi-user.target
 EOF
 
-    log "WoL service enabled for $INTERFACE."
+    log "WoL service integrated with $INTERFACE."
 fi

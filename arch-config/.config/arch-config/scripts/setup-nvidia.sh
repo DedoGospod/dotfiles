@@ -21,7 +21,6 @@ if command -v uwsm >/dev/null 2>&1; then
     mkdir -p "$HOME/.config/uwsm"
 else
     warn "UWSM not detected. Skipping uwsm directory configuration ..."
-
 fi
 
 # NVIDIA uwsm env variables

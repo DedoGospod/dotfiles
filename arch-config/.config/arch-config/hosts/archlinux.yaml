@@ -13,6 +13,7 @@ enabled_modules:
 - virtual-machine
 - network
 - nvidia
+- system-scripts
 packages:
 - dcli-arch-git
 - base

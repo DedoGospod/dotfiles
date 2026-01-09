@@ -1,8 +1,23 @@
 #!/usr/bin/env bash
 
+# Exit immediately if a command exits with a non-zero status
+set -e
+set -o pipefail
+
+# Colors for logging
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+RED='\033[0;31m'
+NC='\033[0m'
+
+# Helper Functions
+log() { echo -e "${GREEN}[INFO]${NC} $1"; }
+warn() { echo -e "${YELLOW}[WARN]${NC} $1"; }
+error() { echo -e "${RED}[ERROR]${NC} $1"; }
+log_task() { echo -ne "${GREEN}[INFO]${NC} $1... "; }
+
 # System Scripts
-DOTFILES_DIR="$HOME/dotfiles"
-SYSTEM_SRC="$DOTFILES_DIR/scripts/system-scripts"
+SYSTEM_SRC=/home/dylan/dotfiles/scripts/system-scripts
 
 if [ -d "$SYSTEM_SRC" ]; then
     log "Syncing system scripts..."

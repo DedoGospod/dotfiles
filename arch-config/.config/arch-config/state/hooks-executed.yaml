@@ -29,3 +29,8 @@ hooks:
   script: /home/dylan/.config/arch-config/scripts/setup-network.sh
   script_hash: '7057173345737988926'
   status: executed
+- executed_at: 2026-01-09T16:35:36.528518447+00:00
+  module: system-scripts
+  script: /home/dylan/.config/arch-config/scripts/setup-system-scripts.sh
+  script_hash: '15808673060739958477'
+  status: executed
