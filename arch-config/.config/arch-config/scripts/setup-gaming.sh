@@ -38,3 +38,6 @@ if command -v gamemoded >/dev/null 2>&1; then
 else
     warn "'gamemoded' command not found. Skipping user group modification."
 fi
+
+# Enable NTSYNC module
+echo "ntsync" | sudo tee /etc/modules-load.d/ntsync.conf > /dev/null;
