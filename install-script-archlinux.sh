@@ -225,8 +225,10 @@ fi
 if [[ "$install_nvidia" =~ ^[Yy]$ ]]; then
     log "Adding NVIDIA modules to mkinitcpio..."
 
-    if ! grep -q "nvidia_drm" /etc/mkinitcpio.conf; then
-        sudo sed -i 's/^MODULES=(/MODULES=(nvidia nvidia_modeset nvidia_uvm nvidia_drm /' /etc/mkinitcpio.conf
+        if ! grep -E "^[^#]*nvidia_drm" /etc/mkinitcpio.conf >/dev/null; then
+        log "Injecting NVIDIA modules ..."
+        echo -e "\n# NVIDIA Setup Script\nMODULES+=(nvidia nvidia_modeset nvidia_uvm nvidia_drm)" | sudo tee -a /etc/mkinitcpio.conf >/dev/null
+
         log "Regenerating initramfs..."
         sudo mkinitcpio -P
     fi
