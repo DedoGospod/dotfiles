@@ -111,12 +111,14 @@ AUR_PACKAGES=(
     brave-bin
     nvibrant-bin
     pyprland
+    dcli-arch-git
 )
 
 # Stow Packages
 STOW_FOLDERS=(
     hypr backgrounds fastfetch kitty mpv nvim starship swaync waybar wofi yazi
     zsh tmux wayland-pipewire-idle-inhibit kwalletrc theme uwsm-autostart mangohud
+    arch-config
 )
 
 # --- ENVIRONMENT SETUP ---
