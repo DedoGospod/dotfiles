@@ -1,0 +1,8 @@
+description: CLI packages
+
+packages:
+  - grub-btrfs
+  - inotify-tools
+
+post_install_hook: scripts/setup-btrfs.sh
+hook_behavior: once
