@@ -8,5 +8,5 @@ packages:
   - obs-vkcapture
   - nvibrant-bin
 
-post_install_hook: #scripts/setup-gaming.sh
-hook_behavior: #ask
+post_install_hook: scripts/setup-gaming.sh
+hook_behavior: ask

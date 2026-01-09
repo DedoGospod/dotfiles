@@ -4,3 +4,23 @@ hooks:
   script: /home/dylan/.config/arch-config/scripts/setup-cli.sh
   script_hash: '15359230525330078229'
   status: executed
+- executed_at: 2026-01-09T13:41:12.621962428+00:00
+  module: filesystem
+  script: /home/dylan/.config/arch-config/scripts/setup-filesystem.sh
+  script_hash: '18245500124330761918'
+  status: executed
+- executed_at: 2026-01-09T13:41:14.632925652+00:00
+  module: gaming
+  script: /home/dylan/.config/arch-config/scripts/setup-gaming.sh
+  script_hash: '17618474985115868808'
+  status: executed
+- executed_at: 2026-01-09T13:41:15.320845321+00:00
+  module: hyprland
+  script: /home/dylan/.config/arch-config/scripts/setup-hyprland.sh
+  script_hash: '2873745030659010906'
+  status: executed
+- executed_at: 2026-01-09T13:41:16.031666562+00:00
+  module: nvidia
+  script: /home/dylan/.config/arch-config/scripts/setup-nvidia.sh
+  script_hash: '7501802525880796115'
+  status: executed

@@ -8,5 +8,5 @@ packages:
   - timeshift-autosnap
 
 post_install_hook: scripts/setup-filesystem.sh
-hook_behavior: #ask
+hook_behavior: ask
 
