@@ -2,18 +2,28 @@ host: archlinux
 description: dylans pc
 import: []
 enabled_modules:
-- applications
-- audio-media
-- cli-tools
-- development
-- filesystem
-- fonts-themes
-- gaming
-- hyprland
-- virtual-machine
-- network
-- nvidia
-- system-scripts
+  # Desktop Environment
+  - hyprland
+
+  # Aesthetics
+  - fonts-themes
+
+  # Applications & Productivity
+  - applications
+  - audio-media
+  - cli-tools
+  - development
+  - gaming
+
+  # System & Infrastructure
+  - filesystem
+  - network
+  - system-scripts
+
+  # Hardware & Virtualization
+  - nvidia
+  - virtual-machine
+
 packages:
 - dcli-arch-git
 - base
