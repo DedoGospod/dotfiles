@@ -32,10 +32,6 @@ sudo -v
 
 # --- CONFIGURATION & PACKAGE LISTS ---
 
-# Directory paths
-DOTFILES_DIR="$HOME/dotfiles"
-TPM_PATH="$HOME/.tmux/plugins/tpm"
-
 # Base Pacman Packages
 PACMAN_PACKAGES=(
     # Core Desktop
@@ -189,6 +185,7 @@ if command -v zsh >/dev/null 2>&1; then
 fi
 
 # Dotfiles
+DOTFILES_DIR="$HOME/dotfiles"
 if [ -d "$DOTFILES_DIR" ]; then
     log "Stowing dotfiles..."
     cd "$DOTFILES_DIR" || exit 1
@@ -369,6 +366,7 @@ else
 fi
 
 # Tmux Plugin Manager
+TPM_PATH="$HOME/.tmux/plugins/tpm"
 if command -v tmux >/dev/null 2>&1; then
     TPM_PATH="${TPM_PATH:-$HOME/.tmux/plugins/tpm}"
 
