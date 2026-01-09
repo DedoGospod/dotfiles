@@ -41,6 +41,17 @@ SUDO_PID=$!
 # Ensure the background process dies when the script exits
 trap 'kill $SUDO_PID' EXIT
 
+# Paru (AUR Helper)
+if ! command -v paru &>/dev/null; then
+    log "Installing Paru..."
+    sudo pacman -S --needed --noconfirm base-devel git
+    git clone https://aur.archlinux.org/paru.git /tmp/paru
+    (cd /tmp/paru && makepkg -si --noconfirm)
+    rm -rf /tmp/paru
+else
+    log "Paru is already installed."
+fi
+
 # Set XDG paths and application specific paths
 log "Setting XDG environment variables..."
 export XDG_DATA_HOME="$HOME/.local/share"
@@ -58,6 +69,7 @@ mkdir -p \
 STOW_FOLDERS=(
     hypr backgrounds fastfetch kitty mpv nvim starship swaync waybar wofi yazi
     zsh tmux wayland-pipewire-idle-inhibit kwalletrc theme uwsm-autostart mangohud
+    arch-config
 )
 
 # Directory paths
