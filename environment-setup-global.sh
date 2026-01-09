@@ -63,17 +63,27 @@ else
 fi
 
 # Gamescope Cap
-if command -v gamescope &>/dev/null; then
-    log "Setting CAP_SYS_NICE for Gamescope..."
-    sudo setcap 'cap_sys_nice=+ep' "$(which gamescope)"
+if command -v gamescope >/dev/null 2>&1; then
+    GAMESCOPE_PATH=$(command -v gamescope)
+
+    # Check if the capability is already present
+    if ! getcap "$GAMESCOPE_PATH" | grep -q "cap_sys_nice+ep"; then
+        log "Setting CAP_SYS_NICE for Gamescope..."
+        sudo setcap 'cap_sys_nice=+ep' "$GAMESCOPE_PATH"
+    fi
+else
+    warn "Gamescope not found. Skipping capability setup."
 fi
 
 # Gamemode setup
-if command -v gamemoded &>/dev/null; then
-    log "Adding user to gamemode group"
-    sudo usermod -aG gamemode "$USER"
+if command -v gamemoded >/dev/null 2>&1; then
+    if ! id -nG "$USER" | grep -qw "gamemode"; then
+        log "Adding user to gamemode group..."
+        sudo usermod -aG gamemode "$USER"
+        log "NOTE: You may need to log out and back in for group changes to apply."
+    fi
 else
-    log "'gamemoded' command not found. Skipping user group modification."
+    warn "'gamemoded' command not found. Skipping user group modification."
 fi
 
 # Shell
@@ -110,7 +120,7 @@ fi
 if [[ "$setup_nvidia" =~ ^[Yy]$ ]]; then
     log "Adding NVIDIA modules to mkinitcpio..."
 
-        if ! grep -E "^[^#]*nvidia_drm" /etc/mkinitcpio.conf >/dev/null; then
+    if ! grep -E "^[^#]*nvidia_drm" /etc/mkinitcpio.conf >/dev/null; then
         log "Injecting NVIDIA modules ..."
         echo -e "\n# NVIDIA Setup Script\nMODULES+=(nvidia nvidia_modeset nvidia_uvm nvidia_drm)" | sudo tee -a /etc/mkinitcpio.conf >/dev/null
 
@@ -161,4 +171,3 @@ EOF
         echo "export-include env-nvidia" >>"$HOME/.config/uwsm/env"
     fi
 fi
-
