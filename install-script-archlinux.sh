@@ -102,6 +102,7 @@ AUR_PACKAGES=(
 STOW_FOLDERS=(
     hypr backgrounds fastfetch kitty mpv nvim starship swaync waybar wofi yazi
     zsh tmux wayland-pipewire-idle-inhibit kwalletrc theme uwsm-autostart arch-config
+    user-scripts
 )
 
 # --- ENVIRONMENT SETUP ---
@@ -210,6 +211,26 @@ if [ -d "$DOTFILES_DIR" ]; then
 else
     error "Dotfiles directory not found at $DOTFILES_DIR."
 fi
+
+# Define your source and target
+SYSTEM_SRC="$DOTFILES_DIR/system-scripts"
+log "Syncing system scripts..."
+
+# This function mimics 'stow' logic
+sync_system_file() {
+    local src_path="$1"
+    local target_path="$2"
+    
+    if [ -f "$src_path" ]; then
+        echo -n "Installing $target_path... "
+        sudo install -Dm 755 "$src_path" "$target_path" && echo "Done." || echo "Failed."
+    fi
+}
+
+# Now just list your files like a "manifest"
+sync_system_file "$SYSTEM_SRC/etc/cron.weekly/btrfs-clean-job" "/etc/cron.weekly/btrfs-clean-job"
+sync_system_file "$SYSTEM_SRC/etc/cron.weekly/clean-pkg-managers" "/etc/cron.weekly/clean-pkg-managers"
+sync_system_file "$SYSTEM_SRC/usr/local/bin/reboot-to-windows" "/usr/local/bin/reboot-to-windows"
 
 # Create UWSM directory if it doesnt already exist
 if command -v uwsm >/dev/null 2>&1; then
@@ -345,7 +366,7 @@ else
 fi
 
 # WoL setup
-if [[ "$setup_wakeonlan" =~ ^[Yy]$ ]]; then
+if [[ "$install_wakeonlan" =~ ^[Yy]$ ]]; then
     # Only detect the interface if we actually need it
     INTERFACE=$(ip route | grep default | awk '{print $5}' | head -n1)
 
