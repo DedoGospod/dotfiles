@@ -37,15 +37,9 @@ nv() {
     fi
 }
 
+# git add + git status 
 ga() {
     git add . && git status
 }
 
-# Decman Add
-dm-add() {
-    ~/.local/bin/dm.sh "$1" && sudo decman --source ~/dotfiles/decman/source.py
-}
 
-dm-del() {
-    ~/.local/bin/dm.sh remove "$1" && sudo decman --source ~/dotfiles/decman/source.py
-}
