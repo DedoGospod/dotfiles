@@ -77,9 +77,9 @@ else
 fi
 
 # Shell
-if [[ "$SHELL" != *"zsh"* ]]; then
+if command -v zsh >/dev/null 2>&1 && [[ "$SHELL" != *"zsh"* ]]; then
     log "Changing default shell to zsh..."
-    chsh -s "$(which zsh)"
+    chsh -s "$(command -v zsh)"
 fi
 
 # Timeshift Autosnap Config
