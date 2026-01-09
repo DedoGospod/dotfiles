@@ -96,3 +96,55 @@ if [ ! -d "$TPM_PATH" ]; then
 else
     log "TPM already installed."
 fi
+
+# Enable NVIDIA KMS
+log "Enabling NVIDIA Kernel Mode Setting (KMS)..."
+echo "options nvidia-drm modeset=1" | sudo tee /etc/modprobe.d/nvidia.conf >/dev/null
+
+# Inject NVIDIA modules into mkinitcpio for initramfs regeneration
+log "Adding NVIDIA modules to mkinitcpio..."
+sudo sed -i 's/^MODULES=(/MODULES=(nvidia nvidia_modeset nvidia_uvm nvidia_drm /' /etc/mkinitcpio.conf
+
+log "Regenerating initramfs..."
+sudo mkinitcpio -P
+
+# UWSM General & Hyprland Environment
+log "Creating general UWSM environment configuration..."
+mkdir -p "$HOME/.config/uwsm"
+
+# Create/Overwrite the Hyprland-specific environment file
+cat <<EOF >"$HOME/.config/uwsm/env-hyprland"
+# Session Identity
+export XDG_CURRENT_DESKTOP=Hyprland
+export XDG_SESSION_DESKTOP=Hyprland
+export XDG_SESSION_TYPE=wayland
+
+# Toolkit Backends
+export GDK_BACKEND=wayland,x11
+export QT_QPA_PLATFORM="wayland;xcb"
+export SDL_VIDEODRIVER=wayland
+export CLUTTER_BACKEND=wayland
+
+# Theming
+export QT_QPA_PLATFORMTHEME=qt6ct
+export XCURSOR_THEME=Adwaita
+export XCURSOR_SIZE=24
+EOF
+
+# Ensure the main env file includes our new hyprland env
+if ! grep -q "env-hyprland" "$HOME/.config/uwsm/env" 2>/dev/null; then
+    echo "export-include env-hyprland" >>"$HOME/.config/uwsm/env"
+fi
+
+# --- NVIDIA Specifics (Modified) ---
+log "Creating UWSM environment configuration for NVIDIA..."
+cat <<EOF >"$HOME/.config/uwsm/env-nvidia"
+export LIBVA_DRIVER_NAME=nvidia
+export __GLX_VENDOR_LIBRARY_NAME=nvidia
+export NVD_BACKEND=direct
+export ELECTRON_OZONE_PLATFORM_HINT=auto
+EOF
+
+if ! grep -q "env-nvidia" "$HOME/.config/uwsm/env" 2>/dev/null; then
+    echo "export-include env-nvidia" >>"$HOME/.config/uwsm/env"
+fi
