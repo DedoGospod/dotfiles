@@ -9,27 +9,27 @@ hooks:
   script: /home/dylan/.config/arch-config/scripts/setup-filesystem.sh
   script_hash: '18245500124330761918'
   status: executed
-- executed_at: 2026-01-09T13:41:14.632925652+00:00
-  module: gaming
-  script: /home/dylan/.config/arch-config/scripts/setup-gaming.sh
-  script_hash: '17618474985115868808'
-  status: executed
 - executed_at: 2026-01-09T13:41:15.320845321+00:00
   module: hyprland
   script: /home/dylan/.config/arch-config/scripts/setup-hyprland.sh
   script_hash: '2873745030659010906'
   status: executed
-- executed_at: 2026-01-09T13:41:16.031666562+00:00
-  module: nvidia
-  script: /home/dylan/.config/arch-config/scripts/setup-nvidia.sh
-  script_hash: '7501802525880796115'
-  status: executed
-- executed_at: 2026-01-09T14:59:52.312436061+00:00
+- executed_at: 2026-01-09T16:49:29.905277751+00:00
   module: network
   script: /home/dylan/.config/arch-config/scripts/setup-network.sh
-  script_hash: '7057173345737988926'
+  script_hash: '1280865148845789035'
   status: executed
-- executed_at: 2026-01-09T16:35:36.528518447+00:00
+- executed_at: 2026-01-09T16:49:37.003150649+00:00
+  module: nvidia
+  script: /home/dylan/.config/arch-config/scripts/setup-nvidia.sh
+  script_hash: '3912077238086874892'
+  status: executed
+- executed_at: 2026-01-09T18:24:19.010035414+00:00
+  module: gaming
+  script: /home/dylan/.config/arch-config/scripts/setup-gaming.sh
+  script_hash: '15296727358403398170'
+  status: executed
+- executed_at: 2026-01-09T18:51:07.890196485+00:00
   module: system-scripts
   script: /home/dylan/.config/arch-config/scripts/setup-system-scripts.sh
   script_hash: '15808673060739958477'
