@@ -64,6 +64,8 @@ PACMAN_PACKAGES=(
     # Fonts
     ttf-cascadia-code-nerd ttf-ubuntu-font-family ttf-font-awesome
     ttf-dejavu ttf-liberation ttf-croscore noto-fonts noto-fonts-cjk noto-fonts-emoji
+
+    # Declared packages
 )
 
 # Optional Groups
@@ -81,6 +83,8 @@ FLATPAK_APPS=(
     com.vysp3r.ProtonPlus
     io.github.ebonjaeger.bluejay
     com.github.wwmm.easyeffects
+
+    # Declared packages
 )
 
 # AUR Packages
@@ -90,6 +94,8 @@ AUR_PACKAGES=(
     brave-bin
     nvibrant-bin
     pyprland
+
+    # Declared packages
 )
 
 # Stow Packages
