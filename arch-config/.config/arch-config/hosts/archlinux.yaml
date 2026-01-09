@@ -41,6 +41,7 @@ system_backups:
   enabled: true
   backup_on_sync: true
   backup_on_update: true
+  create_post_snapshot: false
   tool: timeshift
   snapper_config: root
 services:
