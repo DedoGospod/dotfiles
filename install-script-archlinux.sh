@@ -90,7 +90,6 @@ AUR_PACKAGES=(
     brave-bin
     nvibrant-bin
     pyprland
-    dcli-arch-git
 )
 
 # Stow Packages
