@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+
 
 # Exit immediately if a command exits with a non-zero status
 set -e
@@ -38,6 +38,7 @@ header "CONFIGURATION QUESTIONS"
 read -r -p "$(echo -e "  ${YELLOW}??${NC} Setup NVIDIA drivers? (y/N): ")" setup_nvidia
 read -r -p "$(echo -e "  ${YELLOW}??${NC} Setup WakeOnLan? (y/N): ")" setup_wakeonlan
 read -r -p "$(echo -e "  ${YELLOW}??${NC} Setup system for gaming? (y/N): ")" setup_gaming
+read -r -p "$(echo -e "  ${YELLOW}??${NC} Setup KVM virtualization? (y/N): ")" setup_virtualization
 read -r -p "$(echo -e "  ${YELLOW}??${NC} Do you want to stow your dotfiles with GNU STOW? [y/N]: ")" stow_dotfiles
 echo ""
 
@@ -311,4 +312,46 @@ if [[ "$setup_gaming" =~ ^[Yy]$ ]]; then
     if echo "ntsync" | sudo tee /etc/modules-load.d/ntsync.conf > /dev/null; then ok; else fail; fi
 else
     warn "NTSYNC skipped. Windows games (Wine/Proton) may lack kernel-level sync support."
+fi
+
+# Setup virtualization
+if [[ "$setup_virtualization" =~ ^[Yy]$ ]]; then
+    header "Configuring Virtualization"
+
+    # Add user to groups
+    for group in libvirt kvm; do
+        if getent group "$group" >/dev/null; then
+            log_task "Adding $(whoami) to $group group"
+            if sudo usermod -aG "$group" "$(whoami)"; then ok; else fail; fi
+        fi
+    done
+
+    # Enable and start libvirtd
+    log_task "Enabling and starting libvirtd"
+    if sudo systemctl enable --now libvirtd &>/dev/null; then ok; else fail; fi
+
+    # Wait for the socket to be ready
+    log_task "Waiting for QEMU socket"
+    SOCKET_READY=false
+    for i in {1..5}; do
+        if sudo virsh -c qemu:///system list --all >/dev/null 2>&1; then 
+            SOCKET_READY=true
+            break 
+        fi
+        sleep 1
+    done
+    if [ "$SOCKET_READY" = true ]; then ok; else fail; fi
+
+    # Configure the default network
+    log_task "Activating default network"
+    sudo virsh -c qemu:///system net-autostart default &>/dev/null || true
+    if sudo virsh -c qemu:///system net-start default &>/dev/null || true; then 
+        ok
+    else 
+        fail
+    fi
+
+    echo ""
+    success "Virtualization setup complete!"
+    warn "Note: You must log out and back in for group changes to take effect."
 fi
