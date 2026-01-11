@@ -80,7 +80,6 @@ FLATPAK_APPS=(
     com.github.tchx84.Flatseal
     com.stremio.Stremio
     com.usebottles.bottles
-    com.vysp3r.ProtonPlus
     io.github.ebonjaeger.bluejay
     com.github.wwmm.easyeffects
 
@@ -123,16 +122,17 @@ mkdir -p \
 
 echo ""
 log "--- Configuration Questions ---"
-read -r -p "Install Gaming packages? (y/N): " install_gaming
-read -r -p "Install NVIDIA drivers? (y/N): " install_nvidia
-read -r -p "Install Neovim dev tools? (y/N): " install_neovim
-read -r -p "Install WakeOnLan tools? (y/N): " install_wakeonlan
-read -r -p "Set up dotfiles with GNU Stow? (y/N): " stow_dotfiles
+read -r -p "$(echo -e "  ${YELLOW}??${NC} Install Gaming packages? (y/N): ")" install_gaming
+read -r -p "$(echo -e "  ${YELLOW}??${NC} Install NVIDIA drivers? (y/N): ")" install_nvidia
+read -r -p "$(echo -e "  ${YELLOW}??${NC} Install Neovim dev tools? (y/N): ")" install_neovim
+read -r -p "$(echo -e "  ${YELLOW}??${NC} Install WakeOnLan tools? (y/N): ")" install_wakeonlan
+read -r -p "$(echo -e "  ${YELLOW}??${NC} Set up dotfiles with GNU Stow? (y/N): ")" stow_dotfiles
+read -r -p "$(echo -e "  ${YELLOW}??${NC} Enable NTSYNC (Kernel module for gaming)? [Y/n]: ")" NTSYNC_CHOICE
 echo ""
 
 # Modify Package Lists based on answers
 if [[ "$install_nvidia" =~ ^[Yy]$ ]]; then PACMAN_PACKAGES+=("${NVIDIA_PACKAGES[@]}"); fi
-if [[ "$install_gaming" =~ ^[Yy]$ ]]; then PACMAN_PACKAGES+=("${GAMING_PACKAGES[@]}"); fi
+if [[ "$install_gaming" =~ ^[Yy]$ ]]; then PACMAN_PACKAGES+=("${GAMING_PACKAGES[@]}"); FLATPAK_APPS+=("com.vysp3r.ProtonPlus"); fi
 if [[ "$install_neovim" =~ ^[Yy]$ ]]; then PACMAN_PACKAGES+=("${NEOVIM_DEPS[@]}"); fi
 if [[ "$install_wakeonlan" =~ ^[Yy]$ ]]; then PACMAN_PACKAGES+=("${WAKEONLAN_PACKAGES[@]}"); fi
 
@@ -416,14 +416,16 @@ EOF
     fi
 fi
 
-# Set cpu to balance_performance mode
-log "Configuring CPU Energy Performance Preference..."
-CPU_RULE_FILE="/etc/udev/rules.d/60-cpu-epp.rules"
-echo 'ACTION=="add", SUBSYSTEM=="cpu", ATTR{cpufreq/energy_performance_preference}="balance_performance"' | sudo tee "$CPU_RULE_FILE" >/dev/null
-
-# Apply immediately for the current session
-echo "balance_performance" | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/energy_performance_preference >/dev/null
-log "CPU set to balance_performance."
+# NTSYNC (Kernel Module)
+if [[ "$NTSYNC_CHOICE" =~ ^[Yy]$ || -z "$NTSYNC_CHOICE" ]]; then
+    if echo "ntsync" | sudo tee /etc/modules-load.d/ntsync.conf > /dev/null; then
+        log_success "NTSYNC enabled (added to modules-load.d)."
+    else
+        log_error "Failed to write NTSYNC config."
+    fi
+else
+    echo -e "     Skipping NTSYNC."
+fi
 
 # --- FINISH ---
 echo ""
