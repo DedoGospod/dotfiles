@@ -127,7 +127,6 @@ read -r -p "$(echo -e "  ${YELLOW}??${NC} Install NVIDIA drivers? (y/N): ")" ins
 read -r -p "$(echo -e "  ${YELLOW}??${NC} Install Neovim dev tools? (y/N): ")" install_neovim
 read -r -p "$(echo -e "  ${YELLOW}??${NC} Install WakeOnLan tools? (y/N): ")" install_wakeonlan
 read -r -p "$(echo -e "  ${YELLOW}??${NC} Set up dotfiles with GNU Stow? (y/N): ")" stow_dotfiles
-read -r -p "$(echo -e "  ${YELLOW}??${NC} Enable NTSYNC (Kernel module for gaming)? [Y/n]: ")" NTSYNC_CHOICE
 echo ""
 
 # Modify Package Lists based on answers
@@ -417,7 +416,7 @@ EOF
 fi
 
 # NTSYNC (Kernel Module)
-if [[ "$NTSYNC_CHOICE" =~ ^[Yy]$ || -z "$NTSYNC_CHOICE" ]]; then
+if [[ "$install_nvidia" =~ ^[Yy]$ ]]; then
     if echo "ntsync" | sudo tee /etc/modules-load.d/ntsync.conf > /dev/null; then
         log_success "NTSYNC enabled (added to modules-load.d)."
     else
