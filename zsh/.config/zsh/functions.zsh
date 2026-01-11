@@ -12,6 +12,7 @@ zl() {
     fi;
 }
 
+# Show hidden files when listing with zl
 zlh() {
     if [ -z "$@" ]; then
         ls -1A --color=always --group-directories-first
@@ -21,7 +22,7 @@ zlh() {
     fi
 }
 
-# nv works for root and user files
+# Nv command works for root and user files without the need to type 'sudo'
 nv() {
     if [ -z "$1" ]; then
         command nvim
@@ -37,13 +38,12 @@ nv() {
     fi
 }
 
-# git add + git status 
+# git add + git status in one command
 ga() {
     git add . && git status
 }
 
 # Install or Remove packages from install script
-# Configuration
 SCRIPT_PATH="/home/dylan/dotfiles/install-script-archlinux.sh"
 
 install() {
@@ -53,7 +53,7 @@ install() {
         return 1
     fi
 
-    # 1. Check Official Repos (Pacman)
+    # Check Official Repos (Pacman)
     if pacman -Si "$pkg" &>/dev/null; then
         echo "Found '$pkg' in Pacman repositories..."
         sudo pacman -S --needed --noconfirm "$pkg" && \
@@ -61,7 +61,7 @@ install() {
         return 0
     fi
 
-    # 2. Check AUR (using paru)
+    # Check AUR (using paru)
     if paru -Si "$pkg" &>/dev/null; then
         echo "Found '$pkg' in AUR..."
         paru -S --needed --noconfirm "$pkg" && \
@@ -69,7 +69,7 @@ install() {
         return 0
     fi
 
-    # 3. Check Flatpak
+    # Check Flatpak
     local flat_id=$(flatpak search "$pkg" | head -n 1 | awk '{print $2}')
     if [[ -n "$flat_id" ]]; then
         echo "Found '$pkg' on Flathub as $flat_id..."
