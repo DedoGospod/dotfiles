@@ -194,6 +194,7 @@ if command -v zsh >/dev/null 2>&1; then
     if chsh -s "$(command -v zsh)" "$USER"; then ok; else fail; fi
 fi
 
+# Dotfiles
 DOTFILES_DIR="$HOME/dotfiles"
 if [[ "$stow_dotfiles" =~ ^[Yy]$ ]]; then
     if [ -d "$DOTFILES_DIR" ]; then
