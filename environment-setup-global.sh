@@ -27,8 +27,9 @@ fi
 sudo -v
 
 # Optional setups
-read -r -p "Setup NVIDIA? (y/N): " setup_nvidia
-read -r -p "Setup WakeOnLan? (y/N): " setup_wakeonlan
+read -r -p "$(echo -e "  ${YELLOW}??${NC} Setup NVIDIA drivers? (y/N): ")" setup_nvidia
+read -r -p "$(echo -e "  ${YELLOW}??${NC} Setup WakeOnLan? (y/N): ")" setup_wakeonlan
+read -r -p "$(echo -e "  ${YELLOW}??${NC} Enable NTSYNC (Kernel module for gaming)? [Y/n]: ")" NTSYNC_CHOICE
 
 # Paru (AUR Helper)
 if ! command -v paru &>/dev/null; then
@@ -292,11 +293,13 @@ EOF
     fi
 fi
 
-# Set cpu to balance_performance mode
-log "Configuring CPU Energy Performance Preference..."
-CPU_RULE_FILE="/etc/udev/rules.d/60-cpu-epp.rules"
-echo 'ACTION=="add", SUBSYSTEM=="cpu", ATTR{cpufreq/energy_performance_preference}="balance_performance"' | sudo tee "$CPU_RULE_FILE" >/dev/null
-
-# Apply immediately for the current session
-echo "balance_performance" | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/energy_performance_preference >/dev/null
-log "CPU set to balance_performance."
+# NTSYNC (Kernel Module)
+if [[ "$NTSYNC_CHOICE" =~ ^[Yy]$ || -z "$NTSYNC_CHOICE" ]]; then
+    if echo "ntsync" | sudo tee /etc/modules-load.d/ntsync.conf > /dev/null; then
+        log "NTSYNC enabled (added to modules-load.d)."
+    else
+        log_error "Failed to write NTSYNC config."
+    fi
+else
+    echo -e "     Skipping NTSYNC."
+fi
