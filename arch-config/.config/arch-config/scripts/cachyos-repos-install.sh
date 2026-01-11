@@ -1,7 +1,4 @@
 #!/usr/bin/env bash
-# Install CachyOS repositories (includes Chaotic AUR)
-# Part of arch-config declarative package management
-# https://mirror.cachyos.org/
 
 set -euo pipefail
 
