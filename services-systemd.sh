@@ -122,20 +122,6 @@ else
     echo -e "  [System] Root is not Btrfs ($ROOT_FS). Skipping grub-btrfsd."
 fi
 
-# Special Logic: NTSYNC (Kernel Module)
-echo ""
-read -r -p "$(echo -e "  ${YELLOW}??${NC} Enable NTSYNC (Kernel module for gaming)? [Y/n]: ")" NTSYNC_CHOICE
-if [[ "$NTSYNC_CHOICE" =~ ^[Yy]$ || -z "$NTSYNC_CHOICE" ]]; then
-    if echo "ntsync" | sudo tee /etc/modules-load.d/ntsync.conf > /dev/null; then
-        log_success "NTSYNC enabled (added to modules-load.d)."
-    else
-        log_error "Failed to write NTSYNC config."
-    fi
-else
-    echo -e "     Skipping NTSYNC."
-fi
-
-
 # ==============================================================================
 #  User Services
 # ==============================================================================
