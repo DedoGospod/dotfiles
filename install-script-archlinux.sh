@@ -416,6 +416,15 @@ EOF
     fi
 fi
 
+# Set cpu to balance_performance mode
+log "Configuring CPU Energy Performance Preference..."
+CPU_RULE_FILE="/etc/udev/rules.d/60-cpu-epp.rules"
+echo 'ACTION=="add", SUBSYSTEM=="cpu", ATTR{cpufreq/energy_performance_preference}="balance_performance"' | sudo tee "$CPU_RULE_FILE" >/dev/null
+
+# Apply immediately for the current session
+echo "balance_performance" | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/energy_performance_preference >/dev/null
+log "CPU set to balance_performance."
+
 # --- FINISH ---
 echo ""
 echo "------------------------------------------------------"
