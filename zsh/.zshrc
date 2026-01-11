@@ -96,5 +96,4 @@ alias grub='sudoedit /etc/default/grub'                # Edit GRUB config
 alias decmanconf='nvim ~/dotfiles/decman/source.py'    # Edit Decman config
 
 # QoL
-alias idleinhibit='~/.config/hypr/hyprscripts/idle-inhibitor.sh'
 alias git-reset-hard='git reset --hard origin/main'
