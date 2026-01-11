@@ -298,7 +298,7 @@ if [[ "$NTSYNC_CHOICE" =~ ^[Yy]$ || -z "$NTSYNC_CHOICE" ]]; then
     if echo "ntsync" | sudo tee /etc/modules-load.d/ntsync.conf > /dev/null; then
         log "NTSYNC enabled (added to modules-load.d)."
     else
-        log_error "Failed to write NTSYNC config."
+        error "Failed to write NTSYNC config."
     fi
 else
     echo -e "     Skipping NTSYNC."
