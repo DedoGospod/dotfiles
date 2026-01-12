@@ -22,4 +22,19 @@ sudo ./cachyos-repo.sh
 echo "--- Cleaning up ---"
 rm -rf "$WORKDIR"
 
-echo "Done! Please run 'sudo pacman -Syu' to synchronize your new repositories."
+# Sync repos
+sudo pacman -Syu --needed --noconfirm 
+
+# CachyOS kernel
+PACMAN_PACKAGES=()
+
+# Prompt the user
+read -r -p "$(echo -e "  ${YELLOW}??${NC} Install CachyOS bore kernel? (y/N): ")" install_cachy_kernel
+
+# If yes, add the strings directly to the main array
+if [[ "$install_cachy_kernel" =~ ^[Yy]$ ]]; then 
+    PACMAN_PACKAGES+=("linux-cachyos-bore" "linux-cachyos-bore-headers")
+fi
+
+echo "Installing Official Packages..."
+sudo pacman -S --needed --noconfirm "${PACMAN_PACKAGES[@]}"
