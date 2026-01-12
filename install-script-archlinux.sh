@@ -149,6 +149,20 @@ if [[ "$install_obs" =~ ^[Yy]$ ]]; then AUR_PACKAGES+=("${OBS_GAMING_PACKAGES[@]
 if [[ "$install_neovim" =~ ^[Yy]$ ]]; then PACMAN_PACKAGES+=("${NEOVIM_DEPS[@]}"); fi
 if [[ "$install_wakeonlan" =~ ^[Yy]$ ]]; then PACMAN_PACKAGES+=("${WAKEONLAN_PACKAGES[@]}"); fi
 
+if [[ "$install_gaming" =~ ^[Yy]$ ]]; then
+    log "Checking repositories for optimized Proton builds"
+    
+    if pacman -Ssq "^proton-cachyos$" > /dev/null && \
+       pacman -Ssq "^proton-cachyos-slr$" > /dev/null; then
+        
+        GAMING_PACKAGES+=(proton-cachyos proton-cachyos-slr)
+        log_task "Adding optimized Proton packages to queue."
+        ok
+    else
+        warn "Proton-cachyos packages not found; skipping optimized builds."
+    fi
+fi
+
 # Check for BTRFS Root
 if findmnt -n -o FSTYPE --target / | grep -q "btrfs"; then
     log "Btrfs root detected. Adding grub-btrfs and inotify-tools."
