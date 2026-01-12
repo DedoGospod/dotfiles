@@ -33,7 +33,7 @@ read -r -p "$(echo -e "  ${YELLOW}??${NC} Install CachyOS bore kernel? (y/N): ")
 
 # If yes, add the strings directly to the main array
 if [[ "$install_cachy_kernel" =~ ^[Yy]$ ]]; then 
-    PACMAN_PACKAGES+=("linux-cachyos-bore" "linux-cachyos-bore-headers")
+    PACMAN_PACKAGES+=("linux-cachyos" "linux-cachyos-headers")
 fi
 
 echo "Installing Official Packages..."
