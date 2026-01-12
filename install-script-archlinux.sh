@@ -34,6 +34,13 @@ fi
 # Ask for sudo upfront to prevent timeouts later
 sudo -v
 
+# Ask to install cachyos repos (TESTING FEATURE)
+read -r -p "$(echo -e "  ${YELLOW}??${NC} Install CachyOS repos? (y/N): ")" install_cachy_repos
+if [[ "$install_cachy_repos" =~ ^[Yy]$ ]]; then
+    chmod u+x "$HOME/.local/bin/cachyos-repo.sh"
+    "$HOME/.local/bin/cachyos-repo.sh"
+fi
+
 # --- CONFIGURATION & PACKAGE LISTS ---
 
 # Base Pacman Packages
