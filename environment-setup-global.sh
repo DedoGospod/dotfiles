@@ -32,34 +32,15 @@ fi
 # Ask for sudo upfront to prevent timeouts later
 sudo -v
 
-# Optional setups
-echo ""
-header "CONFIGURATION QUESTIONS"
-read -r -p "$(echo -e "  ${YELLOW}??${NC} Setup NVIDIA drivers? (y/N): ")" setup_nvidia
-read -r -p "$(echo -e "  ${YELLOW}??${NC} Setup WakeOnLan? (y/N): ")" setup_wakeonlan
-read -r -p "$(echo -e "  ${YELLOW}??${NC} Setup system for gaming? (y/N): ")" setup_gaming
-read -r -p "$(echo -e "  ${YELLOW}??${NC} Setup KVM virtualization? (y/N): ")" setup_virtualization
-read -r -p "$(echo -e "  ${YELLOW}??${NC} Do you want to stow your dotfiles with GNU STOW? [y/N]: ")" stow_dotfiles
-echo ""
+# --- CONFIGURATION ---
 
-# Rustup
-if ! command -v rustup &>/dev/null; then
-    log_task "Installing rustup"
-    if sudo pacman -S --noconfirm rustup >/dev/null 2>&1 && rustup default stable >/dev/null 2>&1; then ok; else fail; fi
-else
-    log "Rustup already installed."
-fi
+# Stow Packages (Directories in your dotfiles folder)
+STOW_FOLDERS=(
+    hypr backgrounds fastfetch kitty mpv nvim starship swaync waybar wofi yazi
+    zsh tmux wayland-pipewire-idle-inhibit kwalletrc theme uwsm-autostart arch-config
+)
 
-# Paru
-if ! command -v paru &>/dev/null; then
-    log_task "Installing Paru"
-    if sudo pacman -S --needed --noconfirm base-devel git >/dev/null 2>&1 &&
-        git clone https://aur.archlinux.org/paru.git /tmp/paru >/dev/null 2>&1 &&
-        (cd /tmp/paru && makepkg -si --noconfirm >/dev/null 2>&1) &&
-        rm -rf /tmp/paru; then ok; else fail; fi
-else
-    log "Paru already installed."
-fi
+# --- ENVIRONMENT SETUP ---
 
 # Set XDG paths and application specific paths
 header "ENVIRONMENT SETUP"
@@ -74,11 +55,50 @@ if mkdir -p \
     "${XDG_STATE_HOME}/zsh" "${XDG_CACHE_HOME}/zsh" \
     "${XDG_DATA_HOME}/gnupg" "${XDG_STATE_HOME}/python"; then ok; else fail; fi
 
-# Stow Packages (Directories in your dotfiles folder)
-STOW_FOLDERS=(
-    hypr backgrounds fastfetch kitty mpv nvim starship swaync waybar wofi yazi
-    zsh tmux wayland-pipewire-idle-inhibit kwalletrc theme uwsm-autostart arch-config
-)
+# --- USER INTERACTION ---
+echo ""
+header "CONFIGURATION QUESTIONS"
+read -r -p "$(echo -e "  ${YELLOW}??${NC} Setup NVIDIA drivers? (y/N): ")" setup_nvidia
+read -r -p "$(echo -e "  ${YELLOW}??${NC} Setup WakeOnLan? (y/N): ")" setup_wakeonlan
+read -r -p "$(echo -e "  ${YELLOW}??${NC} Setup system for gaming? (y/N): ")" setup_gaming
+read -r -p "$(echo -e "  ${YELLOW}??${NC} Setup KVM virtualization? (y/N): ")" setup_virtualization
+read -r -p "$(echo -e "  ${YELLOW}??${NC} Do you want to stow your dotfiles with GNU STOW? [y/N]: ")" stow_dotfiles
+echo ""
+
+# --- INSTALLATION PHASE ---
+header "INSTALLATION PHASE"
+
+# Update system
+log_task "Updating system"
+if sudo pacman -Syu --noconfirm > /dev/null 2>&1; then ok; else fail; fi
+
+# Install rustup
+if ! command -v rustup &>/dev/null; then
+    log_task "Installing rustup"
+    if sudo pacman -S --noconfirm rustup > /dev/null 2>&1 && rustup default stable > /dev/null 2>&1; then ok; else fail; fi
+else
+    log "Rustup already installed."
+fi
+
+# Install Paru
+if ! command -v paru &>/dev/null; then
+    log_task "Installing Paru"
+    if sudo pacman -S --needed --noconfirm base-devel git > /dev/null 2>&1 && \
+       git clone https://aur.archlinux.org/paru.git /tmp/paru > /dev/null 2>&1 && \
+       (cd /tmp/paru && makepkg -si --noconfirm > /dev/null 2>&1) && \
+       rm -rf /tmp/paru; then ok; else fail; fi
+else
+    log "Paru already installed."
+fi
+
+# --- SYSTEM CONFIGURATION ---
+header "SYSTEM CONFIGURATION"
+
+# Shell
+if command -v zsh >/dev/null 2>&1; then
+    log_task "Changing shell to zsh"
+    if chsh -s "$(command -v zsh)" "$USER"; then ok; else fail; fi
+fi
 
 # Dotfiles
 DOTFILES_DIR="$HOME/dotfiles"
@@ -128,79 +148,18 @@ if [ -d "$SYSTEM_SRC" ]; then
     done
 fi
 
-# Gamescope Cap
-if command -v gamescope >/dev/null 2>&1; then
-    GAMESCOPE_PATH=$(command -v gamescope)
-
-    # Check if the capability is already present
-    if ! getcap "$GAMESCOPE_PATH" | grep -q "cap_sys_nice+ep"; then
-        log_task "Setting CAP_SYS_NICE for Gamescope"
-        if sudo setcap 'cap_sys_nice=+ep' "$GAMESCOPE_PATH"; then ok; else fail; fi
-    fi
-else
-    warn "Gamescope not found. Skipping capability setup."
-fi
-
-# Gamemode setup
-if command -v gamemoded >/dev/null 2>&1; then
-    if ! id -nG "$USER" | grep -qw "gamemode"; then
-        log_task "Adding user to gamemode group"
-        if sudo usermod -aG gamemode "$USER"; then ok; else fail; fi
-        warn "NOTE: You may need to log out and back in for group changes to apply."
-    fi
-else
-    warn "'gamemoded' command not found. Skipping user group modification."
-fi
-
-header "SYSTEM CONFIGURATION"
-
-# Shell
-if command -v zsh >/dev/null 2>&1; then
-    log_task "Changing shell to zsh"
-    if chsh -s "$(command -v zsh)" "$USER"; then ok; else fail; fi
-fi
-
-# Timeshift Autosnap Config
-TS_CONFIG="/etc/timeshift-autosnap.conf"
-if [ -f "$TS_CONFIG" ]; then
-    if ! grep -q "^maxSnapshots=1$" "$TS_CONFIG"; then
-        log_task "Configuring Timeshift maxSnapshots"
-        if sudo sed -i 's/^maxSnapshots=.*/maxSnapshots=1/' "$TS_CONFIG"; then ok; else fail; fi
-    else
-        log "Timeshift maxSnapshots is already set to 1."
-    fi
-else
-    warn "Timeshift config not found at $TS_CONFIG. Skipping."
-fi
-
-# Tmux Plugin Manager
-TPM_PATH="$HOME/.tmux/plugins/tpm"
-if command -v tmux >/dev/null 2>&1; then
-    TPM_PATH="${TPM_PATH:-$HOME/.tmux/plugins/tpm}"
-
-    if [ ! -d "$TPM_PATH" ]; then
-        log_task "Installing TPM"
-        if git clone --depth 1 https://github.com/tmux-plugins/tpm "$TPM_PATH"; then ok; else fail; fi
-    else
-        log "TPM already installed."
-    fi
-else
-    warn "Tmux is not installed. Skipping TPM setup."
-fi
-
 # Create UWSM directory if it doesnt already exist
 if command -v uwsm >/dev/null 2>&1; then
     log_task "UWSM found. Preparing configuration directory..."
     if mkdir -p "$HOME/.config/uwsm"; then ok; else fail; fi
 else
     warn "UWSM not detected. Skipping uwsm directory configuration ..."
-
 fi
 
 # Hyprland-specific uwsm environment file
 if command -v uwsm >/dev/null 2>&1; then
     log_task "Writing uwsm env-hyprland"
-    if cat <<EOF >"$HOME/.config/uwsm/env-hyprland"; then ok; else fail; fi
+    if cat <<EOF >"$HOME/.config/uwsm/env-hyprland"
 # Session Identity
 export XDG_CURRENT_DESKTOP=Hyprland
 export XDG_SESSION_DESKTOP=Hyprland
@@ -217,6 +176,8 @@ export QT_QPA_PLATFORMTHEME=qt6ct
 export XCURSOR_THEME=Adwaita
 export XCURSOR_SIZE=24
 EOF
+    then ok; else fail; fi
+
     if ! grep -q "env-hyprland" "$HOME/.config/uwsm/env" 2>/dev/null; then
         echo "export-include env-hyprland" >>"$HOME/.config/uwsm/env"
     fi
@@ -266,6 +227,58 @@ EOF
     if ! grep -q "env-nvidia" "$HOME/.config/uwsm/env" 2>/dev/null; then
         echo "export-include env-nvidia" >>"$HOME/.config/uwsm/env"
     fi
+fi
+
+# Gamescope Cap
+if command -v gamescope >/dev/null 2>&1; then
+    GAMESCOPE_PATH=$(command -v gamescope)
+
+    # Check if the capability is already present
+    if ! getcap "$GAMESCOPE_PATH" | grep -q "cap_sys_nice+ep"; then
+        log_task "Setting CAP_SYS_NICE for Gamescope"
+        if sudo setcap 'cap_sys_nice=+ep' "$GAMESCOPE_PATH"; then ok; else fail; fi
+    fi
+else
+    warn "Gamescope not found. Skipping capability setup."
+fi
+
+# Gamemode setup
+if command -v gamemoded >/dev/null 2>&1; then
+    if ! id -nG "$USER" | grep -qw "gamemode"; then
+        log_task "Adding user to gamemode group"
+        if sudo usermod -aG gamemode "$USER"; then ok; else fail; fi
+        warn "NOTE: You may need to log out and back in for group changes to apply."
+    fi
+else
+    warn "'gamemoded' command not found. Skipping user group modification."
+fi
+
+# Timeshift Autosnap Config
+TS_CONFIG="/etc/timeshift-autosnap.conf"
+if [ -f "$TS_CONFIG" ]; then
+    if ! grep -q "^maxSnapshots=1$" "$TS_CONFIG"; then
+        log_task "Configuring Timeshift maxSnapshots"
+        if sudo sed -i 's/^maxSnapshots=.*/maxSnapshots=1/' "$TS_CONFIG"; then ok; else fail; fi
+    else
+        log "Timeshift maxSnapshots is already set to 1."
+    fi
+else
+    warn "Timeshift config not found at $TS_CONFIG. Skipping."
+fi
+
+# Tmux Plugin Manager
+TPM_PATH="$HOME/.tmux/plugins/tpm"
+if command -v tmux >/dev/null 2>&1; then
+    TPM_PATH="${TPM_PATH:-$HOME/.tmux/plugins/tpm}"
+
+    if [ ! -d "$TPM_PATH" ]; then
+        log_task "Installing TPM"
+        if git clone --depth 1 https://github.com/tmux-plugins/tpm "$TPM_PATH"; then ok; else fail; fi
+    else
+        log "TPM already installed."
+    fi
+else
+    warn "Tmux is not installed. Skipping TPM setup."
 fi
 
 # WoL setup
