@@ -35,10 +35,10 @@ fi
 sudo -v
 
 # Ask to install cachyos repos (TESTING FEATURE)
-read -r -p "$(echo -e "  ${YELLOW}??${NC} Install CachyOS repos? (y/N): ")" install_cachy_repos
+read -r -p "$(echo -e "  ${YELLOW}??${NC} Install CachyOS repos & kernel? (y/N): ")" install_cachy_repos
 if [[ "$install_cachy_repos" =~ ^[Yy]$ ]]; then
-    chmod u+x "$HOME/.local/bin/cachyos-repo.sh"
-    "$HOME/.local/bin/cachyos-repo.sh"
+    chmod u+x "$HOME/dotfiles/scripts/user-scripts/.local/bin/cachyos-repo.sh"
+    "$HOME/dotfiles/scripts/user-scripts/.local/bin/cachyos-repo.sh"
 fi
 
 # --- CONFIGURATION & PACKAGE LISTS ---
@@ -362,7 +362,7 @@ if command -v gamemoded >/dev/null 2>&1; then
     if ! id -nG "$USER" | grep -qw "gamemode"; then
         log_task "Adding user to gamemode group"
         if sudo usermod -aG gamemode "$USER"; then ok; else fail; fi
-        log "NOTE: You may need to log out and back in for group changes to apply."
+        warn "NOTE: You may need to log out and back in for group changes to apply."
     fi
 else
     warn "'gamemoded' command not found. Skipping user group modification."
@@ -463,7 +463,7 @@ if [[ "$setup_virtualization" =~ ^[Yy]$ ]]; then
     # Wait for the socket to be ready
     log_task "Waiting for QEMU socket"
     SOCKET_READY=false
-    for i in {1..5}; do
+    for _ in {1..5}; do
         if sudo virsh -c qemu:///system list --all >/dev/null 2>&1; then 
             SOCKET_READY=true
             break 
