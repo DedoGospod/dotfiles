@@ -1,4 +1,4 @@
-
+#!/usr/bin/env bash
 
 # Exit immediately if a command exits with a non-zero status
 set -e
@@ -12,15 +12,15 @@ BLUE='\033[0;34m'
 NC='\033[0m'
 
 # Helper Functions
-header()  { echo -e "\n${BLUE}==== $1 ====${NC}"; }
+header() { echo -e "\n${BLUE}==== $1 ====${NC}"; }
 log() { echo -e "${GREEN}[INFO]${NC} $1"; }
 warn() { echo -e "${YELLOW}[WARN]${NC} $1"; }
 error() { echo -e "${RED}[ERROR]${NC} $1"; }
 success() { echo -e "${GREEN}[SUCCESS]${NC} $1"; }
 
 log_task() { echo -ne "${GREEN}[INFO]${NC} $1... "; }
-ok()       { echo -e "${GREEN}Done.${NC}"; }
-fail()     { echo -e "${RED}Failed.${NC}"; }
+ok() { echo -e "${GREEN}Done.${NC}"; }
+fail() { echo -e "${RED}Failed.${NC}"; }
 
 # Check if running as root (Don't do this!)
 if [ "$EUID" -eq 0 ]; then
@@ -45,7 +45,7 @@ echo ""
 # Rustup
 if ! command -v rustup &>/dev/null; then
     log_task "Installing rustup"
-    if sudo pacman -S --noconfirm rustup > /dev/null 2>&1 && rustup default stable > /dev/null 2>&1; then ok; else fail; fi
+    if sudo pacman -S --noconfirm rustup >/dev/null 2>&1 && rustup default stable >/dev/null 2>&1; then ok; else fail; fi
 else
     log "Rustup already installed."
 fi
@@ -53,10 +53,10 @@ fi
 # Paru
 if ! command -v paru &>/dev/null; then
     log_task "Installing Paru"
-    if sudo pacman -S --needed --noconfirm base-devel git > /dev/null 2>&1 && \
-       git clone https://aur.archlinux.org/paru.git /tmp/paru > /dev/null 2>&1 && \
-       (cd /tmp/paru && makepkg -si --noconfirm > /dev/null 2>&1) && \
-       rm -rf /tmp/paru; then ok; else fail; fi
+    if sudo pacman -S --needed --noconfirm base-devel git >/dev/null 2>&1 &&
+        git clone https://aur.archlinux.org/paru.git /tmp/paru >/dev/null 2>&1 &&
+        (cd /tmp/paru && makepkg -si --noconfirm >/dev/null 2>&1) &&
+        rm -rf /tmp/paru; then ok; else fail; fi
 else
     log "Paru already installed."
 fi
@@ -73,7 +73,6 @@ if mkdir -p \
     "$XDG_DATA_HOME" "$XDG_CONFIG_HOME" "$XDG_STATE_HOME" "$XDG_CACHE_HOME" \
     "${XDG_STATE_HOME}/zsh" "${XDG_CACHE_HOME}/zsh" \
     "${XDG_DATA_HOME}/gnupg" "${XDG_STATE_HOME}/python"; then ok; else fail; fi
-
 
 # Stow Packages (Directories in your dotfiles folder)
 STOW_FOLDERS=(
@@ -109,7 +108,6 @@ if [[ "$stow_dotfiles" =~ ^[Yy]$ ]]; then
         cd - >/dev/null
     fi
 fi
-
 
 # System Scripts
 SYSTEM_SRC="$DOTFILES_DIR/scripts/system-scripts"
@@ -148,7 +146,7 @@ if command -v gamemoded >/dev/null 2>&1; then
     if ! id -nG "$USER" | grep -qw "gamemode"; then
         log_task "Adding user to gamemode group"
         if sudo usermod -aG gamemode "$USER"; then ok; else fail; fi
-        log "NOTE: You may need to log out and back in for group changes to apply."
+        warn "NOTE: You may need to log out and back in for group changes to apply."
     fi
 else
     warn "'gamemoded' command not found. Skipping user group modification."
@@ -202,7 +200,7 @@ fi
 # Hyprland-specific uwsm environment file
 if command -v uwsm >/dev/null 2>&1; then
     log_task "Writing uwsm env-hyprland"
-    if cat <<EOF >"$HOME/.config/uwsm/env-hyprland"
+    if cat <<EOF >"$HOME/.config/uwsm/env-hyprland"; then ok; else fail; fi
 # Session Identity
 export XDG_CURRENT_DESKTOP=Hyprland
 export XDG_SESSION_DESKTOP=Hyprland
@@ -219,8 +217,6 @@ export QT_QPA_PLATFORMTHEME=qt6ct
 export XCURSOR_THEME=Adwaita
 export XCURSOR_SIZE=24
 EOF
-    then ok; else fail; fi
-
     if ! grep -q "env-hyprland" "$HOME/.config/uwsm/env" 2>/dev/null; then
         echo "export-include env-hyprland" >>"$HOME/.config/uwsm/env"
     fi
@@ -261,14 +257,12 @@ fi
 # NVIDIA uwsm env variables
 if [[ "$setup_nvidia" =~ ^[Yy]$ ]]; then
     log_task "Creating UWSM NVIDIA env"
-    if cat <<EOF >"$HOME/.config/uwsm/env-nvidia"
+    if cat <<EOF >"$HOME/.config/uwsm/env-nvidia"; then ok; else fail; fi
 export LIBVA_DRIVER_NAME=nvidia
 export __GLX_VENDOR_LIBRARY_NAME=nvidia
 export NVD_BACKEND=direct
 export ELECTRON_OZONE_PLATFORM_HINT=auto
 EOF
-    then ok; else fail; fi
-
     if ! grep -q "env-nvidia" "$HOME/.config/uwsm/env" 2>/dev/null; then
         echo "export-include env-nvidia" >>"$HOME/.config/uwsm/env"
     fi
@@ -289,7 +283,7 @@ if [[ "$setup_wakeonlan" =~ ^[Yy]$ ]]; then
 
         # This is the actual task
         log_task "Enabling WoL service for $INTERFACE"
-        if cat <<EOF | sudo tee $SERVICE_FILE >/dev/null
+        if cat <<EOF | sudo tee $SERVICE_FILE >/dev/null; then ok; else fail; fi
 [Unit]
 Description=Enable Wake On LAN for $INTERFACE
 After=network-online.target
@@ -302,14 +296,13 @@ ExecStart=/usr/bin/ethtool -s $INTERFACE wol g
 [Install]
 WantedBy=multi-user.target
 EOF
-        then ok; else fail; fi
     fi
 fi
 
 # NTSYNC (Kernel Module)
 if [[ "$setup_gaming" =~ ^[Yy]$ ]]; then
     log_task "Enabling NTSYNC"
-    if echo "ntsync" | sudo tee /etc/modules-load.d/ntsync.conf > /dev/null; then ok; else fail; fi
+    if echo "ntsync" | sudo tee /etc/modules-load.d/ntsync.conf >/dev/null; then ok; else fail; fi
 else
     warn "NTSYNC skipped. Windows games (Wine/Proton) may lack kernel-level sync support."
 fi
@@ -333,10 +326,10 @@ if [[ "$setup_virtualization" =~ ^[Yy]$ ]]; then
     # Wait for the socket to be ready
     log_task "Waiting for QEMU socket"
     SOCKET_READY=false
-    for i in {1..5}; do
-        if sudo virsh -c qemu:///system list --all >/dev/null 2>&1; then 
+    for _ in {1..5}; do
+        if sudo virsh -c qemu:///system list --all >/dev/null 2>&1; then
             SOCKET_READY=true
-            break 
+            break
         fi
         sleep 1
     done
@@ -345,9 +338,9 @@ if [[ "$setup_virtualization" =~ ^[Yy]$ ]]; then
     # Configure the default network
     log_task "Activating default network"
     sudo virsh -c qemu:///system net-autostart default &>/dev/null || true
-    if sudo virsh -c qemu:///system net-start default &>/dev/null || true; then 
+    if sudo virsh -c qemu:///system net-start default &>/dev/null || true; then
         ok
-    else 
+    else
         fail
     fi
 
