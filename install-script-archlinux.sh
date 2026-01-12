@@ -88,6 +88,7 @@ NEOVIM_DEPS=(npm nodejs unzip clang go shellcheck zig luarocks dotnet-sdk cmake 
 WAKEONLAN_PACKAGES=(wol ethtool)
 VIRTUALIZATION_PACKAGES=(qemu libvirt virt-manager qemu-full dnsmasq bridge-utils)
 OBS_GAMING_PACKAGES=(obs-studio obs-vkcapture)
+CACHY_KERNEL=(linux-cachyos-bore linux-cachyos-bore-headers)
 
 # Flatpaks
 FLATPAK_APPS=(
@@ -151,6 +152,7 @@ read -r -p "$(echo -e "  ${YELLOW}??${NC} Set up dotfiles with GNU Stow? (y/N): 
 echo ""
 
 # Modify Package Lists based on answers
+if [[ "$install_cachy_repos" =~ ^[Yy]$ ]]; then PACMAN_PACKAGES+=("${CACHY_KERNEL[@]}"); fi
 if [[ "$install_nvidia" =~ ^[Yy]$ ]]; then PACMAN_PACKAGES+=("${NVIDIA_PACKAGES[@]}"); fi
 if [[ "$install_gaming" =~ ^[Yy]$ ]]; then PACMAN_PACKAGES+=("${GAMING_PACKAGES[@]}"); FLATPAK_APPS+=("com.vysp3r.ProtonPlus"); fi
 if [[ "$install_obs" =~ ^[Yy]$ ]]; then AUR_PACKAGES+=("${OBS_GAMING_PACKAGES[@]}"); fi
