@@ -65,7 +65,7 @@ PACMAN_PACKAGES=(
     flatpak
 
     # Kernel & Headers
-    linux-headers linux-zen linux-zen-headers
+    linux-headers #linux-zen linux-zen-headers
 
     # Fonts
     ttf-cascadia-code-nerd ttf-ubuntu-font-family ttf-font-awesome
@@ -80,6 +80,7 @@ GAMING_PACKAGES=(gamemode gamescope mangohud)
 NEOVIM_DEPS=(npm nodejs unzip clang go shellcheck zig luarocks dotnet-sdk cmake gcc imagemagick)
 WAKEONLAN_PACKAGES=(wol ethtool)
 VIRTUALIZATION_PACKAGES=(qemu libvirt virt-manager qemu-full dnsmasq bridge-utils)
+OBS_GAMING_PACKAGES=(obs-studio obs-vkcapture)
 
 # Flatpaks
 FLATPAK_APPS=(
@@ -130,6 +131,11 @@ if mkdir -p \
 echo ""
 header "CONFIGURATION QUESTIONS"
 read -r -p "$(echo -e "  ${YELLOW}??${NC} Install Gaming packages? (y/N): ")" install_gaming
+
+if [[ "$install_gaming" =~ ^[Yy]$ ]]; then
+    read -r -p "$(echo -e "  ${YELLOW}??${NC} Install OBS game recording packages? (y/N): ")" install_obs
+fi
+
 read -r -p "$(echo -e "  ${YELLOW}??${NC} Install NVIDIA drivers? (y/N): ")" install_nvidia
 read -r -p "$(echo -e "  ${YELLOW}??${NC} Install Neovim dev tools? (y/N): ")" install_neovim
 read -r -p "$(echo -e "  ${YELLOW}??${NC} Install WakeOnLan tools? (y/N): ")" install_wakeonlan
@@ -140,6 +146,7 @@ echo ""
 # Modify Package Lists based on answers
 if [[ "$install_nvidia" =~ ^[Yy]$ ]]; then PACMAN_PACKAGES+=("${NVIDIA_PACKAGES[@]}"); fi
 if [[ "$install_gaming" =~ ^[Yy]$ ]]; then PACMAN_PACKAGES+=("${GAMING_PACKAGES[@]}"); FLATPAK_APPS+=("com.vysp3r.ProtonPlus"); fi
+if [[ "$install_obs" =~ ^[Yy]$ ]]; then AUR_PACKAGES+=("${OBS_GAMING_PACKAGES[@]}"); fi
 if [[ "$install_neovim" =~ ^[Yy]$ ]]; then PACMAN_PACKAGES+=("${NEOVIM_DEPS[@]}"); fi
 if [[ "$install_wakeonlan" =~ ^[Yy]$ ]]; then PACMAN_PACKAGES+=("${WAKEONLAN_PACKAGES[@]}"); fi
 
