@@ -127,7 +127,6 @@ if mkdir -p \
     "${XDG_DATA_HOME}/gnupg" "${XDG_STATE_HOME}/python"; then ok; else fail; fi
 
 # --- USER INTERACTION ---
-
 echo ""
 header "CONFIGURATION QUESTIONS"
 read -r -p "$(echo -e "  ${YELLOW}??${NC} Install Gaming packages? (y/N): ")" install_gaming
@@ -161,20 +160,6 @@ fi
 # --- INSTALLATION PHASE ---
 
 header "INSTALLATION PHASE"
-
-# Prompt user to install CachyOS repos/kernel
-read -r -p "$(echo -e "  ${YELLOW}??${NC} Install/set up CachyOS repos/kernel? (y/N): ")" install_cachyos
-if [[ "$install_cachyos" =~ ^[Yy]$ ]]; then
-    chmod u+x "$HOME/dotfiles/scripts/user-scripts/.local/bin/cachyos-repo.sh"
-    log_task "Setting up CachyOS repositories"
-    if "$HOME/dotfiles/scripts/user-scripts/.local/bin/cachyos-repo.sh" > /dev/null 2>&1; then
-        ok
-    else
-        fail
-    fi
-else
-    log "Skipping CachyOS setup."
-fi
 
 # Update system
 log_task "Updating system"
@@ -213,7 +198,6 @@ flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.f
 flatpak install -y --noninteractive flathub "${FLATPAK_APPS[@]}"
 
 # --- SYSTEM CONFIGURATION ---
-
 header "SYSTEM CONFIGURATION"
 
 # Shell
@@ -276,7 +260,6 @@ if command -v uwsm >/dev/null 2>&1; then
     if mkdir -p "$HOME/.config/uwsm"; then ok; else fail; fi
 else
     warn "UWSM not detected. Skipping uwsm directory configuration ..."
-
 fi
 
 # Hyprland-specific uwsm environment file
@@ -446,6 +429,7 @@ else
     warn "NTSYNC skipped. Windows games (Wine/Proton) may lack kernel-level sync support."
 fi
 
+# Setup virtualization
 if [[ "$setup_virtualization" =~ ^[Yy]$ ]]; then
     header "Installing/Configuring Virtualization"
 
