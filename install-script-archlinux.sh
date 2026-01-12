@@ -143,15 +143,8 @@ read -r -p "$(echo -e "  ${YELLOW}??${NC} Set up dotfiles with GNU Stow? (y/N): 
 echo ""
 
 # Modify Package Lists based on answers
-if [[ "$install_nvidia" =~ ^[Yy]$ ]]; then PACMAN_PACKAGES+=("${NVIDIA_PACKAGES[@]}"); fi
-if [[ "$install_gaming" =~ ^[Yy]$ ]]; then PACMAN_PACKAGES+=("${GAMING_PACKAGES[@]}"); FLATPAK_APPS+=("com.vysp3r.ProtonPlus"); fi
-if [[ "$install_obs" =~ ^[Yy]$ ]]; then AUR_PACKAGES+=("${OBS_GAMING_PACKAGES[@]}"); fi
-if [[ "$install_neovim" =~ ^[Yy]$ ]]; then PACMAN_PACKAGES+=("${NEOVIM_DEPS[@]}"); fi
-if [[ "$install_wakeonlan" =~ ^[Yy]$ ]]; then PACMAN_PACKAGES+=("${WAKEONLAN_PACKAGES[@]}"); fi
-
 if [[ "$install_gaming" =~ ^[Yy]$ ]]; then
     log "Checking repositories for optimized Proton builds"
-    
     if pacman -Ssq "^proton-cachyos$" > /dev/null && \
        pacman -Ssq "^proton-cachyos-slr$" > /dev/null; then
         
@@ -162,6 +155,12 @@ if [[ "$install_gaming" =~ ^[Yy]$ ]]; then
         warn "Proton-cachyos packages not found; skipping optimized builds."
     fi
 fi
+
+if [[ "$install_nvidia" =~ ^[Yy]$ ]]; then PACMAN_PACKAGES+=("${NVIDIA_PACKAGES[@]}"); fi
+if [[ "$install_gaming" =~ ^[Yy]$ ]]; then PACMAN_PACKAGES+=("${GAMING_PACKAGES[@]}"); FLATPAK_APPS+=("com.vysp3r.ProtonPlus"); fi
+if [[ "$install_obs" =~ ^[Yy]$ ]]; then AUR_PACKAGES+=("${OBS_GAMING_PACKAGES[@]}"); fi
+if [[ "$install_neovim" =~ ^[Yy]$ ]]; then PACMAN_PACKAGES+=("${NEOVIM_DEPS[@]}"); fi
+if [[ "$install_wakeonlan" =~ ^[Yy]$ ]]; then PACMAN_PACKAGES+=("${WAKEONLAN_PACKAGES[@]}"); fi
 
 # Check for BTRFS Root
 if findmnt -n -o FSTYPE --target / | grep -q "btrfs"; then
