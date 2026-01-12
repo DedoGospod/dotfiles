@@ -161,10 +161,26 @@ fi
 # --- INSTALLATION PHASE ---
 
 header "INSTALLATION PHASE"
+
+# Prompt user to install CachyOS repos/kernel
+read -r -p "$(echo -e "  ${YELLOW}??${NC} Install/set up CachyOS repos/kernel? (y/N): ")" install_cachyos
+if [[ "$install_cachyos" =~ ^[Yy]$ ]]; then
+    chmod u+x "$HOME/dotfiles/scripts/user-scripts/.local/bin/cachyos-repo.sh"
+    log_task "Setting up CachyOS repositories"
+    if "$HOME/dotfiles/scripts/user-scripts/.local/bin/cachyos-repo.sh" > /dev/null 2>&1; then
+        ok
+    else
+        fail
+    fi
+else
+    log "Skipping CachyOS setup."
+fi
+
+# Update system
 log_task "Updating system"
 if sudo pacman -Syu --noconfirm > /dev/null 2>&1; then ok; else fail; fi
 
-# Rustup
+# Install rustup
 if ! command -v rustup &>/dev/null; then
     log_task "Installing rustup"
     if sudo pacman -S --noconfirm rustup > /dev/null 2>&1 && rustup default stable > /dev/null 2>&1; then ok; else fail; fi
@@ -172,7 +188,7 @@ else
     log "Rustup already installed."
 fi
 
-# Paru
+# Install Paru
 if ! command -v paru &>/dev/null; then
     log_task "Installing Paru"
     if sudo pacman -S --needed --noconfirm base-devel git > /dev/null 2>&1 && \
@@ -183,12 +199,15 @@ else
     log "Paru already installed."
 fi
 
+# Install pacman pkgs
 log "Installing Official Packages..."
 sudo pacman -S --needed --noconfirm "${PACMAN_PACKAGES[@]}"
 
+# Install AUR packages
 log "Installing AUR Packages..."
 paru -S --needed --noconfirm "${AUR_PACKAGES[@]}"
 
+# Install Flatpaks
 log "Installing Flatpak Apps..."
 flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 flatpak install -y --noninteractive flathub "${FLATPAK_APPS[@]}"
