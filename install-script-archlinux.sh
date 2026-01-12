@@ -56,7 +56,7 @@ PACMAN_PACKAGES=(
     fzf zoxide fd tmux stow bat eza ripgrep ncdu trash-cli man-db
 
     # Network & Services
-    networkmanager bluez bluez-utils pipewire wireplumber cronie power-profiles-daemon
+    networkmanager bluez bluez-utils pipewire wireplumber
 
     # Maintenance
     reflector timeshift
@@ -80,7 +80,7 @@ GAMING_PACKAGES=(gamemode gamescope mangohud steam)
 NEOVIM_DEPS=(npm nodejs unzip clang go shellcheck zig luarocks dotnet-sdk cmake gcc imagemagick)
 WAKEONLAN_PACKAGES=(wol ethtool)
 VIRTUALIZATION_PACKAGES=(qemu libvirt virt-manager qemu-full dnsmasq bridge-utils)
-OBS_GAMING_PACKAGES=(obs-studio obs-vkcapture)
+OBS_GAME_RECORDING=(obs-studio obs-vkcapture)
 
 # Flatpaks
 FLATPAK_APPS=(
@@ -158,7 +158,7 @@ fi
 
 if [[ "$install_nvidia" =~ ^[Yy]$ ]]; then PACMAN_PACKAGES+=("${NVIDIA_PACKAGES[@]}"); fi
 if [[ "$install_gaming" =~ ^[Yy]$ ]]; then PACMAN_PACKAGES+=("${GAMING_PACKAGES[@]}"); FLATPAK_APPS+=("com.vysp3r.ProtonPlus"); fi
-if [[ "$install_obs" =~ ^[Yy]$ ]]; then AUR_PACKAGES+=("${OBS_GAMING_PACKAGES[@]}"); fi
+if [[ "$install_obs" =~ ^[Yy]$ ]]; then AUR_PACKAGES+=("${OBS_GAME_RECORDING[@]}"); fi
 if [[ "$install_neovim" =~ ^[Yy]$ ]]; then PACMAN_PACKAGES+=("${NEOVIM_DEPS[@]}"); fi
 if [[ "$install_wakeonlan" =~ ^[Yy]$ ]]; then PACMAN_PACKAGES+=("${WAKEONLAN_PACKAGES[@]}"); fi
 
