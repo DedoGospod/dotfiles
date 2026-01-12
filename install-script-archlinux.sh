@@ -76,7 +76,7 @@ PACMAN_PACKAGES=(
 
 # Optional Groups
 NVIDIA_PACKAGES=(libva-nvidia-driver nvidia-open-dkms nvidia-utils lib32-nvidia-utils nvidia-settings egl-wayland)
-GAMING_PACKAGES=(gamemode gamescope mangohud)
+GAMING_PACKAGES=(gamemode gamescope mangohud steam)
 NEOVIM_DEPS=(npm nodejs unzip clang go shellcheck zig luarocks dotnet-sdk cmake gcc imagemagick)
 WAKEONLAN_PACKAGES=(wol ethtool)
 VIRTUALIZATION_PACKAGES=(qemu libvirt virt-manager qemu-full dnsmasq bridge-utils)
