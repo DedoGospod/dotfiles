@@ -1,0 +1,2 @@
+export-include env-hyprland
+export-include env-nvidia
