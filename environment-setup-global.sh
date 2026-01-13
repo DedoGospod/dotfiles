@@ -37,7 +37,7 @@ sudo -v
 # Stow Packages (Directories in your dotfiles folder)
 STOW_FOLDERS=(
     hypr backgrounds fastfetch kitty mpv nvim starship swaync waybar wofi yazi
-    zsh tmux wayland-pipewire-idle-inhibit kwalletrc theme uwsm-autostart arch-config
+    zsh tmux wayland-pipewire-idle-inhibit kwalletrc theme uwsm-autostart systemd-user
 )
 
 # --- ENVIRONMENT SETUP ---
@@ -65,32 +65,6 @@ read -r -p "$(echo -e "  ${YELLOW}??${NC} Setup KVM virtualization? (y/N): ")" s
 read -r -p "$(echo -e "  ${YELLOW}??${NC} Do you want to stow your dotfiles with GNU STOW? [y/N]: ")" stow_dotfiles
 echo ""
 
-# --- INSTALLATION PHASE ---
-header "INSTALLATION PHASE"
-
-# Update system
-log_task "Updating system"
-if sudo pacman -Syu --noconfirm > /dev/null 2>&1; then ok; else fail; fi
-
-# Install rustup
-if ! command -v rustup &>/dev/null; then
-    log_task "Installing rustup"
-    if sudo pacman -S --noconfirm rustup > /dev/null 2>&1 && rustup default stable > /dev/null 2>&1; then ok; else fail; fi
-else
-    log "Rustup already installed."
-fi
-
-# Install Paru
-if ! command -v paru &>/dev/null; then
-    log_task "Installing Paru"
-    if sudo pacman -S --needed --noconfirm base-devel git > /dev/null 2>&1 && \
-       git clone https://aur.archlinux.org/paru.git /tmp/paru > /dev/null 2>&1 && \
-       (cd /tmp/paru && makepkg -si --noconfirm > /dev/null 2>&1) && \
-       rm -rf /tmp/paru; then ok; else fail; fi
-else
-    log "Paru already installed."
-fi
-
 # --- SYSTEM CONFIGURATION ---
 header "SYSTEM CONFIGURATION"
 
@@ -106,11 +80,6 @@ if [[ "$stow_dotfiles" =~ ^[Yy]$ ]]; then
     if [ -d "$DOTFILES_DIR" ]; then
         log "Stowing dotfiles..."
         cd "$DOTFILES_DIR"
-
-        if [ -d "systemd-user" ]; then
-            log_task "Stowing systemd-user"
-            if stow -t "$HOME" --restow --no-folding systemd-user; then ok; else fail; fi
-        fi
 
         if [ -d "scripts/user-scripts" ]; then
             log_task "Stowing user scripts"
@@ -134,8 +103,6 @@ SYSTEM_SRC="$DOTFILES_DIR/scripts/system-scripts"
 if [ -d "$SYSTEM_SRC" ]; then
     log "Syncing system scripts..."
     SYSTEM_FILES=(
-        "etc/cron.weekly/btrfs-clean-job|/etc/cron.weekly/btrfs-clean-job"
-        "etc/cron.weekly/clean-pkg-managers|/etc/cron.weekly/clean-pkg-managers"
         "usr/local/bin/reboot-to-windows|/usr/local/bin/reboot-to-windows"
     )
     for entry in "${SYSTEM_FILES[@]}"; do
