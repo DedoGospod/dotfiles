@@ -1,0 +1,14 @@
+[Unit]
+Description=Run Flatpak update daily
+
+[Timer]
+OnBootSec=2m
+OnUnitActiveSec=1d
+Persistent=true
+RandomizedDelaySec=15m 
+
+[Service]
+ExecStartPre=/usr/bin/notify-send "Flatpak" "Checking for Flatpak updates..." --icon=system-software-update
+
+[Install]
+WantedBy=default.target
