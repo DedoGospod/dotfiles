@@ -1,0 +1,6 @@
+[Unit]
+Description=Update Flatpaks in background with low priority
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/nice -n 19 /usr/bin/ionice -c 3 /usr/bin/flatpak update --user --noninteractive --limit-rate=500K
