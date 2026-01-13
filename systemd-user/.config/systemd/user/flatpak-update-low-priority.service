@@ -1,5 +1,6 @@
 [Unit]
 Description=Update Flatpaks in background with low priority
+After=network-online.target
 
 [Service]
 Type=oneshot
