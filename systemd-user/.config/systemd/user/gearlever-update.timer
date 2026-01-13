@@ -3,6 +3,7 @@ Description=Daily Gear Lever Update Check
 
 [Timer]
 OnBootSec=2m
+RandomizedDelaySec=2m
 OnUnitActiveSec=1d
 Persistent=true
 
