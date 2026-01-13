@@ -1,0 +1,9 @@
+[Unit]
+Description=Fetch Gear Lever AppImage Updates
+After=network-online.target
+
+[Service]
+Type=oneshot
+ExecStartPre=/usr/bin/notify-send "Gear Lever" "Checking for AppImage updates..." --icon=system-software-update
+ExecStart=/usr/bin/flatpak run it.mijorus.gearlever --fetch-updates
+ExecStartPost=/usr/bin/notify-send "Gear Lever" "Update check complete!" --icon=emblem-success
