@@ -1,6 +1,0 @@
-description: System scripts setup
-
-packages:
-
-post_install_hook: scripts/setup-system-scripts.sh
-hook_behavior: always

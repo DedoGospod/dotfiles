@@ -1,9 +1,0 @@
-description: Network packages
-
-packages:
-  - networkmanager
-  - ethtool
-  - wol
-
-post_install_hook: scripts/setup-network.sh
-hook_behavior: ask
