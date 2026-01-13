@@ -37,7 +37,7 @@ sudo -v
 # Stow Packages (Directories in your dotfiles folder)
 STOW_FOLDERS=(
     hypr backgrounds fastfetch kitty mpv nvim starship swaync waybar wofi yazi
-    zsh tmux wayland-pipewire-idle-inhibit kwalletrc theme uwsm-autostart systemd-user
+    zsh tmux wayland-pipewire-idle-inhibit kwalletrc theme uwsm systemd-user
 )
 
 # --- ENVIRONMENT SETUP ---
@@ -115,41 +115,6 @@ if [ -d "$SYSTEM_SRC" ]; then
     done
 fi
 
-# Create UWSM directory if it doesnt already exist
-if command -v uwsm >/dev/null 2>&1; then
-    log_task "UWSM found. Preparing configuration directory..."
-    if mkdir -p "$HOME/.config/uwsm"; then ok; else fail; fi
-else
-    warn "UWSM not detected. Skipping uwsm directory configuration ..."
-fi
-
-# Hyprland-specific uwsm environment file
-if command -v uwsm >/dev/null 2>&1; then
-    log_task "Writing uwsm env-hyprland"
-    if cat <<EOF >"$HOME/.config/uwsm/env-hyprland"
-# Session Identity
-export XDG_CURRENT_DESKTOP=Hyprland
-export XDG_SESSION_DESKTOP=Hyprland
-export XDG_SESSION_TYPE=wayland
-
-# Toolkit Backends
-export GDK_BACKEND=wayland,x11
-export QT_QPA_PLATFORM="wayland;xcb"
-export SDL_VIDEODRIVER=wayland
-export CLUTTER_BACKEND=wayland
-
-# Theming
-export QT_QPA_PLATFORMTHEME=qt6ct
-export XCURSOR_THEME=Adwaita
-export XCURSOR_SIZE=24
-EOF
-    then ok; else fail; fi
-
-    if ! grep -q "env-hyprland" "$HOME/.config/uwsm/env" 2>/dev/null; then
-        echo "export-include env-hyprland" >>"$HOME/.config/uwsm/env"
-    fi
-fi
-
 # Enable NVIDIA KMS
 if [[ "$setup_nvidia" =~ ^[Yy]$ ]]; then
     CONF_FILE="/etc/modprobe.d/nvidia.conf"
@@ -179,20 +144,6 @@ if [[ "$setup_nvidia" =~ ^[Yy]$ ]]; then
         if sudo mkinitcpio -P; then ok; else fail; fi
     else
         log "NVIDIA modules already present in mkinitcpio. Skipping regeneration."
-    fi
-fi
-
-# NVIDIA uwsm env variables
-if [[ "$setup_nvidia" =~ ^[Yy]$ ]]; then
-    log_task "Creating UWSM NVIDIA env"
-    if cat <<EOF >"$HOME/.config/uwsm/env-nvidia"; then ok; else fail; fi
-export LIBVA_DRIVER_NAME=nvidia
-export __GLX_VENDOR_LIBRARY_NAME=nvidia
-export NVD_BACKEND=direct
-export ELECTRON_OZONE_PLATFORM_HINT=auto
-EOF
-    if ! grep -q "env-nvidia" "$HOME/.config/uwsm/env" 2>/dev/null; then
-        echo "export-include env-nvidia" >>"$HOME/.config/uwsm/env"
     fi
 fi
 
