@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Gamescope setup. Includes: mouse raw input, performance optimizations, and resolution scaling
 

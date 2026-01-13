@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Define the Git configuration settings
 GIT_EMAIL="dylanlazarov2002@protonmail.com"
