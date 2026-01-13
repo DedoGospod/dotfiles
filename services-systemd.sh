@@ -108,12 +108,12 @@ echo ""
 log_info "--- Configuring System Services ---"
 
 # Standard Services
-manage_service "cronie.service"    "" "enable" "Scheduled tasks" "Y"
-manage_service "bluetooth.service" "" "enable" "Bluetooth connectivity" "n"
-manage_service "NetworkManager.service" "" "enable" "Network management" "Y"
-manage_service "wol.service"       "" "enable" "Wake on LAN" "n"
-manage_service "ratbagd.service"   "" "enable" "Piper mouse configuration" "Y"
-manage_service "power-profiles-daemon.service" "" "enable" "Power profiles" "Y"
+manage_service "cronie.service"                        "" "enable" "Scheduled tasks" "Y"
+manage_service "bluetooth.service"                     "" "enable" "Bluetooth connectivity" "n"
+manage_service "NetworkManager.service"                "" "enable" "Network management" "Y"
+manage_service "wol.service"                           "" "enable" "Wake on LAN" "n"
+manage_service "ratbagd.service"                       "" "enable" "Piper mouse configuration" "Y"
+manage_service "power-profiles-daemon.service"         "" "enable" "Power profiles" "Y"
 
 # System timers
 
@@ -141,24 +141,24 @@ if [[ "${XDG_SESSION_DESKTOP:-}" == "Hyprland" || -n "${HYPRLAND_INSTANCE_SIGNAT
 fi
 
 if $IS_HYPRLAND; then
-    manage_service "hypridle.service"        "--user" "enable" "Idle daemon" "Y"
-    manage_service "hyprpaper.service"       "--user" "enable" "Wallpaper daemon" "Y"
-    manage_service "pyprland.service"        "--user" "enable" "Pyprland plugins" "Y"
-    manage_service "hyprpolkitagent.service" "--user" "enable" "Polkit Authentication" "Y"
+    manage_service "hypridle.service"                  "--user" "enable" "Idle daemon" "Y"
+    manage_service "hyprpaper.service"                 "--user" "enable" "Wallpaper daemon" "Y"
+    manage_service "pyprland.service"                  "--user" "enable" "Pyprland plugins" "Y"
+    manage_service "hyprpolkitagent.service"           "--user" "enable" "Polkit Authentication" "Y"
 else
     echo "  [User] Not in Hyprland. Skipping Hyprland-specific services."
 fi
 
 # General user services
 manage_service "wayland-pipewire-idle-inhibit.service" "--user" "enable" "Prevent sleep when playing audio" "Y"
-manage_service "waybar.service"          "--user" "enable" "Status bar" "Y"
-manage_service "wlsunset.service"        "--user" "enable" "Blue light filter" "Y"
-manage_service "swaync.service"          "--user" "enable" "Notification daemon" "Y"
+manage_service "waybar.service"                        "--user" "enable" "Status bar" "Y"
+manage_service "wlsunset.service"                      "--user" "enable" "Blue light filter" "Y"
+manage_service "swaync.service"                        "--user" "enable" "Notification daemon" "Y"
 manage_service "easyeffects.service"                   "--user" "enable" "Audio effects/Equalizer" "n"
 manage_service "obs.service"                           "--user" "enable" "OBS Studio" "n"
 
 # User timers
-manage_service "gearlever-update.timer"  "--user" "enable" "Gearlever auto-update" "Y"
+manage_service "gearlever-update.timer"                "--user" "enable" "Gearlever auto-update" "Y"
 
 echo ""
 log_success "Configuration complete!"
