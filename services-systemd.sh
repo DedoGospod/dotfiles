@@ -159,6 +159,7 @@ manage_service "obs.service"                           "--user" "enable" "OBS St
 
 # User timers
 manage_service "gearlever-update.timer"                "--user" "enable" "Gearlever auto-update" "Y"
+manage_service "flatpak-update-low-priority.timer"     "--user" "enable" "Flatpak auto-update" "Y"
 
 echo ""
 log_success "Configuration complete!"
