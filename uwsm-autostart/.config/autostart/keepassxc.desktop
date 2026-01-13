@@ -1,11 +1,11 @@
-[Desktop Entry]
-Name=KeePassXC
-GenericName=Password Manager
-Exec=keepassxc
-TryExec=keepassxc
-Icon=keepassxc
-StartupWMClass=keepassxc
-StartupNotify=false
-Terminal=false
-Type=Application
-Version=1.0
+[desktop entry]
+name=keepassxc
+genericname=password manager
+exec=keepassxc
+tryexec=keepassxc
+icon=keepassxc
+startupwmclass=keepassxc
+startupnotify=false
+terminal=false
+type=application
+version=1.0
