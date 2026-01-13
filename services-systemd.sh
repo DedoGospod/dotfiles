@@ -110,14 +110,18 @@ log_info "--- Configuring System Services ---"
 # Standard Services
 manage_service "cronie.service"    "" "enable" "Scheduled tasks" "Y"
 manage_service "bluetooth.service" "" "enable" "Bluetooth connectivity" "n"
+manage_service "NetworkManager.service" "" "enable" "Network management" "Y"
 manage_service "wol.service"       "" "enable" "Wake on LAN" "n"
 manage_service "ratbagd.service"   "" "enable" "Piper mouse configuration" "Y"
 manage_service "power-profiles-daemon.service" "" "enable" "Power profiles" "Y"
+
+# System timers
 
 # Special Logic: Grub Btrfs
 ROOT_FS=$(findmnt -n -o FSTYPE /)
 if [[ "$ROOT_FS" == "btrfs" ]]; then
     manage_service "grub-btrfsd.service" "" "enable" "Auto-update grub on snapshots" "Y"
+    # manage_service "btrfs-scrub@-.timer.service" "" "enable" "Automatic btrfs maintnance" "Y"
 else
     echo -e "  [System] Root is not Btrfs ($ROOT_FS). Skipping grub-btrfsd."
 fi
@@ -152,6 +156,9 @@ manage_service "wlsunset.service"        "--user" "enable" "Blue light filter" "
 manage_service "swaync.service"          "--user" "enable" "Notification daemon" "Y"
 manage_service "easyeffects.service"                   "--user" "enable" "Audio effects/Equalizer" "n"
 manage_service "obs.service"                           "--user" "enable" "OBS Studio" "n"
+
+# User timers
+manage_service "gearlever-update.timer"  "--user" "enable" "Gearlever auto-update" "Y"
 
 echo ""
 log_success "Configuration complete!"
