@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-# --- PRELIMINARY SETUP & CONSTANTS ---
-
 # Exit immediately if a command exits with a non-zero status
 set -e
 set -o pipefail
@@ -108,7 +106,7 @@ AUR_PACKAGES=(
 # Stow Packages
 STOW_FOLDERS=(
     hypr backgrounds fastfetch kitty mpv nvim starship swaync waybar wofi yazi
-    zsh tmux wayland-pipewire-idle-inhibit kwalletrc theme uwsm-autostart arch-config
+    zsh tmux wayland-pipewire-idle-inhibit kwalletrc theme uwsm-autostart systemd-user
 )
 
 # --- ENVIRONMENT SETUP ---
@@ -226,11 +224,6 @@ if [[ "$stow_dotfiles" =~ ^[Yy]$ ]]; then
         log "Stowing dotfiles..."
         cd "$DOTFILES_DIR"
 
-        if [ -d "systemd-user" ]; then
-            log_task "Stowing systemd-user"
-            if stow -t "$HOME" --restow --no-folding systemd-user; then ok; else fail; fi
-        fi
-
         if [ -d "scripts/user-scripts" ]; then
             log_task "Stowing user scripts"
             if stow -d "scripts" -t "$HOME" --restow user-scripts; then ok; else fail; fi
@@ -253,8 +246,6 @@ SYSTEM_SRC="$DOTFILES_DIR/scripts/system-scripts"
 if [ -d "$SYSTEM_SRC" ]; then
     log "Syncing system scripts..."
     SYSTEM_FILES=(
-        "etc/cron.weekly/btrfs-clean-job|/etc/cron.weekly/btrfs-clean-job"
-        "etc/cron.weekly/clean-pkg-managers|/etc/cron.weekly/clean-pkg-managers"
         "usr/local/bin/reboot-to-windows|/usr/local/bin/reboot-to-windows"
     )
     for entry in "${SYSTEM_FILES[@]}"; do
