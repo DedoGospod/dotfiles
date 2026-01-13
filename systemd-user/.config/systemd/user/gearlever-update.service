@@ -1,8 +1,8 @@
 [Unit]
 Description=Fetch Gear Lever AppImage Updates
+Wants=network-online.target
 After=network-online.target
 
 [Service]
 Type=oneshot
-ExecStartPre=/usr/bin/notify-send "Gear Lever" "Checking for AppImage updates..." --icon=system-software-update
-ExecStart=/usr/bin/flatpak run it.mijorus.gearlever --fetch-updates
+ExecStart=/home/dylan/dotfiles/scripts/user-scripts/.local/bin/systemd/gear-lever-autoupdates.sh
