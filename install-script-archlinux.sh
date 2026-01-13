@@ -342,35 +342,35 @@ else
     warn "Tmux is not installed. Skipping TPM setup."
 fi
 
-# WoL setup
+# Setup WakeOnLan
 if [[ "$install_wakeonlan" =~ ^[Yy]$ ]]; then
-    # Only detect the interface if we actually need it
-    INTERFACE=$(ip route | grep default | awk '{print $5}' | head -n1)
+    log_task "Configuring Global & Active Wake-on-LAN"
 
-    # Check if detection worked
-    if [ -z "$INTERFACE" ]; then
-        error "Could not detect a network interface. WoL service not created."
+    WOL_CONF="/etc/NetworkManager/conf.d/wol.conf"
+    UDEV_RULE="/etc/udev/rules.d/81-wol.rules"
+
+    # Persistent Global Config (for future connections)
+    sudo mkdir -p /etc/NetworkManager/conf.d
+    echo -e "[connection]\nethernet.wake-on-lan=magic" | sudo tee "$WOL_CONF" >/dev/null
+
+    # Hardware-Level Rule (The "Nuclear" Option)
+    echo 'ACTION=="add", SUBSYSTEM=="net", KERNEL=="en*", RUN+="/usr/sbin/ethtool -s %k wol g"' | sudo tee "$UDEV_RULE" >/dev/null
+
+    # Fix Existing Connections (Handles spaces in names)
+    while IFS= read -r conn; do
+        if [[ -n "$conn" ]]; then
+            sudo nmcli connection modify "$conn" 802-3-ethernet.wake-on-lan magic 2>/dev/null
+            sudo nmcli connection up "$conn" >/dev/null 2>&1
+        fi
+    done < <(nmcli -t -f NAME,TYPE connection show | grep ":802-3-ethernet" | cut -d: -f1)
+
+    # Final Reload
+    if sudo systemctl reload NetworkManager 2>/dev/null; then
+        ok
     else
-        # We use log here because this is information, not the task yet
-        log "Detected interface: $INTERFACE"
-        SERVICE_FILE="/etc/systemd/system/wol.service"
-
-        # This is the actual task
-        log_task "Enabling WoL service for $INTERFACE"
-        if cat <<EOF | sudo tee $SERVICE_FILE >/dev/null
-[Unit]
-Description=Enable Wake On LAN for $INTERFACE
-After=network-online.target
-Requires=network-online.target 
-
-[Service]
-Type=oneshot
-ExecStart=/usr/bin/ethtool -s $INTERFACE wol g
-
-[Install]
-WantedBy=multi-user.target
-EOF
-        then ok; else fail; fi
+        # If NM isn't running, it's fine; the udev rule and conf file will catch it on next boot
+        log "NetworkManager reload skipped; settings will apply on boot."
+        ok
     fi
 fi
 
