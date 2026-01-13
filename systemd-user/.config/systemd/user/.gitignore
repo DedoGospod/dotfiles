@@ -1,0 +1,4 @@
+# Ignore all systemd dependency directories
+*.target.wants/
+*.service.wants/
+*.target.requires/
