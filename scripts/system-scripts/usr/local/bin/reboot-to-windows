@@ -1,18 +1,38 @@
-#!/bin/bash
-WINDOWS_INDEX=0  # Change to your Windows index
+#!/usr/bin/env bash
 
-# Try grub-reboot first
-sudo grub-reboot "$WINDOWS_INDEX" || {
-    echo "grub-reboot failed, trying grub-editenv..."
-    sudo grub-editenv /boot/grub/grubenv set next_entry="$WINDOWS_INDEX"
-}
+# Dynamically find the GRUB index for Windows
+WINDOWS_INDEX=$(grep -i "^menuentry" /boot/grub/grub.cfg | cut -d"'" -f2 | grep -ni "Windows" | cut -d":" -f1)
 
-# Fallback to efibootmgr if GRUB fails
-if ! sudo efibootmgr | grep -q "Windows"; then
-    echo "No Windows UEFI entry found."
+# GRUB indices are 0-based, so we subtract 1 from the line number found
+if [ -n "$WINDOWS_INDEX" ]; then
+    WINDOWS_INDEX=$((WINDOWS_INDEX - 1))
+    echo "Found Windows at GRUB index: $WINDOWS_INDEX"
 else
-    WINDOWS_BOOTNUM=$(sudo efibootmgr | grep "Windows" | sed 's/Boot\([0-9A-F]*\).*/\1/')
-    sudo efibootmgr --bootnext "$WINDOWS_BOOTNUM"
+    echo "Could not find Windows in /boot/grub/grub.cfg"
 fi
 
-sudo reboot
+# Try grub-reboot
+if [ -n "$WINDOWS_INDEX" ]; then
+    sudo grub-reboot "$WINDOWS_INDEX" || {
+        echo "grub-reboot failed, trying grub-editenv..."
+        sudo grub-editenv /boot/grub/grubenv set next_entry="$WINDOWS_INDEX"
+    }
+fi
+
+# Fallback to efibootmgr (UEFI direct boot)
+WINDOWS_BOOTNUM=$(sudo efibootmgr | grep -i "Windows Boot Manager" | sed -n 's/Boot\([0-9A-F]\{4\}\).*/\1/p')
+
+if [ -n "$WINDOWS_BOOTNUM" ]; then
+    echo "Setting EFI BootNext to: $WINDOWS_BOOTNUM"
+    sudo efibootmgr --bootnext "$WINDOWS_BOOTNUM"
+else
+    echo "No Windows UEFI entry found."
+fi
+
+# Final check: Only reboot if one of the methods succeeded
+if [ -z "$WINDOWS_INDEX" ] && [ -z "$WINDOWS_BOOTNUM" ]; then
+    echo "Error: Could not identify Windows boot entry. Aborting reboot."
+    exit 1
+fi
+
+sudo reboot -h now
