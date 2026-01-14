@@ -12,15 +12,15 @@ BLUE='\033[0;34m'
 NC='\033[0m'
 
 # Helper Functions
-header()  { echo -e "\n${BLUE}==== $1 ====${NC}"; }
+header() { echo -e "\n${BLUE}==== $1 ====${NC}"; }
 log() { echo -e "${GREEN}[INFO]${NC} $1"; }
 warn() { echo -e "${YELLOW}[WARN]${NC} $1"; }
 error() { echo -e "${RED}[ERROR]${NC} $1"; }
 success() { echo -e "${GREEN}[SUCCESS]${NC} $1"; }
 
 log_task() { echo -ne "${GREEN}[INFO]${NC} $1... "; }
-ok()       { echo -e "${GREEN}Done.${NC}"; }
-fail()     { echo -e "${RED}Failed.${NC}"; }
+ok() { echo -e "${GREEN}Done.${NC}"; }
+fail() { echo -e "${RED}Failed.${NC}"; }
 
 # Check if running as root (Don't do this!)
 if [ "$EUID" -eq 0 ]; then
@@ -57,7 +57,7 @@ PACMAN_PACKAGES=(
     ufw gnome-keyring seahorse keepassxc networkmanager bluez bluez-utils
 
     # Maintenance
-    reflector 
+    reflector
 
     # Containerization
     flatpak
@@ -143,9 +143,9 @@ echo ""
 # Modify Package Lists based on answers
 if [[ "$install_gaming" =~ ^[Yy]$ ]]; then
     log "Checking repositories for optimized Proton builds"
-    if pacman -Ssq "^proton-cachyos$" > /dev/null && \
-       pacman -Ssq "^proton-cachyos-slr$" > /dev/null; then
-        
+    if pacman -Ssq "^proton-cachyos$" >/dev/null &&
+        pacman -Ssq "^proton-cachyos-slr$" >/dev/null; then
+
         GAMING_PACKAGES+=(proton-cachyos proton-cachyos-slr)
         log_task "Adding optimized Proton packages to queue."
         ok
@@ -155,7 +155,10 @@ if [[ "$install_gaming" =~ ^[Yy]$ ]]; then
 fi
 
 if [[ "$install_nvidia" =~ ^[Yy]$ ]]; then PACMAN_PACKAGES+=("${NVIDIA_PACKAGES[@]}"); fi
-if [[ "$install_gaming" =~ ^[Yy]$ ]]; then PACMAN_PACKAGES+=("${GAMING_PACKAGES[@]}"); FLATPAK_APPS+=("com.vysp3r.ProtonPlus"); fi
+if [[ "$install_gaming" =~ ^[Yy]$ ]]; then
+    PACMAN_PACKAGES+=("${GAMING_PACKAGES[@]}")
+    FLATPAK_APPS+=("com.vysp3r.ProtonPlus")
+fi
 if [[ "$install_obs" =~ ^[Yy]$ ]]; then AUR_PACKAGES+=("${OBS_GAME_RECORDING[@]}"); fi
 if [[ "$install_neovim" =~ ^[Yy]$ ]]; then PACMAN_PACKAGES+=("${NEOVIM_DEPS[@]}"); fi
 if [[ "$install_wakeonlan" =~ ^[Yy]$ ]]; then PACMAN_PACKAGES+=("${WAKEONLAN_PACKAGES[@]}"); fi
@@ -174,12 +177,12 @@ header "INSTALLATION PHASE"
 
 # Update system
 log_task "Updating system"
-if sudo pacman -Syu --noconfirm > /dev/null 2>&1; then ok; else fail; fi
+if sudo pacman -Syu --noconfirm >/dev/null 2>&1; then ok; else fail; fi
 
 # Install rustup
 if ! command -v rustup &>/dev/null; then
     log_task "Installing rustup"
-    if sudo pacman -S --noconfirm rustup > /dev/null 2>&1 && rustup default stable > /dev/null 2>&1; then ok; else fail; fi
+    if sudo pacman -S --noconfirm rustup >/dev/null 2>&1 && rustup default stable >/dev/null 2>&1; then ok; else fail; fi
 else
     log "Rustup already installed."
 fi
@@ -187,10 +190,10 @@ fi
 # Install Paru
 if ! command -v paru &>/dev/null; then
     log_task "Installing Paru"
-    if sudo pacman -S --needed --noconfirm base-devel git > /dev/null 2>&1 && \
-       git clone https://aur.archlinux.org/paru.git /tmp/paru > /dev/null 2>&1 && \
-       (cd /tmp/paru && makepkg -si --noconfirm > /dev/null 2>&1) && \
-       rm -rf /tmp/paru; then ok; else fail; fi
+    if sudo pacman -S --needed --noconfirm base-devel git >/dev/null 2>&1 &&
+        git clone https://aur.archlinux.org/paru.git /tmp/paru >/dev/null 2>&1 &&
+        (cd /tmp/paru && makepkg -si --noconfirm >/dev/null 2>&1) &&
+        rm -rf /tmp/paru; then ok; else fail; fi
 else
     log "Paru already installed."
 fi
@@ -208,18 +211,11 @@ log "Installing Flatpak Apps..."
 flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 flatpak install -y --noninteractive flathub "${FLATPAK_APPS[@]}"
 
-# --- SYSTEM CONFIGURATION ---
-header "SYSTEM CONFIGURATION"
-
-# Shell
-if command -v zsh >/dev/null 2>&1; then
-    log_task "Changing shell to zsh"
-    if chsh -s "$(command -v zsh)" "$USER"; then ok; else fail; fi
-fi
-
 # Dotfiles
 DOTFILES_DIR="$HOME/dotfiles"
 if [[ "$stow_dotfiles" =~ ^[Yy]$ ]]; then
+    header "DOTFILE CONFIGURATION"
+
     if [ -d "$DOTFILES_DIR" ]; then
         log "Stowing dotfiles..."
         cd "$DOTFILES_DIR"
@@ -258,24 +254,27 @@ FILES_TO_SYNC=(
 )
 
 for entry in "${FILES_TO_SYNC[@]}"; do
-    IFS='|' read -r src target mode <<< "$entry"
+    IFS='|' read -r src target mode <<<"$entry"
 
     if [ -f "$src" ]; then
         mode=${mode:-644}
-        
-        log_task "Installing $target (mode: $mode)"
-        if sudo install -Dm "$mode" "$src" "$target"; then 
-            ok 
-        else 
-            fail 
+
+        log_task "Syncing $target (mode: $mode)"
+        if sudo install -Dm "$mode" "$src" "$target"; then
+            ok
+        else
+            fail
         fi
     else
         warn "Source file missing: $src"
     fi
 done
 
-# Enable NVIDIA KMS
+# NVIDIA Configuration Block
 if [[ "$install_nvidia" =~ ^[Yy]$ ]]; then
+    header "NVIDIA SETUP"
+
+    # Enable NVIDIA KMS
     CONF_FILE="/etc/modprobe.d/nvidia.conf"
     SETTING="options nvidia-drm modeset=1"
 
@@ -285,10 +284,8 @@ if [[ "$install_nvidia" =~ ^[Yy]$ ]]; then
     else
         log "NVIDIA KMS already configured."
     fi
-fi
 
-# Inject NVIDIA modules into mkinitcpio for initramfs regeneration
-if [[ "$install_nvidia" =~ ^[Yy]$ ]]; then
+    # Inject NVIDIA modules into mkinitcpio for initramfs regeneration
     MK_CONF="/etc/mkinitcpio.conf"
 
     # Check if nvidia_drm is already in the MODULES array (even if commented out)
@@ -306,28 +303,57 @@ if [[ "$install_nvidia" =~ ^[Yy]$ ]]; then
     fi
 fi
 
-# Gamescope Cap
-if command -v gamescope >/dev/null 2>&1; then
-    GAMESCOPE_PATH=$(command -v gamescope)
+# Gaming settings
+if [[ "$install_gaming" =~ ^[Yy]$ ]]; then
+    header "GAMING CONFIGURATION"
 
-    # Check if the capability is already present
-    if ! getcap "$GAMESCOPE_PATH" | grep -q "cap_sys_nice+ep"; then
-        log_task "Setting CAP_SYS_NICE for Gamescope"
-        if sudo setcap 'cap_sys_nice=+ep' "$GAMESCOPE_PATH"; then ok; else fail; fi
+    # Gamescope Cap
+    if command -v gamescope >/dev/null 2>&1; then
+        GAMESCOPE_PATH=$(command -v gamescope)
+
+        # Check if the capability is already present
+        if ! getcap "$GAMESCOPE_PATH" | grep -q "cap_sys_nice+ep"; then
+            log_task "Setting CAP_SYS_NICE for Gamescope"
+            if sudo setcap 'cap_sys_nice=+ep' "$GAMESCOPE_PATH"; then ok; else fail; fi
+        fi
+    else
+        warn "Gamescope not found. Skipping capability setup."
     fi
-else
-    warn "Gamescope not found. Skipping capability setup."
+
+    # Gamemode setup
+    if command -v gamemoded >/dev/null 2>&1; then
+        if ! id -nG "$USER" | grep -qw "gamemode"; then
+            log_task "Adding user to gamemode group"
+            if sudo usermod -aG gamemode "$USER"; then ok; else fail; fi
+            warn "NOTE: You may need to log out and back in for group changes to apply."
+        else
+            log "User already in gamemode group."
+        fi
+    else
+        warn "'gamemoded' command not found. Skipping user group modification."
+    fi
+
+    # NTSYNC (Kernel Module)
+    log_task "Enabling NTSYNC"
+    if echo "ntsync" | sudo tee /etc/modules-load.d/ntsync.conf >/dev/null; then
+        ok
+    else
+        fail
+        warn "NTSYNC skipped. Windows games (Wine/Proton) may lack kernel-level sync support."
+    fi
 fi
 
-# Gamemode setup
-if command -v gamemoded >/dev/null 2>&1; then
-    if ! id -nG "$USER" | grep -qw "gamemode"; then
-        log_task "Adding user to gamemode group"
-        if sudo usermod -aG gamemode "$USER"; then ok; else fail; fi
-        warn "NOTE: You may need to log out and back in for group changes to apply."
+# System configuration
+header "SYSTEM CONFIGURATION"
+
+# Shell
+if command -v zsh >/dev/null 2>&1; then
+    if [[ "$SHELL" != "$(command -v zsh)" ]]; then
+        log_task "Changing shell to zsh"
+        if chsh -s "$(command -v zsh)" "$USER"; then ok; else fail; fi
+    else
+        log "Shell is already set to zsh. Skipping."
     fi
-else
-    warn "'gamemoded' command not found. Skipping user group modification."
 fi
 
 # Tmux Plugin Manager
@@ -377,14 +403,6 @@ if [[ "$install_wakeonlan" =~ ^[Yy]$ ]]; then
     fi
 fi
 
-# NTSYNC (Kernel Module)
-if [[ "$install_gaming" =~ ^[Yy]$ ]]; then
-    log_task "Enabling NTSYNC"
-    if echo "ntsync" | sudo tee /etc/modules-load.d/ntsync.conf > /dev/null; then ok; else fail; fi
-else
-    warn "NTSYNC skipped. Windows games (Wine/Proton) may lack kernel-level sync support."
-fi
-
 # Setup virtualization
 if [[ "$setup_virtualization" =~ ^[Yy]$ ]]; then
     header "Installing/Configuring Virtualization"
@@ -414,9 +432,9 @@ if [[ "$setup_virtualization" =~ ^[Yy]$ ]]; then
     log_task "Waiting for QEMU socket"
     SOCKET_READY=false
     for _ in {1..5}; do
-        if sudo virsh -c qemu:///system list --all >/dev/null 2>&1; then 
+        if sudo virsh -c qemu:///system list --all >/dev/null 2>&1; then
             SOCKET_READY=true
-            break 
+            break
         fi
         sleep 1
     done
@@ -425,9 +443,9 @@ if [[ "$setup_virtualization" =~ ^[Yy]$ ]]; then
     # Configure the default network
     log_task "Activating default network"
     sudo virsh -c qemu:///system net-autostart default &>/dev/null || true
-    if sudo virsh -c qemu:///system net-start default &>/dev/null || true; then 
+    if sudo virsh -c qemu:///system net-start default &>/dev/null || true; then
         ok
-    else 
+    else
         fail
     fi
 
@@ -439,28 +457,28 @@ fi
 # Setup firewall
 header "Firewall Configuration"
 
-if command -v ufw &> /dev/null; then
+if command -v ufw &>/dev/null; then
     log "UFW detected. Applying security rules."
 
     log_task "Setting default policies (Deny Incoming / Allow Outgoing)"
-    if sudo ufw default deny incoming &> /dev/null && \
-       sudo ufw default allow outgoing &> /dev/null; then
+    if sudo ufw default deny incoming &>/dev/null &&
+        sudo ufw default allow outgoing &>/dev/null; then
         ok
     else
         fail
     fi
 
     log_task "Configuring port rules (SSH, HTTP, HTTPS)"
-    if sudo ufw limit 22/tcp &> /dev/null && \
-       sudo ufw allow 80/tcp &> /dev/null && \
-       sudo ufw allow 443/tcp &> /dev/null; then
+    if sudo ufw limit 22/tcp &>/dev/null &&
+        sudo ufw allow 80/tcp &>/dev/null &&
+        sudo ufw allow 443/tcp &>/dev/null; then
         ok
     else
         fail
     fi
 
     log_task "Enabling UFW"
-    if echo "y" | sudo ufw enable &> /dev/null; then
+    if echo "y" | sudo ufw enable &>/dev/null; then
         ok
         success "Firewall is active and configured."
     else
