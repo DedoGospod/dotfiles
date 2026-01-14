@@ -110,6 +110,7 @@ log_info "--- Configuring System Services ---"
 manage_service "NetworkManager.service"                "" "enable" "Network management" "Y"
 manage_service "bluetooth.service"                     "" "enable" "Bluetooth connectivity" "n"
 manage_service "power-profiles-daemon.service"         "" "enable" "Power profiles" "Y"
+manage_service "ufw.service"                           "" "enable" "Enable firewall" "Y"
 
 # System timers
 
