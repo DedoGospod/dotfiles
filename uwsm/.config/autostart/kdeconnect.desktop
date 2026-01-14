@@ -4,6 +4,6 @@ Name=KDE Connect Daemon
 Exec=kdeconnectd
 Icon=kdeconnect
 Terminal=false
-X-GNOME-Autostart-enabled=true
 
+X-UWSM-Startup-Slice=background
 X-UWSM-Options=--type=service
