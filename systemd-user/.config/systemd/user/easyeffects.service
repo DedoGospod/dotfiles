@@ -2,8 +2,13 @@
 Description=EasyEffects Audio Service
 After=graphical-session.target pipewire.service
 PartOf=graphical-session.target
+StartLimitIntervalSec=60
+StartLimitBurst=5
 
 [Service]
+Nice=-5
+CPUWeight=200
+MemoryLow=256M
 ExecStart=/usr/bin/flatpak run com.github.wwmm.easyeffects --gapplication-service
 Type=simple
 Restart=on-failure
