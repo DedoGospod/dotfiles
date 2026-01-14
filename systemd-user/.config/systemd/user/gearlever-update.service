@@ -4,5 +4,8 @@ Wants=network-online.target
 After=network-online.target
 
 [Service]
-Type=oneshot
-ExecStart=/home/dylan/dotfiles/scripts/user-scripts/.local/bin/systemd/gear-lever-autoupdates.sh
+Type=simple
+ExecStart=%h/dotfiles/scripts/user-scripts/.local/bin/systemd/gear-lever-autoupdates.sh
+TimeoutStartSec=5m
+Slice=background.slice
+Nice=15
