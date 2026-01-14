@@ -6,4 +6,4 @@ Terminal=false
 Type=Application
 
 X-UWSM-Startup-Slice=background
-X-UWSM-Options=--type=service
+X-UWSM-Options=--wait-for-env=WAYLAND_DISPLAY --type=service
