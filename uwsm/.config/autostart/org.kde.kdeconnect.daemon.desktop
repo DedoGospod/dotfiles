@@ -5,3 +5,5 @@ Exec=kdeconnectd
 Icon=kdeconnect
 Terminal=false
 X-GNOME-Autostart-enabled=true
+
+X-UWSM-Options=--type=service
