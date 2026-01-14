@@ -44,14 +44,15 @@ bindkey -s '^Z' 'zi\n'
 [ -f /usr/share/fzf/key-bindings.zsh ] && source /usr/share/fzf/key-bindings.zsh
 [ -f /usr/share/fzf/completion.zsh ] && source /usr/share/fzf/completion.zsh
 
-# Add user-installed binaries located in the standard XDG path to the start of the PATH variable
-export PATH="$HOME/.local/bin:$PATH"
-
 # Editor preferences
 export EDITOR="nvim"                  # Set Neovim as default editor
 export SUDO_EDITOR="$EDITOR"          # Editor for sudo operations
 export VISUAL="$EDITOR"               # Set VISUAL to nvim for applications that prefer this
 export MANPAGER='nvim +Man!'          # Use Neovim for man pages
+
+# Executable search paths
+export PATH="$HOME/.local/bin:$PATH"  # User scripts and local binaries
+export PATH="$CARGO_HOME/bin:$PATH"   # Rust/Cargo binaries (XDG compliant)
 
 # ======================
 # Aliases 
@@ -69,6 +70,7 @@ alias pacman='sudo pacman'   # Always use sudo with pacman
 
 # Apps
 alias y='yazi'                                         # Use Yazi as a terminal file manager
+alias sy='sudo -E yazi'                                # Use Yazi with sudo and preserve environment
 alias top='btop'                                       # Modern system monitor
 alias cls='clear'                                      # Clear screen
 alias kssh='kitty +kitten ssh'                         # SSH with kitty terminal features
