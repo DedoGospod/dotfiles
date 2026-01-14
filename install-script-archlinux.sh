@@ -46,24 +46,24 @@ PACMAN_PACKAGES=(
 
     # Apps & Utils
     neovim nautilus yazi mpv fastfetch btop gnome-disk-utility
-    obsidian pavucontrol gnome-keyring seahorse rsync keepassxc
-    ffmpeg ffmpegthumbnailer
+    obsidian pavucontrol gnome-keyring seahorse rsync ffmpeg
+    ffmpegthumbnailer pipewire wireplumber
 
     # Shell & CLI
     kitty zsh zsh-completions zsh-syntax-highlighting zsh-autosuggestions starship
     fzf zoxide fd tmux stow bat eza ripgrep ncdu trash-cli man-db
 
-    # Network & Services
-    networkmanager bluez bluez-utils pipewire wireplumber
+    # Security & Networking
+    ufw gnome-keyring seahorse keepassxc networkmanager bluez bluez-utils
 
     # Maintenance
-    reflector
+    reflector 
 
     # Containerization
     flatpak
 
     # Kernel & Headers
-    linux-headers #linux-zen linux-zen-headers
+    linux-headers
 
     # Fonts
     ttf-cascadia-code-nerd ttf-ubuntu-font-family ttf-font-awesome
@@ -434,6 +434,42 @@ if [[ "$setup_virtualization" =~ ^[Yy]$ ]]; then
     echo ""
     success "Virtualization setup complete!"
     warn "Note: You must log out and back in for group changes to take effect."
+fi
+
+# Setup firewall
+header "Firewall Configuration"
+
+if command -v ufw &> /dev/null; then
+    log "UFW detected. Applying security rules."
+
+    log_task "Setting default policies (Deny Incoming / Allow Outgoing)"
+    if sudo ufw default deny incoming &> /dev/null && \
+       sudo ufw default allow outgoing &> /dev/null; then
+        ok
+    else
+        fail
+    fi
+
+    log_task "Configuring port rules (SSH, HTTP, HTTPS)"
+    if sudo ufw limit 22/tcp &> /dev/null && \
+       sudo ufw allow 80/tcp &> /dev/null && \
+       sudo ufw allow 443/tcp &> /dev/null; then
+        ok
+    else
+        fail
+    fi
+
+    log_task "Enabling UFW"
+    if echo "y" | sudo ufw enable &> /dev/null; then
+        ok
+        success "Firewall is active and configured."
+    else
+        fail
+        error "Could not enable UFW."
+    fi
+else
+    warn "UFW is not installed on this system."
+    error "Firewall configuration skipped."
 fi
 
 # --- FINISH ---
