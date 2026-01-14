@@ -234,41 +234,38 @@ if [[ "$stow_dotfiles" =~ ^[Yy]$ ]]; then
             fi
         done
         cd - >/dev/null
+
+        # Sync system-level files
+        log "Syncing system-level files..."
+
+        # Define your source directories
+        SCRIPTS_SRC="$DOTFILES_DIR/scripts/system-scripts/usr/local/bin"
+        CONFIGS_SRC="$DOTFILES_DIR/system-files"
+
+        # Format: "source|target|mode"
+        FILES_TO_SYNC=(
+            "$SCRIPTS_SRC/reboot-to-windows|/usr/local/bin/reboot-to-windows|755"
+            "$CONFIGS_SRC/root|/etc/snapper/configs/root|644"
+        )
+
+        for entry in "${FILES_TO_SYNC[@]}"; do
+            IFS='|' read -r src target mode <<<"$entry"
+
+            if [ -f "$src" ]; then
+                mode=${mode:-644}
+
+                log_task "Syncing $target (mode: $mode)"
+                if sudo install -Dm "$mode" "$src" "$target"; then
+                    ok
+                else
+                    fail
+                fi
+            else
+                warn "Source file missing: $src"
+            fi
+        done
     fi
 fi
-
-# Sync system-level files
-log "Syncing system-level files..."
-
-# Define your source directories
-SCRIPTS_SRC="$DOTFILES_DIR/scripts/system-scripts/usr/local/bin"
-CONFIGS_SRC="$DOTFILES_DIR/system-files"
-
-# Format: "source|target|mode"
-FILES_TO_SYNC=(
-    # Scripts
-    "$SCRIPTS_SRC/reboot-to-windows|/usr/local/bin/reboot-to-windows|755"
-
-    # System configs
-    "$CONFIGS_SRC/root|/etc/snapper/configs/root|644"
-)
-
-for entry in "${FILES_TO_SYNC[@]}"; do
-    IFS='|' read -r src target mode <<<"$entry"
-
-    if [ -f "$src" ]; then
-        mode=${mode:-644}
-
-        log_task "Syncing $target (mode: $mode)"
-        if sudo install -Dm "$mode" "$src" "$target"; then
-            ok
-        else
-            fail
-        fi
-    else
-        warn "Source file missing: $src"
-    fi
-done
 
 # NVIDIA Configuration Block
 if [[ "$install_nvidia" =~ ^[Yy]$ ]]; then
