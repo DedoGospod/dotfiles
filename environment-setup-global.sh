@@ -65,6 +65,8 @@ read -r -p "$(echo -e "  ${YELLOW}??${NC} Setup KVM virtualization? (y/N): ")" s
 read -r -p "$(echo -e "  ${YELLOW}??${NC} Do you want to stow your dotfiles with GNU STOW? [y/N]: ")" stow_dotfiles
 echo ""
 
+# --- DOTFILE SETUP ---
+
 # Dotfiles
 DOTFILES_DIR="$HOME/dotfiles"
 if [[ "$stow_dotfiles" =~ ^[Yy]$ ]]; then
@@ -121,6 +123,8 @@ if [[ "$stow_dotfiles" =~ ^[Yy]$ ]]; then
     fi
 fi
 
+# --- NVIDIA CONFIGURATION --- 
+
 # NVIDIA Configuration Block
 if [[ "$setup_nvidia" =~ ^[Yy]$ ]]; then
     header "NVIDIA SETUP"
@@ -153,6 +157,8 @@ if [[ "$setup_nvidia" =~ ^[Yy]$ ]]; then
         log "NVIDIA modules already present in mkinitcpio. Skipping regeneration."
     fi
 fi
+
+# --- GAMING CONFIGURATION ---
 
 # Gaming settings
 if [[ "$setup_gaming" =~ ^[Yy]$ ]]; then
@@ -193,6 +199,8 @@ if [[ "$setup_gaming" =~ ^[Yy]$ ]]; then
         warn "NTSYNC skipped. Windows games (Wine/Proton) may lack kernel-level sync support."
     fi
 fi
+
+# --- SYSTEM CONFIGURATION ---
 
 # System configuration
 header "SYSTEM CONFIGURATION"
@@ -296,6 +304,7 @@ if [[ "$setup_virtualization" =~ ^[Yy]$ ]]; then
     warn "Note: You must log out and back in for group changes to take effect."
 fi
 
+# --- FIREWALL CONFIGURATION ---
 header "Firewall Configuration"
 
 if command -v ufw &>/dev/null; then
