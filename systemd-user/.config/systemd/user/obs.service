@@ -1,14 +1,16 @@
 [Unit]
 Description=OBS Studio
+PartOf=graphical-session.target
 After=graphical-session.target
-StartLimitIntervalSec=60
-StartLimitBurst=5
 
 [Service]
 Type=simple
 ExecStartPre=/bin/bash -c 'rm -rf ~/.config/obs-studio/.sentinel'
 ExecStart=/usr/bin/obs --startreplaybuffer
 Restart=on-failure
+RestartSec=5s
+StartLimitIntervalSec=60s
+StartLimitBurst=5
 
 [Install]
 WantedBy=graphical-session.target
