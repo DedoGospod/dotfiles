@@ -15,7 +15,6 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # --- Helper Functions ---
-
 log_info() { echo -e "${BLUE}[INFO]${NC} $1"; }
 log_success() { echo -e "${GREEN}[OK]${NC} $1"; }
 log_warn() { echo -e "${YELLOW}[ACTION]${NC} $1"; }
@@ -108,11 +107,8 @@ echo ""
 log_info "--- Configuring System Services ---"
 
 # Standard Services
-manage_service "cronie.service"                        "" "enable" "Scheduled tasks" "Y"
-manage_service "bluetooth.service"                     "" "enable" "Bluetooth connectivity" "n"
 manage_service "NetworkManager.service"                "" "enable" "Network management" "Y"
-manage_service "wol.service"                           "" "enable" "Wake on LAN" "n"
-manage_service "ratbagd.service"                       "" "enable" "Piper mouse configuration" "Y"
+manage_service "bluetooth.service"                     "" "enable" "Bluetooth connectivity" "n"
 manage_service "power-profiles-daemon.service"         "" "enable" "Power profiles" "Y"
 
 # System timers
@@ -120,8 +116,9 @@ manage_service "power-profiles-daemon.service"         "" "enable" "Power profil
 # Special Logic: Grub Btrfs
 ROOT_FS=$(findmnt -n -o FSTYPE /)
 if [[ "$ROOT_FS" == "btrfs" ]]; then
-    manage_service "grub-btrfsd.service" "" "enable" "Auto-update grub on snapshots" "Y"
-    # manage_service "btrfs-scrub@-.timer.service" "" "enable" "Automatic btrfs maintnance" "Y"
+    manage_service "grub-btrfsd.service"               "" "enable" "Auto-update grub on snapshots" "Y"
+    manage_service "btrfs-scrub.timer"                 "" "enable" "Auto-scrub btrfs" "Y"
+    manage_service "btrfs-balance.timer"               "" "enable" "Auto-balance btrfs" "Y"
 else
     echo -e "  [System] Root is not Btrfs ($ROOT_FS). Skipping grub-btrfsd."
 fi
@@ -159,7 +156,6 @@ manage_service "obs.service"                           "--user" "enable" "OBS St
 
 # User timers
 manage_service "gearlever-update.timer"                "--user" "enable" "Gearlever auto-update" "Y"
-manage_service "flatpak-update-low-priority.timer"     "--user" "enable" "Flatpak auto-update" "Y"
 
 echo ""
 log_success "Configuration complete!"
