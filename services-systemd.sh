@@ -165,13 +165,13 @@ if $IS_HYPRLAND; then
     manage_service "hyprpaper.service"                 "--user" "enable" "Wallpaper daemon" "Y"
     manage_service "pyprland.service"                  "--user" "enable" "Pyprland plugins" "Y"
     manage_service "hyprpolkitagent.service"           "--user" "enable" "Polkit Authentication" "Y"
+    manage_service "waybar.service"                    "--user" "enable" "Status bar" "Y"
 else
     echo "  [User] Not in Hyprland. Skipping Hyprland-specific services."
 fi
 
 # General user services
 manage_service "wayland-pipewire-idle-inhibit.service" "--user" "enable" "Prevent sleep when playing audio" "Y"
-manage_service "waybar.service"                        "--user" "enable" "Status bar" "Y"
 manage_service "wlsunset.service"                      "--user" "enable" "Blue light filter" "Y"
 manage_service "swaync.service"                        "--user" "enable" "Notification daemon" "Y"
 manage_service "obs.service"                           "--user" "enable" "OBS-STUDIO" "n"
