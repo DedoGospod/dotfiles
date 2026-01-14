@@ -9,3 +9,5 @@ startupnotify=false
 terminal=false
 type=application
 version=1.0
+
+X-UWSM-Options=--type=service
