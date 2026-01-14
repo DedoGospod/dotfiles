@@ -163,7 +163,7 @@ if [[ "$install_wakeonlan" =~ ^[Yy]$ ]]; then PACMAN_PACKAGES+=("${WAKEONLAN_PAC
 # Check for BTRFS Root
 if findmnt -n -o FSTYPE --target / | grep -q "btrfs"; then
     log "Btrfs root detected. Adding grub-btrfs and inotify-tools."
-    PACMAN_PACKAGES+=(grub-btrfs inotify-tools)
+    PACMAN_PACKAGES+=(grub-btrfs inotify-tools btrfsmaintenance)
 else
     log "Root is not Btrfs. Skipping grub-btrfs."
 fi
