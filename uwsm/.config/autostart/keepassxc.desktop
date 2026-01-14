@@ -1,13 +1,13 @@
-[desktop entry]
-name=keepassxc
-genericname=password manager
-exec=keepassxc
-tryexec=keepassxc
-icon=keepassxc
-startupwmclass=keepassxc
-startupnotify=false
-terminal=false
-type=application
-version=1.0
+[Desktop Entry]
+Type=Application
+Name=KeePassXC
+GenericName=Password Manager
+Exec=/usr/bin/keepassxc %f
+TryExec=/usr/bin/keepassxc
+Icon=keepassxc
+StartupWMClass=keepassxc
+Terminal=false
+Categories=Utility;Security;
 
-X-UWSM-Options=--type=service
+# UWSM specific: ensure it waits for the graphical session
+X-UWSM-Options=--wait-for-env=WAYLAND_DISPLAY
