@@ -61,7 +61,6 @@ header "CONFIGURATION QUESTIONS"
 read -r -p "$(echo -e "  ${YELLOW}??${NC} Setup NVIDIA drivers? (y/N): ")" setup_nvidia
 read -r -p "$(echo -e "  ${YELLOW}??${NC} Setup WakeOnLan? (y/N): ")" setup_wakeonlan
 read -r -p "$(echo -e "  ${YELLOW}??${NC} Setup system for gaming? (y/N): ")" setup_gaming
-read -r -p "$(echo -e "  ${YELLOW}??${NC} Setup KVM virtualization? (y/N): ")" setup_virtualization
 read -r -p "$(echo -e "  ${YELLOW}??${NC} Do you want to stow your dotfiles with GNU STOW? [y/N]: ")" stow_dotfiles
 echo ""
 
@@ -123,7 +122,7 @@ if [[ "$stow_dotfiles" =~ ^[Yy]$ ]]; then
     fi
 fi
 
-# --- NVIDIA CONFIGURATION --- 
+# --- NVIDIA CONFIGURATION ---
 
 # NVIDIA Configuration Block
 if [[ "$setup_nvidia" =~ ^[Yy]$ ]]; then
@@ -137,7 +136,8 @@ if [[ "$setup_nvidia" =~ ^[Yy]$ ]]; then
         log_task "Enabling NVIDIA Kernel Mode Setting (KMS)..."
         if echo "$SETTING" | sudo tee "$CONF_FILE" >/dev/null; then ok; else fail; fi
     else
-        log "NVIDIA KMS already configured."
+        log_task "NVIDIA KMS already configured."
+        ok
     fi
 
     # Inject NVIDIA modules into mkinitcpio for initramfs regeneration
@@ -154,7 +154,8 @@ if [[ "$setup_nvidia" =~ ^[Yy]$ ]]; then
         log_task "Regenerating initramfs (this may take a moment)..."
         if sudo mkinitcpio -P; then ok; else fail; fi
     else
-        log "NVIDIA modules already present in mkinitcpio. Skipping regeneration."
+        log_task "NVIDIA modules already present in mkinitcpio"
+        ok
     fi
 fi
 
@@ -166,14 +167,19 @@ if [[ "$setup_gaming" =~ ^[Yy]$ ]]; then
 
     # Gamescope Cap
     if command -v gamescope >/dev/null 2>&1; then
-        GAMESCOPE_PATH=$(command -v gamescope)
+        GAMESCOPE_PATH=$(realpath "$(command -v gamescope)")
 
-        # Check if the capability is already present
+        # Check silently if the capability is missing
         if ! getcap "$GAMESCOPE_PATH" | grep -q "cap_sys_nice+ep"; then
-            log_task "Setting CAP_SYS_NICE for Gamescope"
-            if sudo setcap 'cap_sys_nice=+ep' "$GAMESCOPE_PATH"; then ok; else fail; fi
+            if sudo setcap 'cap_sys_nice=ep' "$GAMESCOPE_PATH"; then
+                log_task "CAP_SYS_NICE is already set"
+                ok
+            else
+                fail
+            fi
         fi
     else
+        fail
         warn "Gamescope not found. Skipping capability setup."
     fi
 
@@ -184,19 +190,26 @@ if [[ "$setup_gaming" =~ ^[Yy]$ ]]; then
             if sudo usermod -aG gamemode "$USER"; then ok; else fail; fi
             warn "NOTE: You may need to log out and back in for group changes to apply."
         else
-            log "User already in gamemode group."
+            log_task "User already in gamemode group."
+            ok
         fi
     else
+        fail
         warn "'gamemoded' command not found. Skipping user group modification."
     fi
 
     # NTSYNC (Kernel Module)
-    log_task "Enabling NTSYNC"
-    if echo "ntsync" | sudo tee /etc/modules-load.d/ntsync.conf >/dev/null; then
+    if grep -q "ntsync" /etc/modules-load.d/ntsync.conf 2>/dev/null; then
+        log_task "NTSYNC already enabled"
         ok
     else
-        fail
-        warn "NTSYNC skipped. Windows games (Wine/Proton) may lack kernel-level sync support."
+        log_task "Enabling NTSYNC"
+        if echo "ntsync" | sudo tee /etc/modules-load.d/ntsync.conf >/dev/null; then
+            ok
+        else
+            fail
+            warn "NTSYNC skipped. Windows games (Wine/Proton) may lack kernel-level sync support."
+        fi
     fi
 fi
 
@@ -211,7 +224,8 @@ if command -v zsh >/dev/null 2>&1; then
         log_task "Changing shell to zsh"
         if chsh -s "$(command -v zsh)" "$USER"; then ok; else fail; fi
     else
-        log "Shell is already set to zsh. Skipping."
+        log_task "Shell is already set to zsh"
+        ok
     fi
 fi
 
@@ -224,116 +238,97 @@ if command -v tmux >/dev/null 2>&1; then
         log_task "Installing TPM"
         if git clone --depth 1 https://github.com/tmux-plugins/tpm "$TPM_PATH"; then ok; else fail; fi
     else
-        log "TPM already installed."
+        log_task "TPM already installed."
+        ok
     fi
 else
+    fail
     warn "Tmux is not installed. Skipping TPM setup."
 fi
 
 # Setup WakeOnLan
 if [[ "$setup_wakeonlan" =~ ^[Yy]$ ]]; then
-    log_task "Configuring Global & Active Wake-on-LAN"
-
     WOL_CONF="/etc/NetworkManager/conf.d/wol.conf"
-    UDEV_RULE="/etc/udev/rules.d/81-wol.rules"
 
-    # Persistent Global Config (for future connections)
-    sudo mkdir -p /etc/NetworkManager/conf.d
-    echo -e "[connection]\nethernet.wake-on-lan=magic" | sudo tee "$WOL_CONF" >/dev/null
-
-    # Hardware-Level Rule (The "Nuclear" Option)
-    echo 'ACTION=="add", SUBSYSTEM=="net", KERNEL=="en*", RUN+="/usr/sbin/ethtool -s %k wol g"' | sudo tee "$UDEV_RULE" >/dev/null
-
-    # Fix Existing Connections (Handles spaces in names)
-    while IFS= read -r conn; do
-        if [[ -n "$conn" ]]; then
-            sudo nmcli connection modify "$conn" 802-3-ethernet.wake-on-lan magic 2>/dev/null
-            sudo nmcli connection up "$conn" >/dev/null 2>&1
-        fi
-    done < <(nmcli -t -f NAME,TYPE connection show | grep ":802-3-ethernet" | cut -d: -f1)
-
-    # Final Reload
-    if sudo systemctl reload NetworkManager 2>/dev/null; then
+    # Check if already set
+    if [[ -f "$WOL_CONF" ]]; then
+        log_task "Wake-on-LAN is already configured"
         ok
     else
-        # If NM isn't running, it's fine; the udev rule and conf file will catch it on next boot
-        log "NetworkManager reload skipped; settings will apply on boot."
-        ok
-    fi
-fi
+        log_task "Configuring Global & Active Wake-on-LAN"
 
-# Setup virtualization
-if [[ "$setup_virtualization" =~ ^[Yy]$ ]]; then
-    header "Configuring Virtualization"
+        WOL_CONF="/etc/NetworkManager/conf.d/wol.conf"
+        UDEV_RULE="/etc/udev/rules.d/81-wol.rules"
 
-    # Add user to groups
-    for group in libvirt kvm; do
-        if getent group "$group" >/dev/null; then
-            log_task "Adding $(whoami) to $group group"
-            if sudo usermod -aG "$group" "$(whoami)"; then ok; else fail; fi
+        # Persistent global config
+        sudo mkdir -p /etc/NetworkManager/conf.d
+        echo -e "[connection]\nethernet.wake-on-lan=magic" | sudo tee "$WOL_CONF" >/dev/null
+
+        # Hardware-Level udev rule
+        echo 'ACTION=="add", SUBSYSTEM=="net", KERNEL=="en*", RUN+="/usr/sbin/ethtool -s %k wol g"' | sudo tee "$UDEV_RULE" >/dev/null
+
+        # Fix Existing Connections (Handles spaces in names)
+        while IFS= read -r conn; do
+            if [[ -n "$conn" ]]; then
+                sudo nmcli connection modify "$conn" 802-3-ethernet.wake-on-lan magic 2>/dev/null
+                sudo nmcli connection up "$conn" >/dev/null 2>&1
+            fi
+        done < <(nmcli -t -f NAME,TYPE connection show | grep ":802-3-ethernet" | cut -d: -f1)
+
+        # Final reload
+        if sudo systemctl reload NetworkManager 2>/dev/null; then
+            ok
+        else
+            warn "NetworkManager reload skipped; settings will apply on boot."
+            ok
         fi
-    done
-
-    # Enable and start libvirtd
-    log_task "Enabling and starting libvirtd"
-    if sudo systemctl enable --now libvirtd &>/dev/null; then ok; else fail; fi
-
-    # Wait for the socket to be ready
-    log_task "Waiting for QEMU socket"
-    SOCKET_READY=false
-    for _ in {1..5}; do
-        if sudo virsh -c qemu:///system list --all >/dev/null 2>&1; then
-            SOCKET_READY=true
-            break
-        fi
-        sleep 1
-    done
-    if [ "$SOCKET_READY" = true ]; then ok; else fail; fi
-
-    # Configure the default network
-    log_task "Activating default network"
-    sudo virsh -c qemu:///system net-autostart default &>/dev/null || true
-    if sudo virsh -c qemu:///system net-start default &>/dev/null || true; then
-        ok
-    else
-        fail
     fi
-
-    echo ""
-    success "Virtualization setup complete!"
-    warn "Note: You must log out and back in for group changes to take effect."
 fi
 
 # --- FIREWALL CONFIGURATION ---
 header "Firewall Configuration"
 
 if command -v ufw &>/dev/null; then
-    log "UFW detected. Applying security rules."
 
-    log_task "Setting default policies (Deny Incoming / Allow Outgoing)"
-    if sudo ufw default deny incoming &>/dev/null &&
-        sudo ufw default allow outgoing &>/dev/null; then
+    # Get the current status and policies to check against
+    UFW_STATUS=$(sudo ufw status verbose)
+
+    # Detailed check: Status, Policies, and Ports
+    if echo "$UFW_STATUS" | grep -q "Status: active" &&
+        echo "$UFW_STATUS" | grep -qE "Default:\s+deny\s+\(incoming\),\s+allow\s+\(outgoing\)" &&
+        echo "$UFW_STATUS" | grep -qE "22/tcp\s+LIMIT\s+IN" &&
+        echo "$UFW_STATUS" | grep -qE "80/tcp\s+ALLOW\s+IN" &&
+        echo "$UFW_STATUS" | grep -qE "443/tcp\s+ALLOW\s+IN"; then
+        log_task "UFW already configured"
         ok
     else
-        fail
-    fi
+        # Re-apply configuration if any of the above fails
+        log_task "Applying UFW default policies"
+        if sudo ufw default deny incoming &>/dev/null &&
+            sudo ufw default allow outgoing &>/dev/null; then
+            ok
+        else
+            fail
+        fi
 
-    log_task "Configuring port rules (SSH, HTTP, HTTPS)"
-    if sudo ufw limit 22/tcp &>/dev/null &&
-        sudo ufw allow 80/tcp &>/dev/null &&
-        sudo ufw allow 443/tcp &>/dev/null; then
-        ok
-    else
-        fail
-    fi
+        log_task "Configuring UFW port rules"
+        if sudo ufw limit 22/tcp &>/dev/null &&
+            sudo ufw allow 80/tcp &>/dev/null &&
+            sudo ufw allow 443/tcp &>/dev/null; then
+            ok
+        else
+            fail
+        fi
 
-    log_task "Enabling UFW"
-    if echo "y" | sudo ufw enable &>/dev/null; then
-        ok
-        success "Firewall is active and configured."
-    else
-        fail
-        error "Could not enable UFW."
+        log_task "Enabling UFW"
+        if echo "y" | sudo ufw enable &>/dev/null; then
+            ok
+            success "Firewall is active and configured."
+            ok
+        else
+            fail
+            error "Could not enable UFW."
+        fi
     fi
 else
     warn "UFW is not installed on this system."
