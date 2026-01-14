@@ -10,4 +10,5 @@ Terminal=false
 Categories=Utility;Security;
 
 # UWSM specific: ensure it waits for the graphical session
-X-UWSM-Options=--wait-for-env=WAYLAND_DISPLAY
+X-UWSM-Startup-Slice=background
+X-UWSM-Options=--wait-for-env=WAYLAND_DISPLAY --type=service
