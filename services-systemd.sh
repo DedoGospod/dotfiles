@@ -117,6 +117,9 @@ manage_service "power-profiles-daemon.service"         "" "enable" "Power profil
 ROOT_FS=$(findmnt -n -o FSTYPE /)
 if [[ "$ROOT_FS" == "btrfs" ]]; then
     manage_service "grub-btrfsd.service"               "" "enable" "Auto-update grub on snapshots" "Y"
+
+    manage_service "snapper-timeline.timer"            "" "enable" "Auto-create daily snapshots" "Y"
+    manage_service "snapper-cleanup.timer"             "" "enable" "Auto-remove old snapshots" "Y"
     manage_service "btrfs-scrub.timer"                 "" "enable" "Auto-scrub btrfs" "Y"
     manage_service "btrfs-balance.timer"               "" "enable" "Auto-balance btrfs" "Y"
 else
