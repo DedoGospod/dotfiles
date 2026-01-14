@@ -1,10 +1,15 @@
 [Unit]
 Description=wlsunset - Adjust blue light filter
+PartOf=graphical-session.target
 After=graphical-session.target
+StartLimitIntervalSec=60
+StartLimitBurst=5
 
 [Service]
 ExecStart=/usr/bin/wlsunset -t 3500 -T 5500 -S 06:30 -s 18:45 -g 1.0
-Restart=always
+Restart=on-failure
+RestartSec=5s
+ProtectSystem=full
 
 [Install]
 WantedBy=graphical-session.target
