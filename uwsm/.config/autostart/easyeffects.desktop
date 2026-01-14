@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=EasyEffects Service
+Comment=Audio Effects Daemon
+Type=Application
+Exec=flatpak run com.github.wwmm.easyeffects --gapplication-service
+Terminal=false
+
+# UWSM Specifics
+X-UWSM-Options=--wait-for-env=WAYLAND_DISPLAY --type=service
+X-UWSM-Startup-Slice=app
