@@ -20,6 +20,10 @@ log_success() { echo -e "${GREEN}[OK]${NC} $1"; }
 log_warn() { echo -e "${YELLOW}[ACTION]${NC} $1"; }
 log_error() { echo -e "${RED}[ERROR]${NC} $1"; }
 
+log_task() { echo -ne "${GREEN}[INFO]${NC} $1... "; }
+ok() { echo -e "${GREEN}Done.${NC}"; }
+fail() { echo -e "${RED}Failed.${NC}"; }
+
 # Check if a service unit file exists (works for both user and system)
 # Usage: service_exists "service_name" "scope (--user or empty)"
 service_exists() {
@@ -116,15 +120,30 @@ manage_service "ufw.service"                           "" "enable" "Enable firew
 
 # Special Logic: Grub Btrfs
 ROOT_FS=$(findmnt -n -o FSTYPE /)
-if [[ "$ROOT_FS" == "btrfs" ]]; then
-    manage_service "grub-btrfsd.service"               "" "enable" "Auto-update grub on snapshots" "Y"
 
-    manage_service "snapper-timeline.timer"            "" "enable" "Auto-create daily snapshots" "Y"
-    manage_service "snapper-cleanup.timer"             "" "enable" "Auto-remove old snapshots" "Y"
-    manage_service "btrfs-scrub.timer"                 "" "enable" "Auto-scrub btrfs" "Y"
-    manage_service "btrfs-balance.timer"               "" "enable" "Auto-balance btrfs" "Y"
+if [[ "$ROOT_FS" == "btrfs" ]]; then
+
+    # Grub Btrfs Daemon
+    log_task "Enabling grub-btrfsd.service"
+    if sudo systemctl enable --now grub-btrfsd.service; then ok; else fail; fi
+
+    # Snapper Timeline
+    log_task "Enabling snapper-timeline.timer"
+    if sudo systemctl enable --now snapper-timeline.timer; then ok; else fail; fi
+
+    # Snapper Cleanup
+    log_task "Enabling snapper-cleanup.timer"
+    if sudo systemctl enable --now snapper-cleanup.timer; then ok; else fail; fi
+
+    # Btrfs Scrub
+    log_task "Enabling btrfs-scrub.timer"
+    if sudo systemctl enable --now btrfs-scrub.timer; then ok; else fail; fi
+
+    # Btrfs Balance
+    log_task "Enabling btrfs-balance.timer"
+    if sudo systemctl enable --now btrfs-balance.timer; then ok; else fail; fi
 else
-    echo -e "  [System] Root is not Btrfs ($ROOT_FS). Skipping grub-btrfsd."
+    echo -e "  [System] Root is not Btrfs ($ROOT_FS). Skipping Btrfs tasks."
 fi
 
 # ==============================================================================
@@ -155,9 +174,7 @@ manage_service "wayland-pipewire-idle-inhibit.service" "--user" "enable" "Preven
 manage_service "waybar.service"                        "--user" "enable" "Status bar" "Y"
 manage_service "wlsunset.service"                      "--user" "enable" "Blue light filter" "Y"
 manage_service "swaync.service"                        "--user" "enable" "Notification daemon" "Y"
-manage_service "easyeffects.service"                   "--user" "enable" "Audio effects/Equalizer" "n"
-manage_service "obs.service"                           "--user" "enable" "OBS Studio" "n"
-manage_service "nvibrance.service"                     "--user" "enable" "nvibrance" "y"
+manage_service "obs.service"                           "--user" "enable" "OBS-STUDIO" "n"
 
 # User timers
 manage_service "gearlever-update.timer"                "--user" "enable" "Gearlever auto-update" "Y"
