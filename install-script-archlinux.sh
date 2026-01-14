@@ -57,7 +57,7 @@ PACMAN_PACKAGES=(
     networkmanager bluez bluez-utils pipewire wireplumber
 
     # Maintenance
-    reflector timeshift
+    reflector
 
     # Containerization
     flatpak
@@ -163,7 +163,7 @@ if [[ "$install_wakeonlan" =~ ^[Yy]$ ]]; then PACMAN_PACKAGES+=("${WAKEONLAN_PAC
 # Check for BTRFS Root
 if findmnt -n -o FSTYPE --target / | grep -q "btrfs"; then
     log "Btrfs root detected. Adding grub-btrfs and inotify-tools."
-    PACMAN_PACKAGES+=(grub-btrfs inotify-tools btrfsmaintenance)
+    PACMAN_PACKAGES+=(grub-btrfs inotify-tools btrfsmaintenance snapper snap-pac)
 else
     log "Root is not Btrfs. Skipping grub-btrfs."
 fi
@@ -241,22 +241,38 @@ if [[ "$stow_dotfiles" =~ ^[Yy]$ ]]; then
     fi
 fi
 
-# System Scripts
-SYSTEM_SRC="$DOTFILES_DIR/scripts/system-scripts"
-if [ -d "$SYSTEM_SRC" ]; then
-    log "Syncing system scripts..."
-    SYSTEM_FILES=(
-        "usr/local/bin/reboot-to-windows|/usr/local/bin/reboot-to-windows"
-    )
-    for entry in "${SYSTEM_FILES[@]}"; do
-        src="${entry%%|*}"
-        target="${entry##*|}"
-        if [ -f "$SYSTEM_SRC/$src" ]; then
-            log_task "Installing $target"
-            if sudo install -Dm 755 "$SYSTEM_SRC/$src" "$target"; then ok; else fail; fi
+# Sync system-level files
+log "Syncing system-level files..."
+
+# Define your source directories
+SCRIPTS_SRC="$DOTFILES_DIR/scripts/system-scripts/usr/local/bin"
+CONFIGS_SRC="$DOTFILES_DIR/system-files"
+
+# Format: "source|target|mode"
+FILES_TO_SYNC=(
+    # Scripts
+    "$SCRIPTS_SRC/reboot-to-windows|/usr/local/bin/reboot-to-windows|755"
+
+    # System configs
+    "$CONFIGS_SRC/root|/etc/snapper/configs/root|644"
+)
+
+for entry in "${FILES_TO_SYNC[@]}"; do
+    IFS='|' read -r src target mode <<< "$entry"
+
+    if [ -f "$src" ]; then
+        mode=${mode:-644}
+        
+        log_task "Installing $target (mode: $mode)"
+        if sudo install -Dm "$mode" "$src" "$target"; then 
+            ok 
+        else 
+            fail 
         fi
-    done
-fi
+    else
+        warn "Source file missing: $src"
+    fi
+done
 
 # Enable NVIDIA KMS
 if [[ "$install_nvidia" =~ ^[Yy]$ ]]; then
@@ -312,19 +328,6 @@ if command -v gamemoded >/dev/null 2>&1; then
     fi
 else
     warn "'gamemoded' command not found. Skipping user group modification."
-fi
-
-# Timeshift Autosnap Config
-TS_CONFIG="/etc/timeshift-autosnap.conf"
-if [ -f "$TS_CONFIG" ]; then
-    if ! grep -q "^maxSnapshots=1$" "$TS_CONFIG"; then
-        log_task "Configuring Timeshift maxSnapshots"
-        if sudo sed -i 's/^maxSnapshots=.*/maxSnapshots=1/' "$TS_CONFIG"; then ok; else fail; fi
-    else
-        log "Timeshift maxSnapshots is already set to 1."
-    fi
-else
-    warn "Timeshift config not found at $TS_CONFIG. Skipping."
 fi
 
 # Tmux Plugin Manager
