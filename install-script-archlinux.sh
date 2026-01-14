@@ -82,25 +82,13 @@ OBS_GAME_RECORDING=(obs-studio obs-vkcapture)
 
 # Flatpaks
 FLATPAK_APPS=(
-    it.mijorus.gearlever
-    com.github.tchx84.Flatseal
-    com.stremio.Stremio
-    com.usebottles.bottles
-    io.github.ebonjaeger.bluejay
-    com.github.wwmm.easyeffects
-
-    # Declared packages
+    it.mijorus.gearlever com.github.tchx84.Flatseal com.stremio.Stremio com.usebottles.bottles
+    io.github.ebonjaeger.bluejay com.github.wwmm.easyeffects
 )
 
 # AUR Packages
 AUR_PACKAGES=(
-    timeshift-autosnap
-    wayland-pipewire-idle-inhibit
-    brave-bin
-    nvibrant-bin
-    pyprland
-
-    # Declared packages
+    timeshift-autosnap wayland-pipewire-idle-inhibit brave-bin nvibrant-bin pyprland
 )
 
 # Stow Packages
@@ -211,6 +199,8 @@ log "Installing Flatpak Apps..."
 flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 flatpak install -y --noninteractive flathub "${FLATPAK_APPS[@]}"
 
+# --- DOTFILE SETUP ---
+
 # Dotfiles
 DOTFILES_DIR="$HOME/dotfiles"
 if [[ "$stow_dotfiles" =~ ^[Yy]$ ]]; then
@@ -267,6 +257,8 @@ if [[ "$stow_dotfiles" =~ ^[Yy]$ ]]; then
     fi
 fi
 
+# --- NVIDIA CONFIGURATION --- 
+
 # NVIDIA Configuration Block
 if [[ "$install_nvidia" =~ ^[Yy]$ ]]; then
     header "NVIDIA SETUP"
@@ -299,6 +291,8 @@ if [[ "$install_nvidia" =~ ^[Yy]$ ]]; then
         log "NVIDIA modules already present in mkinitcpio. Skipping regeneration."
     fi
 fi
+
+# --- GAMING CONFIGURATION ---
 
 # Gaming settings
 if [[ "$install_gaming" =~ ^[Yy]$ ]]; then
@@ -340,7 +334,7 @@ if [[ "$install_gaming" =~ ^[Yy]$ ]]; then
     fi
 fi
 
-# System configuration
+# --- SYSTEM CONFIGURATION ---
 header "SYSTEM CONFIGURATION"
 
 # Shell
@@ -451,7 +445,7 @@ if [[ "$setup_virtualization" =~ ^[Yy]$ ]]; then
     warn "Note: You must log out and back in for group changes to take effect."
 fi
 
-# Setup firewall
+# --- FIREWALL CONFIGURATION ---
 header "Firewall Configuration"
 
 if command -v ufw &>/dev/null; then
