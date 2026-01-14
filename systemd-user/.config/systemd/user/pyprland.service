@@ -1,12 +1,15 @@
 [Unit]
 Description=Pyprland - Hyprland-specific helper daemon
-Wants=graphical-session.target
+PartOf=graphical-session.target
 After=graphical-session.target
+StartLimitIntervalSec=60
+StartLimitBurst=5
 
 [Service]
+Type=simple
 ExecStart=/usr/bin/pypr
 Restart=on-failure
-RestartSec=5
+RestartSec=2
 
 [Install]
 WantedBy=graphical-session.target

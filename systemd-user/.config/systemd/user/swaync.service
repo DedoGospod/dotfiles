@@ -2,6 +2,8 @@
 Description=Sway Notification Center Daemon
 After=graphical-session.target
 PartOf=graphical-session.target
+StartLimitIntervalSec=60
+StartLimitBurst=5
 
 [Service]
 ExecStart=/usr/bin/swaync

@@ -157,6 +157,7 @@ manage_service "wlsunset.service"                      "--user" "enable" "Blue l
 manage_service "swaync.service"                        "--user" "enable" "Notification daemon" "Y"
 manage_service "easyeffects.service"                   "--user" "enable" "Audio effects/Equalizer" "n"
 manage_service "obs.service"                           "--user" "enable" "OBS Studio" "n"
+manage_service "nvibrance.service"                     "--user" "enable" "nvibrance" "y"
 
 # User timers
 manage_service "gearlever-update.timer"                "--user" "enable" "Gearlever auto-update" "Y"

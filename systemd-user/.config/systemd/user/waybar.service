@@ -1,12 +1,16 @@
 [Unit]
 Description=Wayland Status Bar
+ConditionEnvironment=WAYLAND_DISPLAY
 After=graphical-session.target
 PartOf=graphical-session.target
+StartLimitIntervalSec=60
+StartLimitBurst=5
 
 [Service]
 ExecStart=/usr/bin/waybar
 Type=simple
 Restart=on-failure
+RestartSec=5s
 
 [Install]
 WantedBy=graphical-session.target

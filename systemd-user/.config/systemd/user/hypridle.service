@@ -2,10 +2,13 @@
 Description=Hyprland Idle Management Daemon
 PartOf=graphical-session.target
 After=graphical-session.target
+StartLimitIntervalSec=60
+StartLimitBurst=5
 
 [Service]
 Type=exec
 Restart=always
+RestartSec=5s
 ExecStart=/usr/bin/hypridle
 
 [Install]

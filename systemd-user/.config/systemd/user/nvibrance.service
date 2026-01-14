@@ -1,0 +1,12 @@
+[Unit]
+Description=Sets NVIDIA Digital Vibrance
+After=graphical-session.target
+PartOf=graphical-session.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/nvibrant 350 350 350 350 350 350
+RemainAfterExit=yes
+
+[Install]
+WantedBy=graphical-session.target

@@ -1,9 +1,0 @@
-[Desktop Entry]
-Name=Digital Vibrance Setup
-Comment=Sets NVIDIA Digital Vibrance using nvibrant on session startup
-Exec=nvibrant 350 350 350 350 350 350
-Terminal=false
-Type=Application
-
-X-UWSM-Startup-Slice=background
-X-UWSM-Options=--wait-for-env=WAYLAND_DISPLAY --type=service
