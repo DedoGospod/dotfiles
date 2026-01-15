@@ -12,6 +12,7 @@ export HISTFILE="${XDG_STATE_HOME}/zsh/history"                       # Store zs
 
 # Theme for qt applications
 export QT_QPA_PLATFORMTHEME="qt6ct"
+export QT_QPA_PLATFORM="wayland;xcb"
 
 # Export nvidia env variables if a nvidia card is detected
 if [ -d "/sys/module/nvidia" ]; then
