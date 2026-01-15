@@ -59,7 +59,6 @@ if mkdir -p \
 echo ""
 header "CONFIGURATION QUESTIONS"
 read -r -p "$(echo -e "  ${YELLOW}??${NC} Setup NVIDIA drivers? (y/N): ")" setup_nvidia
-read -r -p "$(echo -e "  ${YELLOW}??${NC} Setup WakeOnLan? (y/N): ")" setup_wakeonlan
 read -r -p "$(echo -e "  ${YELLOW}??${NC} Setup system for gaming? (y/N): ")" setup_gaming
 read -r -p "$(echo -e "  ${YELLOW}??${NC} Do you want to stow your dotfiles with GNU STOW? [y/N]: ")" stow_dotfiles
 echo ""
@@ -179,7 +178,6 @@ if [[ "$setup_gaming" =~ ^[Yy]$ ]]; then
             fi
         fi
     else
-        fail
         warn "Gamescope not found. Skipping capability setup."
     fi
 
@@ -194,7 +192,6 @@ if [[ "$setup_gaming" =~ ^[Yy]$ ]]; then
             ok
         fi
     else
-        fail
         warn "'gamemoded' command not found. Skipping user group modification."
     fi
 
@@ -207,7 +204,6 @@ if [[ "$setup_gaming" =~ ^[Yy]$ ]]; then
         if echo "ntsync" | sudo tee /etc/modules-load.d/ntsync.conf >/dev/null; then
             ok
         else
-            fail
             warn "NTSYNC skipped. Windows games (Wine/Proton) may lack kernel-level sync support."
         fi
     fi
@@ -242,95 +238,5 @@ if command -v tmux >/dev/null 2>&1; then
         ok
     fi
 else
-    fail
     warn "Tmux is not installed. Skipping TPM setup."
-fi
-
-# Setup WakeOnLan
-if [[ "$setup_wakeonlan" =~ ^[Yy]$ ]]; then
-    WOL_CONF="/etc/NetworkManager/conf.d/wol.conf"
-
-    # Check if already set
-    if [[ -f "$WOL_CONF" ]]; then
-        log_task "Wake-on-LAN is already configured"
-        ok
-    else
-        log_task "Configuring Global & Active Wake-on-LAN"
-
-        WOL_CONF="/etc/NetworkManager/conf.d/wol.conf"
-        UDEV_RULE="/etc/udev/rules.d/81-wol.rules"
-
-        # Persistent global config
-        sudo mkdir -p /etc/NetworkManager/conf.d
-        echo -e "[connection]\nethernet.wake-on-lan=magic" | sudo tee "$WOL_CONF" >/dev/null
-
-        # Hardware-Level udev rule
-        echo 'ACTION=="add", SUBSYSTEM=="net", KERNEL=="en*", RUN+="/usr/sbin/ethtool -s %k wol g"' | sudo tee "$UDEV_RULE" >/dev/null
-
-        # Fix Existing Connections (Handles spaces in names)
-        while IFS= read -r conn; do
-            if [[ -n "$conn" ]]; then
-                sudo nmcli connection modify "$conn" 802-3-ethernet.wake-on-lan magic 2>/dev/null
-                sudo nmcli connection up "$conn" >/dev/null 2>&1
-            fi
-        done < <(nmcli -t -f NAME,TYPE connection show | grep ":802-3-ethernet" | cut -d: -f1)
-
-        # Final reload
-        if sudo systemctl reload NetworkManager 2>/dev/null; then
-            ok
-        else
-            warn "NetworkManager reload skipped; settings will apply on boot."
-            ok
-        fi
-    fi
-fi
-
-# --- FIREWALL CONFIGURATION ---
-header "Firewall Configuration"
-
-if command -v ufw &>/dev/null; then
-
-    # Get the current status and policies to check against
-    UFW_STATUS=$(sudo ufw status verbose)
-
-    # Detailed check: Status, Policies, and Ports
-    if echo "$UFW_STATUS" | grep -q "Status: active" &&
-        echo "$UFW_STATUS" | grep -qE "Default:\s+deny\s+\(incoming\),\s+allow\s+\(outgoing\)" &&
-        echo "$UFW_STATUS" | grep -qE "22/tcp\s+LIMIT\s+IN" &&
-        echo "$UFW_STATUS" | grep -qE "80/tcp\s+ALLOW\s+IN" &&
-        echo "$UFW_STATUS" | grep -qE "443/tcp\s+ALLOW\s+IN"; then
-        log_task "UFW already configured"
-        ok
-    else
-        # Re-apply configuration if any of the above fails
-        log_task "Applying UFW default policies"
-        if sudo ufw default deny incoming &>/dev/null &&
-            sudo ufw default allow outgoing &>/dev/null; then
-            ok
-        else
-            fail
-        fi
-
-        log_task "Configuring UFW port rules"
-        if sudo ufw limit 22/tcp &>/dev/null &&
-            sudo ufw allow 80/tcp &>/dev/null &&
-            sudo ufw allow 443/tcp &>/dev/null; then
-            ok
-        else
-            fail
-        fi
-
-        log_task "Enabling UFW"
-        if echo "y" | sudo ufw enable &>/dev/null; then
-            ok
-            success "Firewall is active and configured."
-            ok
-        else
-            fail
-            error "Could not enable UFW."
-        fi
-    fi
-else
-    warn "UFW is not installed on this system."
-    error "Firewall configuration skipped."
 fi
