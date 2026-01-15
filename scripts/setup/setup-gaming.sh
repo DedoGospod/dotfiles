@@ -22,6 +22,9 @@ log_task() { echo -ne "${GREEN}[INFO]${NC} $1... "; }
 ok() { echo -e "${GREEN}Done.${NC}"; }
 fail() { echo -e "${RED}Failed.${NC}"; }
 
+# Gaming settings
+header "GAMING CONFIGURATION"
+
 # Check for cachyos repos and install proton-cachy
 log "Checking repositories for optimized Proton builds"
 if pacman -Ssq "^proton-cachyos$" >/dev/null &&
@@ -33,9 +36,6 @@ if pacman -Ssq "^proton-cachyos$" >/dev/null &&
 else
     warn "Proton-cachyos packages not found; skipping optimized builds."
 fi
-
-# Gaming settings
-header "GAMING CONFIGURATION"
 
 # --- PACKAGE INSTALLATION SECTION ---
 GAMING_PACKAGES=(gamemode gamescope mangohud steam)
@@ -60,7 +60,7 @@ fi
 # Handle Flatpak Packages
 if [ ${#FLATPAK_APPS[@]} -gt 0 ]; then
     log_task "Installing Flatpak applications..."
-    if flatpak install -y --noninteractive flathub "${FLATPAK_APPS[@]}"; then
+    if flatpak install -y --noninteractive --or-update flathub "${FLATPAK_APPS[@]}" &>/dev/null; then
         ok
     fi
 fi
