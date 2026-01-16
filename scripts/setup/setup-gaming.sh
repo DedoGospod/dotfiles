@@ -26,15 +26,23 @@ fail() { echo -e "${RED}Failed.${NC}"; }
 header "GAMING CONFIGURATION"
 
 # Check for cachyos repos and install proton-cachy
-log "Checking repositories for optimized Proton builds"
-if pacman -Ssq "^proton-cachyos$" >/dev/null &&
-    pacman -Ssq "^proton-cachyos-slr$" >/dev/null; then
-
-    GAMING_PACKAGES+=(proton-cachyos proton-cachyos-slr)
-    log_task "Adding optimized Proton packages to queue."
-    ok
+if pacman -Ssq "^proton-cachyos$" >/dev/null && pacman -Ssq "^proton-cachyos-slr$" >/dev/null; then
+    
+    # Check if they are already installed on the system
+    if pacman -Qi proton-cachyos &>/dev/null; then
+        log_task "Proton-cachyos is already installed on the system."
+        ok
+    # Check if they are already in the queue to avoid duplicates
+    elif [[ " ${GAMING_PACKAGES[*]} " =~ " proton-cachyos " ]]; then
+        log_task "Proton-cachyos is already in the installation queue."
+        ok
+    else
+        GAMING_PACKAGES+=(proton-cachyos proton-cachyos-slr)
+        log_task "Adding optimized Proton packages to queue"
+        ok
+    fi
 else
-    warn "Proton-cachyos packages not found; skipping optimized builds."
+    warn "Proton-cachyos packages not found in repos; skipping optimized builds."
 fi
 
 # --- PACKAGE INSTALLATION SECTION ---
@@ -49,19 +57,35 @@ for pkg in "${GAMING_PACKAGES[@]}"; do
 done
 
 if [ ${#MISSING_PACKAGES[@]} -eq 0 ]; then
-    log_task "All system packages are already installed."
+    log_task "All gaming system packages are already installed."
     ok
 else
-    log_task "Installing missing system packages: ${MISSING_PACKAGES[*]}"
+    log_task "Installing missing gaming system packages: ${MISSING_PACKAGES[*]}"
     sudo pacman -S --needed --noconfirm "${MISSING_PACKAGES[@]}"
     ok
 fi
 
 # Handle Flatpak Packages
 if [ ${#FLATPAK_APPS[@]} -gt 0 ]; then
-    log_task "Installing Flatpak applications..."
-    if flatpak install -y --noninteractive --or-update flathub "${FLATPAK_APPS[@]}" &>/dev/null; then
+    MISSING_FLATPAKS=()
+
+    # Check which Flatpaks are NOT already installed
+    for app in "${FLATPAK_APPS[@]}"; do
+        if ! flatpak list --app --columns=application | grep -q "^$app$"; then
+            MISSING_FLATPAKS+=("$app")
+        fi
+    done
+
+    if [ ${#MISSING_FLATPAKS[@]} -eq 0 ]; then
+        log_task "All gaming Flatpaks are already installed"
         ok
+    else
+        log_task "Installing missing Flatpaks: ${MISSING_FLATPAKS[*]}"
+        if flatpak install -y --noninteractive --or-update flathub "${MISSING_FLATPAKS[@]}" &>/dev/null; then
+            ok
+        else
+            fail
+        fi
     fi
 fi
 
@@ -86,7 +110,12 @@ fi
 if command -v gamemoded >/dev/null 2>&1; then
     if ! id -nG "$USER" | grep -qw "gamemode"; then
         log_task "Adding user to gamemode group"
-        if sudo usermod -aG gamemode "$USER"; then ok; else fail; fi
+        if sudo usermod -aG gamemode "$USER"; then 
+            touch /tmp/reboot_required
+            ok 
+        else 
+            fail 
+        fi
         warn "NOTE: You may need to log out and back in for group changes to apply."
     else
         log_task "User already in gamemode group."
@@ -103,6 +132,7 @@ if grep -q "ntsync" /etc/modules-load.d/ntsync.conf 2>/dev/null; then
 else
     log_task "Enabling NTSYNC"
     if echo "ntsync" | sudo tee /etc/modules-load.d/ntsync.conf >/dev/null; then
+        touch /tmp/reboot_required
         ok
     else
         warn "NTSYNC skipped. Windows games (Wine/Proton) may lack kernel-level sync support."
