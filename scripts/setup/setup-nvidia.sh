@@ -40,6 +40,7 @@ if [ ${#MISSING_PACKAGES[@]} -eq 0 ]; then
 else
     log_task "Installing missing packages: ${MISSING_PACKAGES[*]}"
     sudo pacman -S --needed --noconfirm "${MISSING_PACKAGES[@]}"
+    touch /tmp/reboot_required
     ok
 fi
 
@@ -49,7 +50,12 @@ SETTING="options nvidia-drm modeset=1"
 
 if [ ! -f "$CONF_FILE" ] || ! grep -Fxq "$SETTING" "$CONF_FILE"; then
     log_task "Enabling NVIDIA Kernel Mode Setting (KMS)..."
-    if echo "$SETTING" | sudo tee "$CONF_FILE" >/dev/null; then ok; else fail; fi
+    if echo "$SETTING" | sudo tee "$CONF_FILE" >/dev/null; then 
+        touch /tmp/reboot_required
+        ok 
+    else 
+        fail 
+    fi
 else
     log_task "NVIDIA KMS already configured."
     ok
@@ -62,12 +68,20 @@ MK_CONF="/etc/mkinitcpio.conf"
 if ! grep -E "^MODULES=.*nvidia_drm" "$MK_CONF" >/dev/null 2>&1 &&
     ! grep -E "^MODULES\+=\(.*\bnvidia_drm\b.*\)" "$MK_CONF" >/dev/null 2>&1; then
 
-    # Append the new modules line
     log_task "Injecting NVIDIA modules into mkinitcpio"
-    if echo -e "\n# Added by setup script\nMODULES+=(nvidia nvidia_modeset nvidia_uvm nvidia_drm)" | sudo tee -a "$MK_CONF" >/dev/null; then ok; else fail; fi
+    if echo -e "\n# Added by setup script\nMODULES+=(nvidia nvidia_modeset nvidia_uvm nvidia_drm)" | sudo tee -a "$MK_CONF" >/dev/null; then 
+        ok 
+    else 
+        fail 
+    fi
 
     log_task "Regenerating initramfs (this may take a moment)..."
-    if sudo mkinitcpio -P; then ok; else fail; fi
+    if sudo mkinitcpio -P; then 
+        touch /tmp/reboot_required
+        ok
+    else 
+        fail
+    fi
 else
     log_task "NVIDIA modules already present in mkinitcpio"
     ok
