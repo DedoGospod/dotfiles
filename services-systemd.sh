@@ -172,7 +172,7 @@ fi
 
 # General user services
 manage_service "wayland-pipewire-idle-inhibit.service" "--user" "enable" "Prevent sleep when playing audio" "Y"
-manage_service "wlsunset.service"                      "--user" "enable" "Blue light filter" "Y"
+manage_service "hyprsunset.service"                    "--user" "enable" "Blue light filter" "Y"
 manage_service "swaync.service"                        "--user" "enable" "Notification daemon" "Y"
 manage_service "obs.service"                           "--user" "enable" "OBS-STUDIO" "n"
 
