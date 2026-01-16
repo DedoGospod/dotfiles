@@ -7,7 +7,7 @@
 PACMAN_PACKAGES=(
     # Core Desktop
     hyprland hypridle hyprlock hyprpaper hyprshot hyprpolkitagent
-    hyprland-guiutils hyprutils uwsm waybar wofi swaync dbus wlsunset
+    hyprland-guiutils hyprutils uwsm waybar wofi swaync dbus hyprsunset
 
     # Portals & Theming
     xdg-desktop-portal xdg-desktop-portal-gtk xdg-desktop-portal-hyprland
