@@ -9,6 +9,6 @@ StartupWMClass=keepassxc
 Terminal=false
 Categories=Utility;Security;
 
-# UWSM specific: ensure it waits for the graphical session
+# UWSM specifics
 X-UWSM-Startup-Slice=background
 X-UWSM-Options=--wait-for-env=WAYLAND_DISPLAY --type=service
