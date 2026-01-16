@@ -43,6 +43,20 @@ ga() {
     git add . && git status
 }
 
+# Merge branches and switch bash to testing branch
+gm() {
+    # Guard: Ensure we are in a git repo
+    if ! git rev-parse --is-inside-work-tree > /dev/null 2>&1; then
+        echo "Error: Not a git repository."
+        return 1
+    fi
+
+    git switch main && \
+    git merge testing && \
+    git push && \
+    git switch testing
+}
+
 # Install or Remove packages from install script
 SCRIPT_PATH="/home/dylan/dotfiles/install-script-archlinux.sh"
 
