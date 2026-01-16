@@ -3,7 +3,6 @@
 # Exit immediately if a command exits with a non-zero status
 set -e
 set -o pipefail
-sudo -v
 
 # Colors for logging
 GREEN='\033[0;32m'
@@ -22,10 +21,6 @@ success() { echo -e "${GREEN}[SUCCESS]${NC} $1"; }
 log_task() { echo -ne "${GREEN}[INFO]${NC} $1... "; }
 ok() { echo -e "${GREEN}Done.${NC}"; }
 fail() { echo -e "${RED}Failed.${NC}"; }
-
-# Flag to track if group changes occurred
-CHANGES_MADE=false
-
 
 # Setup virtualization
 header "Configuring Virtualization"
@@ -59,7 +54,7 @@ for group in libvirt kvm; do
         else
             log_task "Adding $(whoami) to $group group"
             if sudo usermod -aG "$group" "$(whoami)"; then
-                CHANGES_MADE=true
+                touch /tmp/reboot_required
                 ok
             else
                 fail
