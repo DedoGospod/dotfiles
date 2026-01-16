@@ -1,0 +1,71 @@
+#!/usr/bin/env bash
+# Note: This file relies on variables and functions defined in the main script.
+
+header "INSTALLATION PHASE"
+
+# Check for Btrfs root
+log_task "Checking filesystem type"
+if [[ $(findmnt -n -o FSTYPE --target /) == "btrfs" ]]; then
+    ok
+    log_task "Btrfs root detected. Adding maintenance packages."
+    PACMAN_PACKAGES+=(grub-btrfs inotify-tools btrfsmaintenance snapper snap-pac)
+    ok
+else
+    ok
+    log "Root is not Btrfs. Skipping Btrfs-specific tools."
+fi
+
+# Update System
+log_task "Updating system"
+if sudo pacman -Syu --noconfirm >/dev/null 2>&1; then
+    ok
+else
+    fail
+    error "System update failed. Check your internet connection or mirrors."
+fi
+
+# Install Rustup
+if ! command -v rustup &>/dev/null; then
+    log_task "Installing rustup"
+    if sudo pacman -S --noconfirm rustup >/dev/null 2>&1 && 
+       rustup default stable >/dev/null 2>&1; then
+        ok
+    else
+        fail
+    fi
+else
+    log_task "Rustup already installed."
+    ok
+fi
+
+# Install Paru
+if ! command -v paru &>/dev/null; then
+    log_task "Installing Paru"
+    if sudo pacman -S --needed --noconfirm base-devel git >/dev/null 2>&1 &&
+       git clone https://aur.archlinux.org/paru.git /tmp/paru >/dev/null 2>&1 &&
+       (cd /tmp/paru && makepkg -si --noconfirm >/dev/null 2>&1) &&
+       rm -rf /tmp/paru; then
+        ok
+    else
+        fail
+    fi
+else
+    log_task "Paru already installed."
+    ok
+fi
+
+# Install Official Packages
+log_task "Installing Official Packages..."
+sudo pacman -S --needed --noconfirm -q "${PACMAN_PACKAGES[@]}" &>/dev/null
+ok
+
+# Install AUR Packages
+log_task "Installing AUR Packages..."
+paru -S --needed --noconfirm -q "${AUR_PACKAGES[@]}" &>/dev/null
+ok
+
+# Install Flatpaks
+log_task "Installing Flatpak Apps..."
+flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+flatpak install -y --noninteractive --or-update flathub "${FLATPAK_APPS[@]}" &>/dev/null
+ok
