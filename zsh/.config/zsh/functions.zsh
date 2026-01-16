@@ -49,8 +49,8 @@ gm() {
   (
     set -e
     git switch main
-    git pull origin main
-    git merge testing --no-edit
+    git pull --rebase origin main
+    GIT_MERGE_AUTOEDIT=no git merge testing --no-edit
     git push origin main
     git switch testing
   )
