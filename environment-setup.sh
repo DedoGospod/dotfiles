@@ -31,7 +31,11 @@ fi
 
 # Ask for sudo upfront to prevent timeouts later
 sudo -v
-while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
+while true; do
+    sudo -n true
+    sleep 60
+    kill -0 "$$" || exit
+done 2>/dev/null &
 
 # --- XDG DIRECTORY SETUP ---
 header "XDG DIRECTORY SETUP"
@@ -146,7 +150,7 @@ echo "------------------------------------------------------"
 
 # Check if reboot is required
 if [ -f /tmp/reboot_required ]; then
-    rm /tmp/reboot_required 
+    rm /tmp/reboot_required
 
     if ask "System changes detected. Reboot now?"; then
         log "Rebooting..."
