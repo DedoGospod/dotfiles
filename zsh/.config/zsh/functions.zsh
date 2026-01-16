@@ -40,7 +40,8 @@ nv() {
 
 # git add + git status in one command
 ga() {
-    git add . && git status
+    git add "${@:-.}"
+    git status
 }
 
 # Merge branches and switch bash to testing branch
@@ -48,8 +49,9 @@ gm() {
   (
     set -e
     git switch main
+    git pull origin main
     git merge testing
-    git push
+    git push origin main
     git switch testing
   )
 }
