@@ -50,7 +50,7 @@ gm() {
     set -e
     git switch main
     git pull origin main
-    git merge testing
+    git merge testing --no-edit
     git push origin main
     git switch testing
   )
