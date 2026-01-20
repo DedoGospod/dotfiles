@@ -29,6 +29,9 @@ if [ "$EUID" -eq 0 ]; then
     exit 1
 fi
 
+# This ensures that when the script exits, the background sudo loop is killed immediately
+trap 'kill $(jobs -p) 2>/dev/null' EXIT
+
 # Ask for sudo upfront to prevent timeouts later
 sudo -v
 while true; do
