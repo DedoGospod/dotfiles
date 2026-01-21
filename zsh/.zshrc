@@ -95,7 +95,6 @@ alias zshrc='nvim ~/.zshrc'                            # Edit zsh config
 alias zshfunc='nvim ~/.config/zsh/functions.zsh'       # Edit zsh functions
 alias hypr='nvim ~/.config/hypr/hyprland.conf'         # Edit Hyprland config
 alias grub='sudoedit /etc/default/grub'                # Edit GRUB config
-alias decmanconf='nvim ~/dotfiles/decman/source.py'    # Edit Decman config
 
 # QoL
 alias git-reset-hard='git reset --hard origin/main'
