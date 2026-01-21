@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# shellcheck disable=SC2034
-
 # Note: This file relies on variables and functions defined in the main script.
+
+# shellcheck disable=SC2034
 
 # Base Pacman Packages
 PACMAN_PACKAGES=(
