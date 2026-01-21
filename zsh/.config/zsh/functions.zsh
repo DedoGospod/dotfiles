@@ -1,18 +1,18 @@
 #!/usr/bin/env zsh
 
-### Custom Zsh Functions ###
+# NAVIGATION -------------------------------------------------------------------
 
-# Automatically do an ls after each zl command
+# zl: Navigate with 'z' and immediately list directory contents
 zl() {
     if [ -z "$@" ]; then
         ls -1 --color=always --group-directories-first
     else
         z "$@" && \
         ls -1 --color=always --group-directories-first
-    fi;
+    fi
 }
 
-# Show hidden files when listing with zl
+# zlh: Navigate with 'z' and list ALL contents (including hidden)
 zlh() {
     if [ -z "$@" ]; then
         ls -1A --color=always --group-directories-first
@@ -22,9 +22,10 @@ zlh() {
     fi
 }
 
-# Nv command works for root and user files without the need to type 'sudo'
+# EDITING ----------------------------------------------------------------------
+
+# nv: Smart Neovim wrapper. Uses sudoedit automatically for root-protected files
 nv() {
-    # If no argument is provided, just open Neovim
     if [ -z "$1" ]; then
         command nvim
         return
@@ -34,7 +35,6 @@ nv() {
     local dir
     dir=$(dirname "$target")
 
-    # Use sudoedit if the file exists and isn't writable, OR the file doesn't exist but the directory isn't writable
     if ([ -e "$target" ] && [ ! -w "$target" ]) || ([ ! -e "$target" ] && [ -d "$dir" ] && [ ! -w "$dir" ]); then
         echo "Using sudoedit for root-protected path: $target"
         command sudoedit "$@"
@@ -43,20 +43,22 @@ nv() {
     fi
 }
 
-# git add + git status in one command
+# GIT --------------------------------------------------------------------------
+
+# ga: Stage files (defaults to all) and show status
 ga() {
     git add "${@:-.}"
     git status
 }
 
-# Merge branches and switch bash to testing branch
+# gm: Sync main with origin, merge 'testing' into 'main', and push
 gm() {
-  (
-    set -e
-    git switch main
-    git pull --rebase origin main
-    GIT_MERGE_AUTOEDIT=no git merge testing --no-edit
-    git push origin main
-    git switch testing
-  )
+    (
+        set -e
+        git switch main
+        git pull --rebase origin main
+        GIT_MERGE_AUTOEDIT=no git merge testing --no-edit
+        git push origin main
+        git switch testing
+    )
 }
