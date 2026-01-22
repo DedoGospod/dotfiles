@@ -110,10 +110,3 @@ else
         fi
     fi
 fi
-
-success "Virtualization setup complete!"
-
-# Only show warning if changes were actually made
-if [ "$CHANGES_MADE" = true ]; then
-    warn "Note: You must log out and back in for group changes to take effect."
-fi
