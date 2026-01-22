@@ -93,7 +93,13 @@ else
     echo "  [User] Not in Hyprland. Skipping Hyprland-specific services."
 fi
 
-# select_exclusive_service "Blue light filter" "--user" "wlsunset.service" "hyprsunset.service"
+# Check if hyprsunset is NOT active
+if ! systemctl --user is-active --quiet hyprsunset.service; then
+    # If not active, ask the question
+    select_exclusive_service "Blue light filter" "--user" "wlsunset.service" "hyprsunset.service"
+else
+    log_info "hyprsunset is already set. Skipping selection."
+fi
 
 # General user services
 manage_service "wayland-pipewire-idle-inhibit.service" "--user" "enable" "Prevent sleep when playing audio" "Y"
