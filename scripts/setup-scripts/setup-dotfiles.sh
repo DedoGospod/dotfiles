@@ -24,8 +24,8 @@ fail() { echo -e "${RED}Failed.${NC}"; }
 
 # Stow Packages
 STOW_FOLDERS=(
-    hypr backgrounds fastfetch kitty mpv nvim starship swaync waybar wofi yazi
-    zsh tmux wayland-pipewire-idle-inhibit kwalletrc theme uwsm systemd-user
+    backgrounds kwalletrc fastfetch wayland-pipewire-idle-inhibit hypr kitty 
+    mpv nvim starship swaync waybar wofi yazi zsh tmux uwsm systemd-user
 )
 
 # Dotfiles
