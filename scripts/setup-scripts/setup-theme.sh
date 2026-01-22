@@ -1,0 +1,118 @@
+#!/usr/bin/env bash
+
+# ==============================================================================
+# MASTER THEME SCRIPT: GTK2, GTK3, GTK4, GSettings, QT5, QT6
+# Purpose: Zero-GUI deterministic theme application for Wayland/UWSM
+# ==============================================================================
+
+# --- SET VARIABLES (The Single Source of Truth) ---
+THEME="Adwaita-dark"
+ICONS="Adwaita"
+FONT="Adwaita Sans 11"
+CURSOR="default"
+CURSOR_SIZE=24
+
+# --- GSETTINGS (Database for GTK4 & Portals) ---
+echo "Applying GSettings..."
+gsettings set org.gnome.nautilus.preferences default-sort-order 'type'
+gsettings set org.gnome.desktop.privacy remember-recent-files false
+
+gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
+gsettings set org.gnome.desktop.interface gtk-theme "$THEME"
+gsettings set org.gnome.desktop.interface icon-theme "$ICONS"
+gsettings set org.gnome.desktop.interface font-name "$FONT"
+gsettings set org.gnome.desktop.interface cursor-theme "$CURSOR"
+gsettings set org.gnome.desktop.interface cursor-size $CURSOR_SIZE
+
+# --- 3. GTK CONFIG GENERATION ---
+echo "Generating GTK configurations..."
+mkdir -p ~/.config/gtk-3.0 ~/.config/gtk-4.0
+
+# GTK2 (Flat file, no absolute /home/dylan paths for portability)
+cat <<EOF > ~/.gtkrc-2.0
+gtk-theme-name="$THEME"
+gtk-icon-theme-name="$ICONS"
+gtk-font-name="$FONT"
+gtk-cursor-theme-name="$CURSOR"
+gtk-cursor-theme-size=$CURSOR_SIZE
+gtk-toolbar-style=GTK_TOOLBAR_ICONS
+gtk-toolbar-icon-size=GTK_ICON_SIZE_LARGE_TOOLBAR
+gtk-button-images=0
+gtk-menu-images=0
+gtk-enable-event-sounds=1
+gtk-enable-input-feedback-sounds=0
+gtk-xft-antialias=1
+gtk-xft-hinting=1
+gtk-xft-hintstyle="hintslight"
+gtk-xft-rgba="rgb"
+EOF
+
+# GTK3
+cat <<EOF > ~/.config/gtk-3.0/settings.ini
+[Settings]
+gtk-theme-name=$THEME
+gtk-icon-theme-name=$ICONS
+gtk-font-name=$FONT
+gtk-cursor-theme-name=$CURSOR
+gtk-cursor-theme-size=$CURSOR_SIZE
+gtk-toolbar-style=GTK_TOOLBAR_ICONS
+gtk-toolbar-icon-size=GTK_ICON_SIZE_LARGE_TOOLBAR
+gtk-button-images=0
+gtk-menu-images=0
+gtk-enable-event-sounds=1
+gtk-enable-input-feedback-sounds=0
+gtk-xft-antialias=1
+gtk-xft-hinting=1
+gtk-xft-hintstyle=hintslight
+gtk-xft-rgba=rgb
+gtk-application-prefer-dark-theme=1
+EOF
+
+# GTK4 (Modern apps)
+cat <<EOF > ~/.config/gtk-4.0/settings.ini
+[Settings]
+gtk-theme-name=$THEME
+gtk-icon-theme-name=$ICONS
+gtk-font-name=$FONT
+gtk-cursor-theme-name=$CURSOR
+gtk-cursor-theme-size=$CURSOR_SIZE
+gtk-application-prefer-dark-theme=1
+EOF
+
+# --- QT CONFIG GENERATION (QT5CT & QT6CT) ---
+echo "Generating QT configurations..."
+mkdir -p ~/.config/qt5ct ~/.config/qt6ct
+
+# We define the shared QT template to avoid duplication
+QT_TEMPLATE=$(cat <<EOF
+[Appearance]
+color_scheme_path=/usr/share/qt6ct/colors/darker.conf
+custom_palette=true
+standard_dialogs=default
+style=Fusion
+
+[Fonts]
+fixed="DejaVu LGC Sans,12,-1,5,50,0,0,0,0,0"
+general="DejaVu LGC Sans,12,-1,5,50,0,0,0,0,0"
+
+[Interface]
+activate_item_on_single_click=1
+buttonbox_layout=0
+cursor_flash_time=1000
+dialog_buttons_have_icons=1
+double_click_interval=400
+gui_effects=@Invalid()
+keyboard_scheme=2
+menus_have_icons=true
+show_shortcuts_in_context_menus=true
+stylesheets=@Invalid()
+toolbutton_style=4
+underline_shortcut=1
+wheel_scroll_lines=3
+EOF
+)
+
+echo "$QT_TEMPLATE" > ~/.config/qt5ct/qt5ct.conf
+echo "$QT_TEMPLATE" > ~/.config/qt6ct/qt6ct.conf
+
+echo "Done! Restart your apps to see the changes."
