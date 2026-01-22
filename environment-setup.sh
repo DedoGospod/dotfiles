@@ -136,7 +136,14 @@ run_setup_script() {
 
 # Mandatory Setup
 run_setup_script "setup-user-env.sh"
+run_setup_script "setup-btrfs.sh"
 run_setup_script "setup-theme.sh"
+
+ROOT_FS=$(findmnt -n -o FSTYPE --target /)
+if [[ "$ROOT_FS" == "btrfs" ]]; then
+    run_setup_script "setup-btrfs.sh"
+fi
+
 
 # Conditional Setups
 [[ "$stow_dotfiles" =~ ^[Yy]$ ]] && run_setup_script "setup-dotfiles.sh"
