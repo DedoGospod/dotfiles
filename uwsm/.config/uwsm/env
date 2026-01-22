@@ -14,6 +14,10 @@ export HISTFILE="${XDG_STATE_HOME}/zsh/history"                       # Store zs
 export QT_QPA_PLATFORMTHEME="qt6ct"
 export QT_QPA_PLATFORM="wayland;xcb"
 
+# Theme for gtk applications
+export GTK_THEME=Adwaita:dark
+export ADW_DISABLE_PORTAL=0
+
 # Export nvidia env variables if a nvidia card is detected
 if [ -d "/sys/module/nvidia" ]; then
     . "${XDG_CONFIG_HOME:-$HOME/.config}/uwsm/env-nvidia"
