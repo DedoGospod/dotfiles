@@ -1,9 +1,27 @@
 #!/usr/bin/env bash
 
-# ==============================================================================
-# MASTER THEME SCRIPT: GTK2, GTK3, GTK4, GSettings, QT5, QT6
-# Purpose: Zero-GUI deterministic theme application for Wayland/UWSM
-# ==============================================================================
+# Exit immediately if a command exits with a non-zero status
+set -e
+set -o pipefail
+
+# Colors for logging
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+RED='\033[0;31m'
+BLUE='\033[0;34m'
+NC='\033[0m'
+
+# Helper Functions
+header() { echo -e "\n${BLUE}==== $1 ====${NC}"; }
+log() { echo -e "${GREEN}[INFO]${NC} $1"; }
+warn() { echo -e "${YELLOW}[WARN]${NC} $1"; }
+error() { echo -e "${RED}[ERROR]${NC} $1"; }
+success() { echo -e "${GREEN}[SUCCESS]${NC} $1"; }
+
+log_task() { echo -ne "${GREEN}[INFO]${NC} $1... "; }
+ok() { echo -e "${GREEN}Done.${NC}"; }
+fail() { echo -e "${RED}Failed.${NC}"; }
+
 
 # --- SET VARIABLES (The Single Source of Truth) ---
 THEME="Adwaita-dark"
@@ -13,22 +31,31 @@ CURSOR="default"
 CURSOR_SIZE=24
 
 # --- GSETTINGS (Database for GTK4 & Portals) ---
-echo "Applying GSettings..."
+header "Applying GSettings"
+
+log_task "Configuring Nautilus and Privacy"
 gsettings set org.gnome.nautilus.preferences default-sort-order 'type'
 gsettings set org.gnome.desktop.privacy remember-recent-files false
+ok
 
+log_task "Applying Theme: $THEME"
 gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
 gsettings set org.gnome.desktop.interface gtk-theme "$THEME"
 gsettings set org.gnome.desktop.interface icon-theme "$ICONS"
 gsettings set org.gnome.desktop.interface font-name "$FONT"
 gsettings set org.gnome.desktop.interface cursor-theme "$CURSOR"
 gsettings set org.gnome.desktop.interface cursor-size $CURSOR_SIZE
+ok
 
-# --- 3. GTK CONFIG GENERATION ---
-echo "Generating GTK configurations..."
+header "Generating GTK configurations"
+
+# --- GTK CONFIG GENERATION ---
+log_task "Creating directories"
 mkdir -p ~/.config/gtk-3.0 ~/.config/gtk-4.0
+ok
 
-# GTK2 (Flat file, no absolute /home/dylan paths for portability)
+# GTK2
+log_task "Writing GTK2 config (~/.gtkrc-2.0)"
 cat <<EOF > ~/.gtkrc-2.0
 gtk-theme-name="$THEME"
 gtk-icon-theme-name="$ICONS"
@@ -46,8 +73,10 @@ gtk-xft-hinting=1
 gtk-xft-hintstyle="hintslight"
 gtk-xft-rgba="rgb"
 EOF
+ok
 
 # GTK3
+log_task "Writing GTK3 config (~/.config/gtk-3.0/settings.ini)"
 cat <<EOF > ~/.config/gtk-3.0/settings.ini
 [Settings]
 gtk-theme-name=$THEME
@@ -67,8 +96,10 @@ gtk-xft-hintstyle=hintslight
 gtk-xft-rgba=rgb
 gtk-application-prefer-dark-theme=1
 EOF
+ok
 
 # GTK4 (Modern apps)
+log_task "Writing GTK4 config (~/.config/gtk-4.0/settings.ini)"
 cat <<EOF > ~/.config/gtk-4.0/settings.ini
 [Settings]
 gtk-theme-name=$THEME
@@ -78,12 +109,17 @@ gtk-cursor-theme-name=$CURSOR
 gtk-cursor-theme-size=$CURSOR_SIZE
 gtk-application-prefer-dark-theme=1
 EOF
+ok
 
 # --- QT CONFIG GENERATION (QT5CT & QT6CT) ---
-echo "Generating QT configurations..."
+header "Generating QT configurations"
+
+log_task "Creating directories"
 mkdir -p ~/.config/qt5ct ~/.config/qt6ct
+ok
 
 # We define the shared QT template to avoid duplication
+log_task "Applying QT shared template"
 QT_TEMPLATE=$(cat <<EOF
 [Appearance]
 color_scheme_path=/usr/share/qt6ct/colors/darker.conf
@@ -114,5 +150,4 @@ EOF
 
 echo "$QT_TEMPLATE" > ~/.config/qt5ct/qt5ct.conf
 echo "$QT_TEMPLATE" > ~/.config/qt6ct/qt6ct.conf
-
-echo "Done! Restart your apps to see the changes."
+ok
