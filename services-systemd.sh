@@ -1,95 +1,16 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-# ==============================================================================
-#  System & User Service Configuration Manager
-# ==============================================================================
 
-# Exit on error, undefined variable, or pipe failure
-set -euo pipefail
+# Source necessary functions
+SCRIPT_DIR="$HOME/dotfiles/scripts/setup-scripts/"
 
-# --- Visuals ---
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-NC='\033[0m' # No Color
-
-# --- Helper Functions ---
-log_info() { echo -e "${BLUE}[INFO]${NC} $1"; }
-log_success() { echo -e "${GREEN}[OK]${NC} $1"; }
-log_warn() { echo -e "${YELLOW}[ACTION]${NC} $1"; }
-log_error() { echo -e "${RED}[ERROR]${NC} $1"; }
-
-log_task() { echo -ne "${GREEN}[INFO]${NC} $1... "; }
-ok() { echo -e "${GREEN}Done.${NC}"; }
-fail() { echo -e "${RED}Failed.${NC}"; }
-
-# Check if a service unit file exists (works for both user and system)
-# Usage: service_exists "service_name" "scope (--user or empty)"
-service_exists() {
-    local service="$1"
-    local scope_arg="$2"
-    
-    local systemctl_args=()
-    [[ -n "$scope_arg" ]] && systemctl_args+=("$scope_arg")
-
-    if systemctl "${systemctl_args[@]}" list-unit-files "$service" | grep -q "$service"; then
-        return 0
-    else
-        return 1
-    fi
-}
-
-# Core logic to manage a single service
-# Usage: manage_service "name" "scope" "action(enable/disable)" "description" "default(Y/n)"
-manage_service() {
-    local service="$1"
-    local scope="$2"      # pass "--user" for user services, empty for system
-    local action="$3"     # "enable" or "disable"
-    local desc="$4"
-    local default="$5"    # "Y" or "n"
-
-    # Determine scope label for logging
-    local scope_label="System"
-    [[ "$scope" == "--user" ]] && scope_label="User"
-
-    # Check if service exists first
-    if ! service_exists "$service" "$scope"; then
-        echo -e "  [${scope_label}] Service ${YELLOW}$service${NC} not found. Skipping."
-        return
-    fi
-
-    # Format the prompt
-    local prompt_str="  ${YELLOW}??${NC} Do you want to ${action^^} ${BLUE}$service${NC} ($desc)? "
-    if [[ "$default" == "Y" ]]; then
-        prompt_str+="[Y/n]: "
-    else
-        prompt_str+="[y/N]: "
-    fi
-
-    # Ask user
-    read -r -p "$(echo -e "$prompt_str")" choice
-    
-    # Normalize empty choice to default
-    if [[ -z "$choice" ]]; then
-        choice="$default"
-    fi
-
-    # Process choice
-    if [[ "$choice" =~ ^[Yy]$ ]]; then
-        echo -e "     Process: ${action}ing $service..."
-        
-        # Execute command (use sudo for system, standard for user)
-        if [[ "$scope" == "--user" ]]; then
-            systemctl --user "$action" --now "$service"
-        else
-            sudo systemctl "$action" --now "$service"
-        fi
-        log_success "$service ${action}d."
-    else
-        echo -e "     Skipping $service."
-    fi
-}
+if [[ -f "$SCRIPT_DIR/services-setup-functions.sh" ]]; then
+    # shellcheck source=/dev/null
+    source "$SCRIPT_DIR/services-setup-functions.sh"
+else
+    log_error "services-setup-functions.sh not found!"
+    exit 1
+fi
 
 # ==============================================================================
 #  Initialization
@@ -166,13 +87,16 @@ if $IS_HYPRLAND; then
     manage_service "pyprland.service"                  "--user" "enable" "Pyprland plugins" "Y"
     manage_service "hyprpolkitagent.service"           "--user" "enable" "Polkit Authentication" "Y"
     manage_service "waybar.service"                    "--user" "enable" "Status bar" "Y"
+    manage_service "hyprsunset.service"                "--user" "enable" "Blue light filter" "Y"
+
 else
     echo "  [User] Not in Hyprland. Skipping Hyprland-specific services."
 fi
 
+# select_exclusive_service "Blue light filter" "--user" "wlsunset.service" "hyprsunset.service"
+
 # General user services
 manage_service "wayland-pipewire-idle-inhibit.service" "--user" "enable" "Prevent sleep when playing audio" "Y"
-manage_service "hyprsunset.service"                    "--user" "enable" "Blue light filter" "Y"
 manage_service "swaync.service"                        "--user" "enable" "Notification daemon" "Y"
 manage_service "obs.service"                           "--user" "enable" "OBS-STUDIO" "n"
 
