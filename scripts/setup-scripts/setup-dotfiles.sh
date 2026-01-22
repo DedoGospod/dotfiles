@@ -52,9 +52,6 @@ if [ -d "$DOTFILES_DIR" ]; then
     cd - >/dev/null
 
     # Sync system-level files
-    log "Syncing system-level files..."
-
-    # Define your source directories
     SCRIPTS_SRC="$DOTFILES_DIR/scripts/system-scripts/usr/local/bin"
     CONFIGS_SRC="$DOTFILES_DIR/system-files"
 
