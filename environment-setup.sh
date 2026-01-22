@@ -54,7 +54,7 @@ if mkdir -p \
     "${XDG_DATA_HOME}/gnupg" "${XDG_STATE_HOME}/python"; then ok; else fail; fi
 
 # Define scripts directory
-SCRIPT_DIR="$HOME/dotfiles/scripts/setup"
+SCRIPT_DIR="$HOME/dotfiles/scripts/setup-scripts/"
 
 header "SYSTEM PREPARATION"
 
