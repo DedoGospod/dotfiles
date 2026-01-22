@@ -5,7 +5,7 @@ After=network-online.target
 
 [Service]
 Type=simple
-ExecStart=%h/dotfiles/scripts/user-scripts/.local/bin/systemd/gear-lever-autoupdates.sh
+ExecStart=%h/dotfiles/systemd-user/.local/lib/systemd-scripts/gear-lever-autoupdates.sh
 TimeoutStartSec=5m
 Slice=background.slice
 Nice=15
