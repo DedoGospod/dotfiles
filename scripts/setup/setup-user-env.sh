@@ -24,6 +24,31 @@ fail() { echo -e "${RED}Failed.${NC}"; }
 
 header "USER ENVIRONMENT CONFIGURATION"
 
+# Set mpv to default media player
+MIMETYPES=(
+    "video/mp4"
+    "video/x-matroska"
+    "video/webm"
+    "video/x-flv"
+    "application/vnd.rn-realmedia"
+    "video/quicktime"
+    "video/x-msvideo"
+)
+
+# Check if mpv is installed
+if command -v mpv >/dev/null 2>&1; then
+    log_task "Mpv is installed. Setting as default for video types..."
+    ok
+    
+    # Loop through mimetypes and set mpv.desktop as default
+    for mime in "${MIMETYPES[@]}"; do
+        xdg-mime default mpv.desktop "$mime"
+    done
+
+else
+    error "mpv is not installed. Please install it first."
+fi
+
 # Shell
 if command -v zsh >/dev/null 2>&1; then
     if [[ "$SHELL" != "$(command -v zsh)" ]]; then
