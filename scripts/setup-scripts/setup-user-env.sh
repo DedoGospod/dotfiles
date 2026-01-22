@@ -24,6 +24,41 @@ fail() { echo -e "${RED}Failed.${NC}"; }
 
 header "USER ENVIRONMENT CONFIGURATION"
 
+run_task() {
+    local desc="$1"
+    local cmd="$2"
+
+    log_task "$desc"
+
+    if eval "$cmd" >/dev/null 2>&1; then
+        ok
+        return 0
+    else
+        fail
+        return 1
+    fi
+}
+
+ROOT_FS=$(findmnt -n -o FSTYPE --target /)
+if [[ "$ROOT_FS" == "btrfs" ]]; then
+
+    # List of Btrfs units to enable
+    btrfs_units=(
+        "grub-btrfsd.service"
+        "snapper-timeline.timer"
+        "snapper-cleanup.timer"
+        "btrfs-scrub.timer"
+        "btrfs-balance.timer"
+    )
+
+    for unit in "${btrfs_units[@]}"; do
+        run_task "Enabling $unit" "sudo systemctl enable --now $unit"
+    done
+
+else
+    echo -e "  [System] Root is not Btrfs ($ROOT_FS). Skipping Btrfs tasks."
+fi
+
 # Set mpv to default media player
 MIMETYPES=(
     "video/mp4"
@@ -39,7 +74,7 @@ MIMETYPES=(
 if command -v mpv >/dev/null 2>&1; then
     log_task "Mpv is installed. Setting as default for video types..."
     ok
-    
+
     # Loop through mimetypes and set mpv.desktop as default
     for mime in "${MIMETYPES[@]}"; do
         xdg-mime default mpv.desktop "$mime"
