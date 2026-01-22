@@ -43,6 +43,7 @@ else
     sudo pacman -S --needed --noconfirm "${MISSING_PACKAGES[@]}"
     ok
 fi
+
 # ----------------------------------------
 
 # Add user to groups
@@ -90,23 +91,29 @@ if [ "$SOCKET_READY" = false ]; then
     fail
 fi
 
-# Robust check for the 'default' network status
-NETWORK_INFO=$(sudo virsh -c qemu:///system net-info default 2>/dev/null || true)
+# Robust check for the network status
+NET="default"
+URI="qemu:///system"
 
-if echo "$NETWORK_INFO" | grep -qiE "Active:\s+yes"; then
+# Check if the network is in the 'active' column of the list
+IF_ACTIVE=$(sudo virsh -c "$URI" net-list --all | grep " $NET " | awk '{print $2}')
+if [ "$IF_ACTIVE" = "active" ]; then
     log_task "Default network already active"
     ok
 else
     log_task "Activating default network"
-    sudo virsh -c qemu:///system net-autostart default &>/dev/null || true
     
-    if sudo virsh -c qemu:///system net-start default &>/dev/null; then
+    # Try to start it
+    if sudo virsh -c "$URI" net-start "$NET" &>/dev/null; then
+        # Ensure autostart is enabled for the future
+        sudo virsh -c "$URI" net-autostart "$NET" &>/dev/null
         ok
     else
-        if sudo virsh -c qemu:///system net-info default | grep -qiE "Active:\s+yes"; then
+        # Final verification check
+        if sudo virsh -c "$URI" net-list --all | grep " $NET " | grep -q "active"; then
             ok
         else
-            fail
+            fail "Could not start network $NET"
         fi
     fi
 fi
