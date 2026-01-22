@@ -31,7 +31,6 @@ center:
   icon_size: 16
 
 end:
-
 # - type: label
   # name: network
   # label: "Ethernet"
@@ -44,7 +43,7 @@ end:
 - type: volume
   format: "{icon} {percentage}%"
   on_click_left: "pavucontrol"
-  on_click_right: "overskride"
+  on_click_right: "flatpak run io.github.ebonjaeger.bluejay"
 - type: clock
   format: " %a %d %H:%M"
 - type: battery
