@@ -136,6 +136,7 @@ run_setup_script() {
 
 # Mandatory Setup
 run_setup_script "setup-user-env.sh"
+run_setup_script "setup-theme.sh"
 
 # Conditional Setups
 [[ "$stow_dotfiles" =~ ^[Yy]$ ]] && run_setup_script "setup-dotfiles.sh"
