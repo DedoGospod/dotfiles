@@ -3,20 +3,6 @@
 
 header "INSTALLATION PHASE"
 
-# Check for Btrfs root
-ROOT_FS=$(findmnt -n -o FSTYPE --target /)
-
-log_task "Checking filesystem type"
-if [[ "$ROOT_FS" == "btrfs" ]]; then
-    ok
-    log_task "Btrfs root detected. Adding maintenance packages."
-    PACMAN_PACKAGES+=(grub-btrfs inotify-tools btrfsmaintenance snapper snap-pac)
-    ok
-else
-    ok
-    log "Root is not Btrfs. Skipping Btrfs-specific tools."
-fi
-
 # Update System
 log_task "Updating system"
 if sudo pacman -Syu --noconfirm >/dev/null 2>&1; then
