@@ -92,6 +92,11 @@ if command -v ufw &>/dev/null; then
         # -------------------------------
 
         log_task "Enabling UFW"
+
+        # Enable system service
+        sudo systemctl enable ufw.service &>/dev/null
+
+        # Enable firewall rules
         if echo "y" | sudo ufw enable &>/dev/null; then
             ok
             success "Firewall is active and configured."
