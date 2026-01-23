@@ -93,9 +93,7 @@ ask() {
 
 # Core Setup Choices
 ask "Set up dotfiles with GNU Stow?" && stow_dotfiles="y"
-ask "Install NVIDIA drivers?" && install_nvidia="y"
 ask "Install Neovim dev tools?" && PACMAN_PACKAGES+=("${NEOVIM_DEPS[@]}")
-ask "Setup ufw firewall?" && install_firewall="y"
 ask "Setup virtualization?" && setup_virt="y"
 ask "Setup wakeonlan?" && setup_wol="y"
 
@@ -136,20 +134,23 @@ run_setup_script() {
 
 # Mandatory Setup
 run_setup_script "setup-user-env.sh"
-run_setup_script "setup-btrfs.sh"
 run_setup_script "setup-theme.sh"
+run_setup_script "setup-firewall.sh"
 
+# Install btrfs maintnence packages if btrfs is root file system
 ROOT_FS=$(findmnt -n -o FSTYPE --target /)
 if [[ "$ROOT_FS" == "btrfs" ]]; then
     run_setup_script "setup-btrfs.sh"
 fi
 
+# Install and setup nvidia drivers if a nvidia gpu is detected
+if lspci | grep -iq "nvidia"; then
+    run_setup_script "setup-nvidia.sh"
+fi
 
 # Conditional Setups
 [[ "$stow_dotfiles" =~ ^[Yy]$ ]] && run_setup_script "setup-dotfiles.sh"
-[[ "$install_nvidia" =~ ^[Yy]$ ]] && run_setup_script "setup-nvidia.sh"
 [[ "$install_gaming" =~ ^[Yy]$ ]] && run_setup_script "setup-gaming.sh"
-[[ "$install_firewall" =~ ^[Yy]$ ]] && run_setup_script "setup-firewall.sh"
 [[ "$setup_virt" =~ ^[Yy]$ ]] && run_setup_script "setup-virtualization.sh"
 [[ "$setup_wol" =~ ^[Yy]$ ]] && run_setup_script "setup-wol.sh"
 
