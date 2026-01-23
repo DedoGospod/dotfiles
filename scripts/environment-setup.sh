@@ -92,7 +92,6 @@ ask() {
 }
 
 # Core Setup Choices
-ask "Set up dotfiles with GNU Stow?" && stow_dotfiles="y"
 ask "Install Neovim dev tools?" && PACMAN_PACKAGES+=("${NEOVIM_DEPS[@]}")
 ask "Setup virtualization?" && setup_virt="y"
 ask "Setup wakeonlan?" && setup_wol="y"
@@ -133,6 +132,7 @@ run_setup_script() {
 }
 
 # Mandatory Setup
+run_setup_script "setup-dotfiles.sh"
 run_setup_script "setup-user-env.sh"
 run_setup_script "setup-theme.sh"
 run_setup_script "setup-firewall.sh"
@@ -149,7 +149,6 @@ if lspci | grep -iq "nvidia"; then
 fi
 
 # Conditional Setups
-[[ "$stow_dotfiles" =~ ^[Yy]$ ]] && run_setup_script "setup-dotfiles.sh"
 [[ "$install_gaming" =~ ^[Yy]$ ]] && run_setup_script "setup-gaming.sh"
 [[ "$setup_virt" =~ ^[Yy]$ ]] && run_setup_script "setup-virtualization.sh"
 [[ "$setup_wol" =~ ^[Yy]$ ]] && run_setup_script "setup-wol.sh"
@@ -157,7 +156,7 @@ fi
 # --- FINISH ---
 echo ""
 echo "------------------------------------------------------"
-log "Installation Complete! 🎉"
+success "Installation Complete! 🎉"
 echo "------------------------------------------------------"
 
 # Check if reboot is required
@@ -171,5 +170,5 @@ if [ -f /tmp/reboot_required ]; then
         warn "Please reboot manually to apply changes."
     fi
 else
-    success "No system changes required a reboot. Enjoy!"
+    log "No system changes required a reboot. Enjoy!"
 fi
