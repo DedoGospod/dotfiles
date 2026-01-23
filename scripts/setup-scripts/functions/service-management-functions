@@ -1,0 +1,106 @@
+#!/usr/bin/env bash
+
+# Check if service exists
+service_exists() {
+    local service="$1"
+    local scope_arg="$2"
+    local systemctl_args=()
+    [[ -n "$scope_arg" ]] && systemctl_args+=("$scope_arg")
+
+    if systemctl "${systemctl_args[@]}" list-unit-files "$service" | grep -q "$service"; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+# Enable and start services via prompt
+manage_service() {
+    local service="$1"
+    local scope="$2"
+    local action="$3"
+    local desc="$4"
+    local default="$5"
+
+    local scope_label="System"
+    [[ "$scope" == "--user" ]] && scope_label="User"
+
+    if ! service_exists "$service" "$scope"; then
+        echo -e "  [${scope_label}] Service ${YELLOW}$service${NC} not found. Skipping."
+        return
+    fi
+
+    local prompt_str="  ${YELLOW}??${NC} Do you want to ${action^^} ${BLUE}$service${NC} ($desc)? "
+    [[ "$default" == "Y" ]] && prompt_str+="[Y/n]: " || prompt_str+="[y/N]: "
+
+    read -r -p "$(echo -e "$prompt_str")" choice
+    [[ -z "$choice" ]] && choice="$default"
+
+    if [[ "$choice" =~ ^[Yy]$ ]]; then
+        echo -e "     Process: ${action}ing $service..."
+        if [[ "$scope" == "--user" ]]; then
+            systemctl --user "$action" --now "$service"
+        else
+            sudo systemctl "$action" --now "$service"
+        fi
+        log_success "$service ${action}d."
+    else
+        echo -e "     Skipping $service."
+    fi
+}
+
+# Pick which service to use if multiple are in the same category (eg waybar vs ironbar | hyprsunset vs wlsunset)
+select_exclusive_service() {
+    local category="$1"
+    local scope="$2"
+    shift 2
+    local options=("$@")
+
+    # Check if any of the options are already running ---
+    for srv in "${options[@]}"; do
+        if systemctl "$scope" is-active --quiet "$srv"; then
+            log_info "$srv is already active. Skipping $category selection."
+            return 0  # Exit function early
+        fi
+    done
+
+    log_info "Select which service to use for: $category"
+    PS3="$(echo -e "${YELLOW}??${NC} Choice (1-${#options[@]} or 's' to skip): ")"
+    
+    select opt in "${options[@]}"; do
+        if [[ "$REPLY" == "s" ]]; then
+            log_info "Skipping $category configuration."
+            break
+        elif [[ -n "$opt" ]]; then
+            log_task "Setting up $opt"
+            
+            # Disable all competing services in the list
+            for srv in "${options[@]}"; do
+                if [[ "$scope" == "--user" ]]; then
+                    systemctl --user disable --now "$srv" >/dev/null 2>&1 || true
+                else
+                    sudo systemctl disable --now "$srv" >/dev/null 2>&1 || true
+                fi
+            done
+
+            # Enable the selected service
+            if [[ "$scope" == "--user" ]]; then
+                if systemctl --user enable --now "$opt"; then ok; else fail; fi
+            else
+                if sudo systemctl enable --now "$opt"; then ok; else fail; fi
+            fi
+            break
+        else
+            log_error "Invalid option $REPLY"
+        fi
+    done
+}
+
+# Helper to loop through "Unit|Scope|Action|Desc|Confirm" arrays
+process_services() {
+    for entry in "$@"; do
+        # Split the string by pipe '|' into variables
+        IFS='|' read -r unit scope action desc confirm <<< "$entry"
+        manage_service "$unit" "$scope" "$action" "$desc" "$confirm"
+    done
+}
