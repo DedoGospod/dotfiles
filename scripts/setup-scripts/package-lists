@@ -14,7 +14,7 @@ PACMAN_PACKAGES=(
     qt5-wayland qt6-wayland qt6ct gnome-themes-extra
 
     # Apps & Utils
-    neovim nautilus yazi mpv fastfetch btop gnome-disk-utility
+    neovim nautilus yazi mpv imv fastfetch btop gnome-disk-utility
     obsidian pavucontrol gnome-keyring seahorse rsync ffmpeg
     ffmpegthumbnailer pipewire wireplumber
 
