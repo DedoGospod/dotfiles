@@ -24,29 +24,43 @@ fail() { echo -e "${RED}Failed.${NC}"; }
 
 header "USER ENVIRONMENT CONFIGURATION"
 
-# Set mpv to default media player
-MIMETYPES=(
-    "video/mp4"
-    "video/x-matroska"
-    "video/webm"
-    "video/x-flv"
-    "application/vnd.rn-realmedia"
-    "video/quicktime"
-    "video/x-msvideo"
+# Define all target MIMETYPES (Video + Image)
+MEDIA_MIMETYPES=(
+    "video/mp4" "video/x-matroska" "video/webm" "video/x-flv"
+    "application/vnd.rn-realmedia" "video/quicktime" "video/x-msvideo"
+    "audio/mp3" "audio/ogg" "audio/wav" "audio/flac"
 )
 
-# Check if mpv is installed
-if command -v mpv >/dev/null 2>&1; then
-    log_task "Setting MPV as default for media player..."
-    ok
+IMAGE_MIMETYPES=(
+    "image/jpeg" "image/png" "image/gif" "image/webp" 
+    "image/bmp" "image/tiff" "image/svg+xml" "image/avif"
+)
 
-    # Loop through mimetypes and set mpv.desktop as default
-    for mime in "${MIMETYPES[@]}"; do
+# Set MPV Defaults
+if command -v mpv >/dev/null 2>&1; then
+    log_task "Setting MPV as default for media..."
+    for mime in "${MEDIA_MIMETYPES[@]}"; do
         xdg-mime default mpv.desktop "$mime"
     done
+    ok
+fi
 
+# Set IMV Defaults
+IMAGE_APP="imv.desktop"
+if command -v imv >/dev/null 2>&1 || command -v imvr >/dev/null 2>&1; then
+    
+    # Detect if we should use imv.desktop or imvr.desktop
+    if [ ! -f "/usr/share/applications/$IMAGE_APP" ]; then
+        IMAGE_APP="imvr.desktop"
+    fi
+
+    log_task "Setting $IMAGE_APP as default for images..."
+    for mime in "${IMAGE_MIMETYPES[@]}"; do
+        xdg-mime default "$IMAGE_APP" "$mime"
+    done
+    ok
 else
-    error "mpv is not installed. Please install it first."
+    echo -e "\e[31m[ERROR]\e[0m imv not found. Install it first."
 fi
 
 # Shell
