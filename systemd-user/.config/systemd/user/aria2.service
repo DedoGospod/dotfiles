@@ -1,5 +1,8 @@
 [Service]
+After=network.target
 Type=simple
+Description=aria2 RPC Service
+
 ExecStart=/usr/bin/aria2c --conf-path=%h/.config/aria2/aria2.conf
 KillSignal=SIGTERM
 TimeoutStopSec=30
