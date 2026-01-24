@@ -75,7 +75,6 @@ select_exclusive_service "Blue light filter"            "--user" "wlsunset.servi
 # General User Services
 # ------------------------------------------------------------------------------
 
-manage__service "aria2.service"                         "--user" "enable" "Download and torrent manager"      "Y"
 manage_service "wayland-pipewire-idle-inhibit.service"  "--user" "enable" "Prevent sleep when playing audio"  "Y"
 manage_service "swaync.service"                         "--user" "enable" "Notification daemon"               "Y"
 manage_service "obs.service"                            "--user" "enable" "OBS-STUDIO"                        "n"
