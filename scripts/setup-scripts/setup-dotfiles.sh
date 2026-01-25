@@ -26,6 +26,7 @@ fail() { echo -e "${RED}Failed.${NC}"; }
 STOW_FOLDERS=(
     backgrounds kwalletrc fastfetch wayland-pipewire-idle-inhibit hypr kitty 
     mpv nvim starship swaync waybar wofi yazi zsh tmux uwsm systemd-user aria2
+    scopebuddy
 )
 
 # Dotfiles
