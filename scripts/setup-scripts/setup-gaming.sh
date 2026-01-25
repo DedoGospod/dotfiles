@@ -46,12 +46,12 @@ else
 fi
 
 # --- PACKAGE INSTALLATION SECTION ---
-GAMING_PACKAGES=(gamemode gamescope mangohud steam)
+GAMING_PACKAGES=(gamemode gamescope mangohud steam scopebuddy-git)
 FLATPAK_APPS+=("com.vysp3r.ProtonPlus")
 MISSING_PACKAGES=()
 
 for pkg in "${GAMING_PACKAGES[@]}"; do
-    if ! pacman -Qq "$pkg" &>/dev/null; then
+    if ! paru -Qq "$pkg" &>/dev/null; then
         MISSING_PACKAGES+=("$pkg")
     fi
 done
@@ -61,7 +61,7 @@ if [ ${#MISSING_PACKAGES[@]} -eq 0 ]; then
     ok
 else
     log_task "Installing missing gaming system packages: ${MISSING_PACKAGES[*]}"
-    sudo pacman -S --needed --noconfirm "${MISSING_PACKAGES[@]}"
+    paru -S --needed --noconfirm "${MISSING_PACKAGES[@]}"
     ok
 fi
 
