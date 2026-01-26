@@ -166,3 +166,18 @@ configure_hyprland_services() {
         log "Not in Hyprland. Skipping Hyprland-specific services."
     fi
 }
+
+run_task() {
+    local desc="$1"
+    local cmd="$2"
+
+    log_task "$desc"
+    
+    if eval "$cmd" >/dev/null 2>&1; then
+        ok
+        return 0
+    else
+        fail
+        return 1
+    fi
+}
