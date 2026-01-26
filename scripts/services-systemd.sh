@@ -6,17 +6,8 @@
 
 # Source functions
 FUNCTIONS_DIR="$HOME/dotfiles/scripts/setup-scripts/functions/"
-if [[ -d "$FUNCTIONS_DIR" ]]; then
-    for func_file in "$FUNCTIONS_DIR"/*; do
-        if [[ -f "$func_file" ]]; then
-            # shellcheck source=/dev/null
-            source "$func_file"
-        fi
-    done
-else
-    echo "Directory $FUNCTIONS_DIR not found"
-    exit 1
-fi
+# shellcheck source=/dev/null
+source "$FUNCTIONS_DIR/service-management-functions"
 
 # ==============================================================================
 #  Initialization
