@@ -1,0 +1,69 @@
+#!/usr/bin/env bash
+
+# Exit immediately if a command exits with a non-zero status
+set -e
+set -o pipefail
+
+# Source functions
+FUNCTIONS_DIR="$HOME/dotfiles/scripts/setup-scripts/functions"
+# shellcheck source=/dev/null
+source "$FUNCTIONS_DIR/setup-functions"
+
+# Import functions
+check_if_root         # Ensure user doesnt run this as root
+keep_sudo_alive       # Keep sudo active for the duration of the script
+xdg_setup             # Setup xdg directory structure
+import_setup_scripts  # Import setup scripts
+import_package_list   # Import the package list
+
+# --- USER INTERACTION ---
+header "CONFIGURATION QUESTIONS"
+
+# Core Setup Choices
+ask "Install Neovim dev tools?" && PACMAN_PACKAGES+=("${NEOVIM_DEPS[@]}")
+ask "Setup virtualization?" && setup_virt="y"
+ask "Setup wakeonlan?" && setup_wol="y"
+
+# Conditional Gaming Group
+if ask "Install gaming packages?"; then
+    install_gaming="y"
+    if ask "Install OBS and game recording tools?"; then
+        AUR_PACKAGES+=("obs-studio" "obs-vkcapture" "obs-pipewire-audio-capture")
+    fi
+fi
+
+echo ""
+
+# Import install phase
+import_install_phase
+
+# Mandatory Setup
+run_setup_script "setup-dotfiles.sh"
+run_setup_script "setup-user-env.sh"
+run_setup_script "setup-theme.sh"
+run_setup_script "setup-firewall.sh"
+
+# Install btrfs maintnence packages if btrfs is root file system
+ROOT_FS=$(findmnt -n -o FSTYPE --target /)
+if [[ "$ROOT_FS" == "btrfs" ]]; then
+    run_setup_script "setup-btrfs.sh"
+fi
+
+# Install and setup nvidia drivers if a nvidia gpu is detected
+if lspci | grep -iq "nvidia"; then
+    run_setup_script "setup-nvidia.sh"
+fi
+
+# Conditional Setups
+[[ "$install_gaming" =~ ^[Yy]$ ]] && run_setup_script "setup-gaming.sh" 
+[[ "$setup_virt" =~ ^[Yy]$ ]] && run_setup_script "setup-virtualization.sh"
+[[ "$setup_wol" =~ ^[Yy]$ ]] && run_setup_script "setup-wol.sh"
+
+# --- FINISH ---
+echo ""
+echo "------------------------------------------------------"
+success "Installation Complete! 🎉"
+echo "------------------------------------------------------"
+
+# Check if reboot is required
+is_reboot_required
