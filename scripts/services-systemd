@@ -1,0 +1,60 @@
+#!/usr/bin/env bash
+
+# ==============================================================================
+#  Setup & Dependencies
+# ==============================================================================
+
+# Source functions
+FUNCTIONS_DIR="$HOME/dotfiles/scripts/setup-scripts/functions/"
+# shellcheck source=/dev/null
+source "$FUNCTIONS_DIR/service-management-functions"
+
+# ==============================================================================
+#  Initialization
+# ==============================================================================
+log "Verifying sudo access..."
+sudo -v
+
+log_task "Reloading systemd daemons"
+sudo systemctl daemon-reload
+systemctl --user daemon-reload
+ok
+
+# ==============================================================================
+#  System Services (Root)
+# ==============================================================================
+header "Configuring system services"
+manage_service "NetworkManager.service"         "" "enable" "Network management"     "Y"
+manage_service "bluetooth.service"              "" "enable" "Bluetooth connectivity" "n"
+manage_service "power-profiles-daemon.service"  "" "enable" "Power profiles"         "Y"
+manage_service "ufw.service"                    "" "enable" "Enable firewall"        "Y"
+
+# ==============================================================================
+#  System Services
+# ==============================================================================
+
+# Environment specific user Services
+configure_hyprland_services
+
+header "Configuring general user services"
+
+# Conditional Selection
+select_exclusive_service "Blue light filter"            "--user" "wlsunset.service" "hyprsunset.service"
+
+# General services
+manage_service "wayland-pipewire-idle-inhibit.service"  "--user" "enable" "Prevent sleep when playing audio"  "Y"
+manage_service "swaync.service"                         "--user" "enable" "Notification daemon"               "Y"
+manage_service "obs.service"                            "--user" "enable" "OBS studio autostart with replay"  "n"
+
+
+# ==============================================================================
+#  System Timers
+# ==============================================================================
+header "Systemd timer configuration"
+
+# Systemd (root)
+if_arch "enabling paccache timer" sudo systemctl enable --now paccache.timer
+
+# Systemd user
+if_arch "Enabling orphaned package check timer" systemctl --user enable --now "check-orphans.timer"       "--user" "enable" "Discover orphaned packages"     "Y"
+run_task "Enabling failed unit check timer" systemctl --user enable --now "failed-units-cheak.timer"      "--user" "enable" "Failed systemd service check"   "Y"
