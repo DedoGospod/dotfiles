@@ -21,18 +21,18 @@ fi
 # ==============================================================================
 #  Initialization
 # ==============================================================================
-log_info "Verifying sudo access..."
+log "Verifying sudo access..."
 sudo -v
 
-log_info "Reloading systemd daemons..."
+log_task "Reloading systemd daemons"
 sudo systemctl daemon-reload
 systemctl --user daemon-reload
+ok
 
 # ==============================================================================
 #  System Services (Root)
 # ==============================================================================
-echo ""
-log_info "--- Configuring System Services ---"
+header "Configuring System Services"
 
 manage_service "NetworkManager.service"         "" "enable" "Network management"     "Y"
 manage_service "bluetooth.service"              "" "enable" "Bluetooth connectivity" "n"
@@ -40,29 +40,13 @@ manage_service "power-profiles-daemon.service"  "" "enable" "Power profiles"    
 manage_service "ufw.service"                    "" "enable" "Enable firewall"        "Y"
 
 # Timers
+if_arch "enabling paccache timer" sudo systemctl enable --now paccache.timer
 
 # ==============================================================================
-#  User Services
+#  Environment specific user Services
 # ==============================================================================
-echo ""
-log_info "--- Configuring User Services ---"
 
-IS_HYPRLAND=false
-if [[ "${XDG_SESSION_DESKTOP:-}" == "Hyprland" || -n "${HYPRLAND_INSTANCE_SIGNATURE:-}" ]]; then
-    IS_HYPRLAND=true
-    log_info "Hyprland environment detected."
-fi
-
-if $IS_HYPRLAND; then
-    manage_service "hypridle.service"         "--user" "enable" "Idle daemon"           "Y"
-    manage_service "hyprpaper.service"        "--user" "enable" "Wallpaper daemon"      "Y"
-    manage_service "pyprland.service"         "--user" "enable" "Pyprland plugins"      "Y"
-    manage_service "hyprpolkitagent.service"  "--user" "enable" "Polkit Authentication" "Y"
-    manage_service "waybar.service"           "--user" "enable" "Status bar"            "Y"
-    manage_service "hyprsunset.service"       "--user" "enable" "blue light filter"     "Y"
-else
-    echo "  [User] Not in Hyprland. Skipping Hyprland-specific services."
-fi
+configure_hyprland_services
 
 # ------------------------------------------------------------------------------
 # Conditional Selection
@@ -75,16 +59,10 @@ select_exclusive_service "Blue light filter"            "--user" "wlsunset.servi
 # General User Services
 # ------------------------------------------------------------------------------
 
+header "Configuring general user services"
+
 manage_service "wayland-pipewire-idle-inhibit.service"  "--user" "enable" "Prevent sleep when playing audio"  "Y"
 manage_service "swaync.service"                         "--user" "enable" "Notification daemon"               "Y"
-manage_service "obs.service"                            "--user" "enable" "OBS-STUDIO"                        "n"
+manage_service "obs.service"                            "--user" "enable" "OBS studio autostart with replay"  "n"
 
 # Timers
-manage_service "gearlever-update.timer"                 "--user" "enable" "Gearlever auto-update"             "Y"
-
-# ==============================================================================
-#  Completion
-# ==============================================================================
-
-echo ""
-log_success "Configuration complete!"
