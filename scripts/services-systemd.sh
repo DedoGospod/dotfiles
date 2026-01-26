@@ -42,25 +42,18 @@ manage_service "ufw.service"                    "" "enable" "Enable firewall"   
 # Timers
 if_arch "enabling paccache timer" sudo systemctl enable --now paccache.timer
 
-# ==============================================================================
-#  Environment specific user Services
-# ==============================================================================
-
-configure_hyprland_services
-
 # ------------------------------------------------------------------------------
-# Conditional Selection
+# User Services
 # ------------------------------------------------------------------------------
-
-select_exclusive_service "Blue light filter"            "--user" "wlsunset.service" "hyprsunset.service"
-# select_exclusive_service "Status bar"                   "--user" "waybar.service" "ironbar.service"
-
-# ------------------------------------------------------------------------------
-# General User Services
-# ------------------------------------------------------------------------------
-
 header "Configuring general user services"
 
+# Environment specific user Services
+configure_hyprland_services
+
+# Conditional Selection
+select_exclusive_service "Blue light filter"            "--user" "wlsunset.service" "hyprsunset.service"
+
+# General services
 manage_service "wayland-pipewire-idle-inhibit.service"  "--user" "enable" "Prevent sleep when playing audio"  "Y"
 manage_service "swaync.service"                         "--user" "enable" "Notification daemon"               "Y"
 manage_service "obs.service"                            "--user" "enable" "OBS studio autostart with replay"  "n"
