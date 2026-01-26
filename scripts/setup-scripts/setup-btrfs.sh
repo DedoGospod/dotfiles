@@ -65,7 +65,6 @@ elif [ "$BOOTLOADER" == "limine" ]; then
     btrfs_units+=("limine-snapper-watcher.service")
 fi  
 
-
 # Install Packages
 log_task "Installing Official Packages"
 paru -S --needed --noconfirm -q "${PACMAN_PACKAGES[@]}" &>/dev/null
@@ -78,11 +77,6 @@ btrfs_units=(
     "btrfs-scrub.timer"
     "btrfs-balance.timer"
 )
-
-# Add GRUB-specific service only if GRUB is used
-if [ "$BOOTLOADER" == "grub" ]; then
-    btrfs_units+=("grub-btrfsd.service")
-fi
 
 # Enable btrfs related services
 for unit in "${btrfs_units[@]}"; do
