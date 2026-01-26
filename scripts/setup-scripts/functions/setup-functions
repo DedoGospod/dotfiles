@@ -1,8 +1,6 @@
 #!/usr/bin/env bash
 # Note: This file relies on variables and functions defined in the main script.
 
-# shellcheck disable=SC2034
-
 # ==============================================================================
 # 1. UI & LOGGING CONFIGURATION
 # ==============================================================================
