@@ -7,5 +7,5 @@ ExecStart=/bin/bash -c '\
 orphans=$(paru -Qtdq 2>/dev/null); \
 if [[ -n "$orphans" ]]; then \
   count=$(echo "$orphans" | wc -w); \
-  notify-send "Orphaned Packages Found ($count)" "$orphans"; \
+  notify-send -i user-trash "Orphaned Packages Found ($count)" "$orphans"; \
 fi'
