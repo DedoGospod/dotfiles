@@ -26,7 +26,7 @@ PACMAN_PACKAGES=(
     gnome-keyring seahorse keepassxc networkmanager bluez bluez-utils
 
     # Maintenance
-    reflector
+    reflector pacman-contrib
 
     # Containerization
     flatpak
