@@ -56,10 +56,13 @@ if [ -d "$DOTFILES_DIR" ]; then
     SCRIPTS_SRC="$DOTFILES_DIR/scripts/system-scripts/usr/local/bin"
     CONFIGS_SRC="$DOTFILES_DIR/system-files"
 
+    # SYSTEMD_SYSTEM="/etc/systemd/system"
+
     # Format: "source|target|mode"
     FILES_TO_SYNC=(
         "$SCRIPTS_SRC/reboot-to-windows|/usr/local/bin/reboot-to-windows|755"
         "$CONFIGS_SRC/root|/etc/snapper/configs/root|644"
+
     )
 
     for entry in "${FILES_TO_SYNC[@]}"; do
