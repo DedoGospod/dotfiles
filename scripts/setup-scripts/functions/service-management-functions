@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
+# Note: This file contains logic for managing systemd services and system config.
 
 # ==============================================================================
-# UI & LOGGING CONFIGURATION
+# 1. UI & LOGGING CONFIGURATION
 # ==============================================================================
 
 # Colors for logging
@@ -12,18 +13,18 @@ BLUE='\033[0;34m'
 NC='\033[0m'
 
 # Helper Functions
-header() { echo -e "\n${BLUE}==== $1 ====${NC}"; }
-log() { echo -e "${GREEN}[INFO]${NC} $1"; }
-warn() { echo -e "${YELLOW}[WARN]${NC} $1"; }
-error() { echo -e "${RED}[ERROR]${NC} $1"; }
+header()  { echo -e "\n${BLUE}==== $1 ====${NC}"; }
+log()     { echo -e "${GREEN}[INFO]${NC} $1"; }
+warn()    { echo -e "${YELLOW}[WARN]${NC} $1"; }
+error()   { echo -e "${RED}[ERROR]${NC} $1"; }
 success() { echo -e "${GREEN}[SUCCESS]${NC} $1"; }
 
 log_task() { echo -ne "${GREEN}[INFO]${NC} $1... "; }
-ok() { echo -e "${GREEN}Done.${NC}"; }
-fail() { echo -e "${RED}Failed.${NC}"; }
+ok()       { echo -e "${GREEN}Done.${NC}"; }
+fail()     { echo -e "${RED}Failed.${NC}"; }
 
 # ==============================================================================
-# SERVICE CORE FUNCTIONS
+# 2. SERVICE CORE FUNCTIONS
 # ==============================================================================
 
 # Check if service exists
@@ -43,10 +44,10 @@ service_exists() {
 # Enable and start services via prompt
 manage_service() {
     local service="$1"
-    local scope="$2"
-    local action="$3"
-    local desc="$4"
-    local default="$5"
+    local scope="$2"   # --user or empty for system
+    local action="$3"  # enable, disable, restart
+    local desc="$4"    # Description for user
+    local default="$5" # Y or N
 
     local scope_label="System"
     [[ "$scope" == "--user" ]] && scope_label="User"
@@ -75,10 +76,10 @@ manage_service() {
 }
 
 # ==============================================================================
-# EXCLUSIVE SELECTION & PROCESSING
+# 3. EXCLUSIVE SELECTION & PROCESSING
 # ==============================================================================
 
-# Pick which service to use if multiple are in the same category
+# Pick which service to use if multiple are in the same category (e.g. multiple notifications)
 select_exclusive_service() {
     local category="$1"
     local scope="$2"
@@ -125,16 +126,8 @@ select_exclusive_service() {
     done
 }
 
-# Helper to loop through "Unit|Scope|Action|Desc|Confirm" arrays
-process_services() {
-    for entry in "$@"; do
-        IFS='|' read -r unit scope action desc confirm <<<"$entry"
-        manage_service "$unit" "$scope" "$action" "$desc" "$confirm"
-    done
-}
-
 # ==============================================================================
-# CONDITIONAL SYSTEM CONFIGURATION
+# 4. CONDITIONAL SYSTEM CONFIGURATION
 # ==============================================================================
 
 if_arch() {
@@ -142,7 +135,6 @@ if_arch() {
     if grep -qE "ID=arch|ID_LIKE=arch" /etc/os-release; then
         local message="$1"
         shift
-
         log_task "$message"
 
         if "$@" >/dev/null 2>&1; then
@@ -160,16 +152,16 @@ configure_hyprland_services() {
     local IS_HYPRLAND=false
     if [[ "${XDG_SESSION_DESKTOP:-}" == "Hyprland" || -n "${HYPRLAND_INSTANCE_SIGNATURE:-}" ]]; then
         IS_HYPRLAND=true
-        header "Configuring hyprland specific services"
+        header "Configuring Hyprland-specific services"
     fi
 
     if $IS_HYPRLAND; then
-        manage_service "hypridle.service" "--user" "enable" "Idle daemon" "Y"
-        manage_service "hyprpaper.service" "--user" "enable" "Wallpaper daemon" "Y"
-        manage_service "pyprland.service" "--user" "enable" "Pyprland plugins" "Y"
+        manage_service "hypridle.service"       "--user" "enable" "Idle daemon"          "Y"
+        manage_service "hyprpaper.service"      "--user" "enable" "Wallpaper daemon"     "Y"
+        manage_service "pyprland.service"       "--user" "enable" "Pyprland plugins"     "Y"
         manage_service "hyprpolkitagent.service" "--user" "enable" "Polkit Authentication" "Y"
-        manage_service "waybar.service" "--user" "enable" "Status bar" "Y"
-        manage_service "hyprsunset.service" "--user" "enable" "blue light filter" "Y"
+        manage_service "waybar.service"         "--user" "enable" "Status bar"           "Y"
+        manage_service "hyprsunset.service"     "--user" "enable" "Blue light filter"    "Y"
     else
         log "Not in Hyprland. Skipping Hyprland-specific services."
     fi
