@@ -8,6 +8,8 @@
 FUNCTIONS_DIR="$HOME/dotfiles/scripts/setup-scripts/functions/"
 # shellcheck source=/dev/null
 source "$FUNCTIONS_DIR/service-management-functions"
+# shellcheck source=/dev/null
+source "$FUNCTIONS_DIR/environment-specific-services"
 
 # ==============================================================================
 #  Initialization
@@ -48,13 +50,13 @@ manage_service "obs.service"                            "--user" "enable" "OBS s
 
 
 # ==============================================================================
-#  System Timers
+#  Systemd Timers
 # ==============================================================================
 header "Systemd timer configuration"
 
-# Systemd (root)
-if_arch "enabling paccache timer" sudo systemctl enable --now paccache.timer
+# Enable specifc timers for arch linux
+configure_arch_timers
+
 
 # Systemd user
-if_arch "Enabling orphaned package check timer" systemctl --user enable --now "check-orphans.timer"       "--user" "enable" "Discover orphaned packages"     "Y"
-run_task "Enabling failed unit check timer" systemctl --user enable --now "failed-units-cheak.timer"      "--user" "enable" "Failed systemd service check"   "Y"
+run_task "Enabling failed systemd service check timer" systemctl --user enable --now "failed-units-cheak.timer"      "--user" "enable" "Failed systemd service check"   "Y"
