@@ -16,5 +16,5 @@ if [[ -n "$user_failed" ]]; then \
   msg="$msg[User Units]\n$user_failed"; \
 fi; \
 if [[ -n "$msg" ]]; then \
-  notify-send -u critical "Systemd Failure" "$msg"; \
+  notify-send -u critical "⚠️ Systemd Failure" "$msg"; \
 fi'
