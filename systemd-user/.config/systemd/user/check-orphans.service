@@ -1,0 +1,11 @@
+[Unit]
+Description=Check for orphaned packages
+
+[Service]
+Type=oneshot
+ExecStart=/bin/bash -c '\
+orphans=$(paru -Qtdq 2>/dev/null); \
+if [[ -n "$orphans" ]]; then \
+  count=$(echo "$orphans" | wc -w); \
+  notify-send "Orphaned Packages Found ($count)" "$orphans"; \
+fi'
