@@ -4,6 +4,7 @@ Description=Check for failed systemd units
 [Service]
 Type=oneshot
 PassEnvironment=DISPLAY DBUS_SESSION_BUS_ADDRESS
+ExecStartPre=/usr/bin/sleep 10
 ExecStart=/usr/bin/env bash -c '\
 sys_failed=$(systemctl --failed --no-legend); \
 user_failed=$(systemctl --user --failed --no-legend); \
