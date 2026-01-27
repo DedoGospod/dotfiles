@@ -56,20 +56,6 @@ log "Detected bootloader: $BOOTLOADER"
 # Needed packages
 PACMAN_PACKAGES=(btrfsmaintenance snapper snap-pac inotify-tools)
 
-# Add bootloader-specific packages for the in use bootloader
-if [ "$BOOTLOADER" == "grub" ]; then
-    PACMAN_PACKAGES+=(grub-btrfs)
-    btrfs_units+=("grub-btrfsd.service")
-elif [ "$BOOTLOADER" == "limine" ]; then
-    PACMAN_PACKAGES+=(limine-snapper-sync limine-mkinitcpio-hook)
-    btrfs_units+=("limine-snapper-watcher.service")
-fi  
-
-# Install Packages
-log_task "Installing Official Packages"
-paru -S --needed --noconfirm -q "${PACMAN_PACKAGES[@]}" &>/dev/null
-ok
-
 # List of Btrfs units to enable
 btrfs_units=(
     "snapper-timeline.timer"
@@ -77,6 +63,20 @@ btrfs_units=(
     "btrfs-scrub.timer"
     "btrfs-balance.timer"
 )
+
+# Add bootloader-specific packages for the in use bootloader
+if [ "$BOOTLOADER" == "grub" ]; then
+    PACMAN_PACKAGES+=(grub-btrfs)
+    btrfs_units+=("grub-btrfsd.service")
+elif [ "$BOOTLOADER" == "limine" ]; then
+    PACMAN_PACKAGES+=(limine-snapper-sync limine-mkinitcpio-hook)
+    btrfs_units+=("limine-snapper-watcher.service" "limine-snapper-sync.service")
+fi  
+
+# Install Packages
+log_task "Installing Official Packages"
+paru -S --needed --noconfirm -q "${PACMAN_PACKAGES[@]}" &>/dev/null
+ok
 
 # Enable btrfs related services
 for unit in "${btrfs_units[@]}"; do
