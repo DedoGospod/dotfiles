@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+
+# sleep 10sec
+sleep 10
+
+sys_failed=$(systemctl --failed --no-legend)
+user_failed=$(systemctl --user --failed --no-legend 2>/dev/null)
+msg=""
+
+# Check if any root services failed
+if [[ -n "$sys_failed" ]]; then
+    msg="[System Units]
+$sys_failed"
+fi
+
+# Check if any user services failed
+if [[ -n "$user_failed" ]]; then
+    [[ -n "$msg" ]] && msg="${msg}
+
+"
+    msg="${msg}[User Units]
+$user_failed"
+fi
+
+# Notify the user
+if [[ -n "$msg" ]]; then
+    notify-send -u critical "⚠️ Systemd Failure" "$msg"
+else
+    notify-send -u low -t 3000 "✅ System Healthy" "All units are running correctly."
+fi
+
