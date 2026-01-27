@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+# Fetch orphans
+orphans=$(paru -Qtdq 2>/dev/null)
+
+# Notify the user
+if [[ -n "$orphans" ]]; then
+  count=$(echo "$orphans" | wc -l)
+  # Replace newlines with spaces for a cleaner notification body
+  list=$(echo "$orphans" | tr '\n' ' ')
+  /usr/bin/notify-send -u critical "⚠️ $count Orphans Found" "$list"
+else
+  /usr/bin/notify-send -u low -t 3000 "✅ System Clean" "No orphaned packages found."
+fi
