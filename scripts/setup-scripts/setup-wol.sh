@@ -22,60 +22,70 @@ log_task() { echo -ne "${GREEN}[INFO]${NC} $1... "; }
 ok() { echo -e "${GREEN}Done.${NC}"; }
 fail() { echo -e "${RED}Failed.${NC}"; }
 
-# Setup WakeOnLan
-header "WAKEONLAN SETUP"
+header "Wake-on-LAN Configuration"
 
-# --- PACKAGE INSTALLATION SECTION ---
-WOL_PACKAGES=(wol ethtool)
-MISSING_PACKAGES=()
-
-for pkg in "${WOL_PACKAGES[@]}"; do
-    if ! pacman -Qq "$pkg" &>/dev/null; then
-        MISSING_PACKAGES+=("$pkg")
-    fi
-done
-
-if [ ${#MISSING_PACKAGES[@]} -eq 0 ]; then
-    log_task "All WakeOnLan packages are already installed"
+# Install necessary tools
+if ! command -v ethtool &> /dev/null; then
+    sudo pacman -S --noconfirm ethtool > /dev/null 2>&1
     ok
 else
-    log_task "Installing missing packages: ${MISSING_PACKAGES[*]}"
-    sudo pacman -S --needed --noconfirm "${MISSING_PACKAGES[@]}"
+    log_task "ethtool is already installed."
     ok
 fi
 
-    WOL_CONF="/etc/NetworkManager/conf.d/wol.conf"
+# Identify the primary ethernet interface
+INTERFACE=$(ip -o link show | awk -F': ' '{print $2}' | grep -v 'lo' | grep '^e' | head -n 1)
 
-    # Check if already set
-    if [[ -f "$WOL_CONF" ]]; then
-        log_task "Wake-on-LAN is already configured"
+if [ -z "$INTERFACE" ]; then
+    fail
+    error "No ethernet interface found starting with 'e' (e.g., enp3s0)."
+    exit 1
+fi
+log_task "Target interface identified: $INTERFACE"
+ok
+
+# Create the systemd template service
+SERVICE_PATH="/etc/systemd/system/wol@.service"
+
+log_task "Creating systemd service at $SERVICE_PATH"
+sudo tee "$SERVICE_PATH" > /dev/null <<EOF
+[Unit]
+Description=Wake-on-LAN for %i
+Requires=network.target
+After=network.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/ethtool -s %i wol g
+
+[Install]
+WantedBy=multi-user.target
+EOF
+ok
+
+# Enable and start the service
+log_task "Enabling and starting wol@$INTERFACE.service"
+sudo systemctl daemon-reload
+sudo systemctl enable --now "wol@$INTERFACE.service" > /dev/null 2>&1
+ok
+
+# Handle NetworkManager
+if systemctl is-active --quiet NetworkManager; then
+    log_task "NetworkManager detected. Configuring connection settings"
+    UUID=$(nmcli -t -f UUID,DEVICE connection show --active | grep ":$INTERFACE$" | cut -d: -f1)
+    
+    if [ -n "$UUID" ]; then
+        sudo nmcli connection modify "$UUID" 802-3-ethernet.wake-on-lan magic
         ok
     else
-        log_task "Configuring Global & Active Wake-on-LAN"
-
-        WOL_CONF="/etc/NetworkManager/conf.d/wol.conf"
-        UDEV_RULE="/etc/udev/rules.d/81-wol.rules"
-
-        # Persistent global config
-        sudo mkdir -p /etc/NetworkManager/conf.d
-        echo -e "[connection]\nethernet.wake-on-lan=magic" | sudo tee "$WOL_CONF" >/dev/null
-
-        # Hardware-Level udev rule
-        echo 'ACTION=="add", SUBSYSTEM=="net", KERNEL=="en*", RUN+="/usr/sbin/ethtool -s %k wol g"' | sudo tee "$UDEV_RULE" >/dev/null
-
-        # Fix Existing Connections (Handles spaces in names)
-        while IFS= read -r conn; do
-            if [[ -n "$conn" ]]; then
-                sudo nmcli connection modify "$conn" 802-3-ethernet.wake-on-lan magic 2>/dev/null
-                sudo nmcli connection up "$conn" >/dev/null 2>&1
-            fi
-        done < <(nmcli -t -f NAME,TYPE connection show | grep ":802-3-ethernet" | cut -d: -f1)
-
-        # Final reload
-        if sudo systemctl reload NetworkManager 2>/dev/null; then
-            ok
-        else
-            warn "NetworkManager reload skipped; settings will apply on boot."
-            ok
-        fi
+        fail
+        warn "Could not find an active NM connection for $INTERFACE."
     fi
+fi
+
+echo ""
+
+# Verification
+WOL_STATUS=$(sudo ethtool "$INTERFACE" | grep "Wake-on" || true)
+log "Current WoL Status for $INTERFACE:"
+echo "$WOL_STATUS"
