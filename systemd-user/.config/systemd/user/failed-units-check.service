@@ -3,21 +3,7 @@ Description=Check for failed systemd units
 
 [Service]
 Type=oneshot
-PassEnvironment=DISPLAY DBUS_SESSION_BUS_ADDRESS
-ExecStartPre=/usr/bin/sleep 10
-ExecStart=/usr/bin/env bash -c '\
-sys_failed=$(systemctl --failed --no-legend); \
-user_failed=$(systemctl --user --failed --no-legend); \
-msg=""; \
-if [[ -n "$sys_failed" ]]; then \
-  msg="[System Units]\n$sys_failed"; \
-fi; \
-if [[ -n "$user_failed" ]]; then \
-  [[ -n "$msg" ]] && msg="${msg}\n\n"; \
-  msg="${msg}[User Units]\n$user_failed"; \
-fi; \
-if [[ -n "$msg" ]]; then \
-  notify-send -u critical "⚠️ Systemd Failure" "$msg"; \
-else \
-  notify-send -u low -t 3000 "✅ System Healthy" "All system and user units are running correctly."; \
-fi'
+ExecStart=/usr/local/bin/check-units
+
+[Install]
+WantedBy=multi-user.target
