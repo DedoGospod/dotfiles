@@ -61,6 +61,9 @@ if [ -d "$DOTFILES_DIR" ]; then
     # Format: "source|target|mode"
     FILES_TO_SYNC=(
         "$SCRIPTS_SRC/reboot-to-windows|/usr/local/bin/reboot-to-windows|755"
+        "$SCRIPTS_SRC/check-units|/usr/local/bin/check-units|755"
+        "$SCRIPTS_SRC/check-orphans|/usr/local/bin/check-orphans|755"
+
         "$CONFIGS_SRC/root|/etc/snapper/configs/root|644"
 
     )
