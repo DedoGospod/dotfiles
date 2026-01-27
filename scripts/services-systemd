@@ -59,4 +59,4 @@ configure_arch_timers
 
 
 # Systemd user
-run_task "Enabling failed systemd service check timer" systemctl --user enable --now "failed-units-cheak.timer"      "--user" "enable" "Failed systemd service check"   "Y"
+run_task "Enabling failed systemd service check timer" systemctl --user enable --now failed-units-cheak.timer
