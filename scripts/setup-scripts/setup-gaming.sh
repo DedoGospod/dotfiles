@@ -41,7 +41,7 @@ if pacman -Ssq "^proton-cachyos$" >/dev/null && pacman -Ssq "^proton-cachyos-slr
         log_task "Proton-cachyos is already in the installation queue."
         ok
     else
-        GAMING_PACKAGES+=(proton-cachyos proton-cachyos-slr)
+        GAMING_PACKAGES+=(proton-cachyos proton-cachyos-slr cachyos-settings)
         log_task "Adding optimized Proton packages to queue"
         ok
     fi
