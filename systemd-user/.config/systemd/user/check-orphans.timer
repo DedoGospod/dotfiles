@@ -3,6 +3,7 @@ Description=Monthly orphaned pacman package check
 
 [Timer]
 OnCalendar=monthly
+RandomizedDelaySec=30s
 Persistent=true
 
 [Install]
