@@ -22,6 +22,10 @@ log_task() { echo -ne "${GREEN}[INFO]${NC} $1... "; }
 ok() { echo -e "${GREEN}Done.${NC}"; }
 fail() { echo -e "${RED}Failed.${NC}"; }
 
+GAMING_PACKAGES=(gamemode gamescope mangohud steam scopebuddy-git)
+FLATPAK_APPS+=("com.vysp3r.ProtonPlus")
+MISSING_PACKAGES=()
+
 # Gaming settings
 header "GAMING CONFIGURATION"
 
@@ -45,11 +49,7 @@ else
     warn "Proton-cachyos packages not found in repos; skipping optimized builds."
 fi
 
-# --- PACKAGE INSTALLATION SECTION ---
-GAMING_PACKAGES=(gamemode gamescope mangohud steam scopebuddy-git)
-FLATPAK_APPS+=("com.vysp3r.ProtonPlus")
-MISSING_PACKAGES=()
-
+# Package installation section
 for pkg in "${GAMING_PACKAGES[@]}"; do
     if ! paru -Qq "$pkg" &>/dev/null; then
         MISSING_PACKAGES+=("$pkg")
