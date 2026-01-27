@@ -3,6 +3,7 @@ Description=Daily systemd failed units check
 
 [Timer]
 OnCalendar=daily
+RandomizedDelaySec=30s
 Persistent=true
 
 [Install]
