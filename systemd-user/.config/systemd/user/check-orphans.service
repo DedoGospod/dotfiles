@@ -3,11 +3,7 @@ Description=Check for orphaned packages
 
 [Service]
 Type=oneshot
-ExecStart=/usr/bin/env bash -c '\
-orphans=$(paru -Qtdq 2>/dev/null); \
-if [[ -n "$orphans" ]]; then \
-  count=$(echo "$orphans" | wc -w); \
-  notify-send -u critical "⚠️ Orphaned Packages Found ($count)" "$orphans"; \
-else \
-  notify-send -u low -t 3000 "✅ System Clean" "No orphaned packages found."; \
-fi'
+ExecStart=/usr/local/bin/check-orphans
+
+[Install]
+WantedBy=multi-user.target
