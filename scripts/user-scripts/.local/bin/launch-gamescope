@@ -52,14 +52,5 @@ else
     )
 fi
 
-# Steam launch options
-STEAM_OPTS=(
-    -steamos
-    -steampal
-    -steam3
-    -noverifyfiles
-    -nobigpicture
-)
-
 # Launch Gamescope + Steam
 exec gamescope "${GAMESCOPE_OPTS[@]}" -- steam "${STEAM_OPTS[@]}"
