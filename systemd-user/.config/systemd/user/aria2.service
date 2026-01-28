@@ -1,6 +1,7 @@
 [Unit]
 Description=aria2 RPC Service
 After=network.target
+PartOf=graphical-session.target
 
 [Service]
 Type=simple
