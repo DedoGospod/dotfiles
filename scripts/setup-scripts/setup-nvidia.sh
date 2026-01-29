@@ -25,7 +25,25 @@ fail() { echo -e "${RED}Failed.${NC}"; }
 # NVIDIA Configuration Block
 header "NVIDIA SETUP"
 
-NVIDIA_PACKAGES=(libva-nvidia-driver nvidia-open-dkms nvidia-utils lib32-nvidia-utils nvidia-settings egl-wayland)
+# Kernel check
+GENERIC_KERNELS=$(pacman -Qq | grep -E '^linux(-zen|-lts|-hardened|-rt)?$' || true)
+CACHY_KERNELS=$(pacman -Qq | grep -E '^linux-cachyos(-bin|-rc|-lts)?$' || true)
+
+if [ -n "$GENERIC_KERNELS" ]; then
+    DRIVER_PKG="nvidia-open-dkms"
+    log "Generic/Zen kernel(s) detected: $(echo "$GENERIC_KERNELS" | tr '\n' ' ')"
+    log "Using $DRIVER_PKG to ensure compatibility across all kernels."
+elif [ -n "$CACHY_KERNELS" ]; then
+    DRIVER_PKG="linux-cachyos-nvidia-open"
+    log "Only CachyOS kernel(s) detected. Using optimized modules: $DRIVER_PKG"
+else
+    # Fallback if somehow no kernel is detected by the regex
+    DRIVER_PKG="nvidia-open-dkms"
+    warn "No standard kernel naming matched. Defaulting to DKMS for safety."
+fi
+
+# Package list
+NVIDIA_PACKAGES=("$DRIVER_PKG" nvidia-settings nvidia-utils libva-nvidia-driver lib32-nvidia-utils egl-wayland)
 MISSING_PACKAGES=()
 
 for pkg in "${NVIDIA_PACKAGES[@]}"; do
