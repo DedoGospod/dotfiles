@@ -5,7 +5,7 @@ header "INSTALLATION PHASE"
 
 # Update System
 log_task "Updating system"
-if sudo pacman -Syu --noconfirm >/dev/null 2>&1; then
+if sudo pacman -Syu --noconfirm; then
     ok
 else
     fail
@@ -15,8 +15,8 @@ fi
 # Install Rustup
 if ! command -v rustup &>/dev/null; then
     log_task "Installing rustup"
-    if sudo pacman -S --noconfirm rustup >/dev/null 2>&1 && 
-       rustup default stable >/dev/null 2>&1; then
+    if sudo pacman -S --noconfirm rustup && 
+       rustup default stable; then
         ok
     else
         fail
@@ -29,9 +29,9 @@ fi
 # Install Paru
 if ! command -v paru &>/dev/null; then
     log_task "Installing Paru"
-    if sudo pacman -S --needed --noconfirm base-devel git >/dev/null 2>&1 &&
-       git clone https://aur.archlinux.org/paru.git /tmp/paru >/dev/null 2>&1 &&
-       (cd /tmp/paru && makepkg -si --noconfirm >/dev/null 2>&1) &&
+    if sudo pacman -S --needed --noconfirm base-devel git &&
+       git clone https://aur.archlinux.org/paru.git /tmp/paru &&
+       (cd /tmp/paru && makepkg -si --noconfirm) &&
        rm -rf /tmp/paru; then
         ok
     else
@@ -44,16 +44,16 @@ fi
 
 # Install Official Packages
 log_task "Installing Official Packages..."
-sudo pacman -S --needed --noconfirm -q "${PACMAN_PACKAGES[@]}" &>/dev/null
+sudo pacman -S --needed --noconfirm "${PACMAN_PACKAGES[@]}"
 ok
 
 # Install AUR Packages
 log_task "Installing AUR Packages..."
-paru -S --needed --noconfirm -q "${AUR_PACKAGES[@]}" &>/dev/null
+paru -S --needed --noconfirm "${AUR_PACKAGES[@]}"
 ok
 
 # Install Flatpaks
 log_task "Installing Flatpak Apps..."
 flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-flatpak install -y --noninteractive --or-update flathub "${FLATPAK_APPS[@]}" &>/dev/null
+flatpak install -y --noninteractive --or-update flathub "${FLATPAK_APPS[@]}"
 ok
