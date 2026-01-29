@@ -32,10 +32,12 @@ CACHY_KERNELS=$(pacman -Qq | grep -E '^linux-cachyos(-bin|-rc|-lts)?$' || true)
 if [ -n "$GENERIC_KERNELS" ]; then
     DRIVER_PKG="nvidia-open-dkms"
     log "Generic/Zen kernel(s) detected: $(echo "$GENERIC_KERNELS" | tr '\n' ' ')"
-    log "Using $DRIVER_PKG to ensure compatibility across all kernels."
+    log_task "Using $DRIVER_PKG to ensure compatibility across all kernels."
+    ok
 elif [ -n "$CACHY_KERNELS" ]; then
     DRIVER_PKG="linux-cachyos-nvidia-open"
-    log "Only CachyOS kernel(s) detected. Using optimized modules: $DRIVER_PKG"
+    log_task "Only CachyOS kernel(s) detected. Using optimized modules: $DRIVER_PKG"
+    ok
 else
     # Fallback if somehow no kernel is detected by the regex
     DRIVER_PKG="nvidia-open-dkms"
