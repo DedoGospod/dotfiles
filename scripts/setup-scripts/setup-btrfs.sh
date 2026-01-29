@@ -54,7 +54,31 @@ BOOTLOADER=$(detect_bootloader)
 log "Detected bootloader: $BOOTLOADER"
 
 # Needed packages
-PACMAN_PACKAGES=(btrfsmaintenance snapper snap-pac inotify-tools)
+PACMAN_PACKAGES=(btrfsmaintenance snapper snapper-rollback snap-pac inotify-tools)
+
+# Ensure /btrfsroot exists and is secure for snapper-rollback
+if [ ! -d "/btrfsroot" ]; then
+    log_task "creating /btrfs root for rollbacks"
+    sudo mkdir -p /btrfsroot
+    sudo chmod 700 /btrfsroot
+    ok
+fi
+
+# Configure /etc/snapper-rollback.conf
+log_task "Configuring /etc/snapper-rollback.conf"
+ROOT_DEV=$(df / | tail -1 | awk '{print $1}')
+ROOT_UUID=$(lsblk -dno UUID "$ROOT_DEV")
+
+# Generate the config (same as before)
+log_task "generating snapper-rollback.conf UUID: $ROOT_UUID"
+cat <<EOF | sudo tee /etc/snapper-rollback.conf > /dev/null
+[root]
+subvol_main = @
+subvol_snapshots = @snapshots
+mountpoint = /btrfsroot
+dev = /dev/disk/by-uuid/$ROOT_UUID
+EOF
+ok
 
 # List of Btrfs units to enable
 btrfs_units=(
@@ -71,11 +95,11 @@ if [ "$BOOTLOADER" == "grub" ]; then
 elif [ "$BOOTLOADER" == "limine" ]; then
     PACMAN_PACKAGES+=(limine-snapper-sync limine-mkinitcpio-hook)
     btrfs_units+=("limine-snapper-watcher.service" "limine-snapper-sync.service")
-fi  
+fi
 
 # Install Packages
 log_task "Installing Official Packages"
-paru -S --needed --noconfirm -q "${PACMAN_PACKAGES[@]}" &>/dev/null
+paru -S --needed --noconfirm -q "${PACMAN_PACKAGES[@]}"
 ok
 
 # Enable btrfs related services
