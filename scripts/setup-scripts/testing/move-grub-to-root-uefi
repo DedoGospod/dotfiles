@@ -1,0 +1,99 @@
+#!/usr/bin/env bash
+
+# Error checking
+set -euo pipefail  # Exit on error, unset variables, or pipe failures
+
+# Colors for logging
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+RED='\033[0;31m'
+BLUE='\033[0;34m'
+NC='\033[0m'
+
+# Helper Functions
+header()  { echo -e "\n${BLUE}==== $1 ====${NC}"; }
+log()     { echo -e "${GREEN}[INFO]${NC} $1"; }
+warn()    { echo -e "${YELLOW}[WARN]${NC} $1"; }
+error()   { echo -e "${RED}[ERROR]${NC} $1"; }
+success() { echo -e "${GREEN}[SUCCESS]${NC} $1"; }
+
+log_task() { echo -ne "${GREEN}[INFO]${NC} $1... "; }
+ok()       { echo -e "${GREEN}Done.${NC}"; }
+fail()     { echo -e "${RED}Failed.${NC}"; }
+
+header "System Compatibility Check"
+
+# Check for UEFI vs BIOS
+if [ ! -d "/sys/firmware/efi" ]; then
+    error "Legacy BIOS detected. This script is designed for UEFI systems only."
+    exit 1
+else
+    log "UEFI system confirmed."
+fi
+
+header "Initialization"
+
+# Check for root
+if [[ $EUID -ne 0 ]]; then
+   error "This script must be run as root." >&2
+   exit 1
+fi
+
+# Identify current /boot status
+BOOT_DEV=$(findmnt -n -o SOURCE /boot || true)
+
+if [[ -z "$BOOT_DEV" ]]; then
+    warn "Aborting: /boot is already on the root partition or not found."
+    exit 0
+fi
+
+log "Detected /boot on device: $BOOT_DEV"
+
+# Identify EFI mount
+EFI_PATH=$(findmnt -n -o TARGET /boot/efi || findmnt -n -o TARGET /efi || echo "")
+if [[ -z "$EFI_PATH" ]]; then
+    error "Could not find an EFI partition mount. UEFI systems require one."
+    exit 1
+fi
+
+# Migration Prep
+TEMP_BOOT="/mnt/temp_boot_migration"
+mkdir -p "$TEMP_BOOT"
+
+log "Binding current /boot to $TEMP_BOOT..."
+mount --bind /boot "$TEMP_BOOT"
+
+log "Unmounting /boot partition..."
+umount /boot
+
+# Now /boot is just an empty folder on the root partition.
+# We move the files from the old partition (via the bind mount) to the new folder.
+log "Copying files to root partition..."
+cp -ax "$TEMP_BOOT/." /boot/
+
+# Cleanup fstab
+log "Backing up and updating /etc/fstab..."
+cp /etc/fstab /etc/fstab.bak
+
+# Comment out the old /boot entry
+sed -i "s|.* /boot .*|# Moved to root: &|" /etc/fstab
+
+# Re-establishing EFI
+log "Remounting EFI partition..."
+mount "$EFI_PATH"
+
+# Reinstalling GRUB
+header "Bootloader Reconfiguration"
+log "Updating GRUB configuration..."
+grub-mkconfig -o /boot/grub/grub.cfg
+
+# Install grub to disk
+log "Installing GRUB to disk..."
+grub-install --target=x86_64-efi --efi-directory="$EFI_PATH" --bootloader-id=GRUB
+
+# Cleanup
+umount "$TEMP_BOOT"
+rmdir "$TEMP_BOOT"
+
+# Finish
+success "Migration complete! Please verify /boot content and /etc/fstab before rebooting."
