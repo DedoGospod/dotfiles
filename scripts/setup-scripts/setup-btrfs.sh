@@ -99,7 +99,7 @@ fi
 
 # Install Packages
 log_task "Installing Official Packages"
-paru -S --needed --noconfirm -q "${PACMAN_PACKAGES[@]}"
+paru -S --needed --noconfirm "${PACMAN_PACKAGES[@]}"
 ok
 
 # Enable btrfs related services
