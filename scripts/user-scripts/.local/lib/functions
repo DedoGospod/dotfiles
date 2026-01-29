@@ -22,11 +22,12 @@ fail() { echo -e "${RED}Failed.${NC}"; }
 # Usage: run_task "Reloading systemd" "sudo systemctl daemon-reload" 
 run_task() {
     local desc="$1"
-    local cmd="$2"
-
+    shift 
+    
     log_task "$desc"
     
-    if eval "$cmd" >/dev/null 2>&1; then
+    # Execute the command arguments directly
+    if "$@" >/dev/null 2>&1; then
         ok
         return 0
     else
