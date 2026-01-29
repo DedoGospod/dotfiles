@@ -16,7 +16,7 @@ PACMAN_PACKAGES=(
     # Apps & Utils
     neovim nautilus yazi mpv imv fastfetch btop gnome-disk-utility
     obsidian pavucontrol gnome-keyring seahorse rsync ffmpeg
-    ffmpegthumbnailer pipewire wireplumber aria2
+    ffmpegthumbnailer pipewire wireplumber
 
     # Shell & CLI
     kitty zsh zsh-completions zsh-syntax-highlighting zsh-autosuggestions starship
