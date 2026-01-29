@@ -26,7 +26,7 @@ header "Wake-on-LAN Configuration"
 
 # Install necessary tools
 if ! command -v ethtool &> /dev/null; then
-    sudo pacman -S --noconfirm ethtool > /dev/null 2>&1
+    sudo pacman -S --noconfirm ethtool
     ok
 else
     log_task "ethtool is already installed."
