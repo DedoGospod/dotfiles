@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-# Exit immediately if a command exits with a non-zero status
 set -e
 set -o pipefail
 
@@ -22,98 +21,135 @@ log_task() { echo -ne "${GREEN}[INFO]${NC} $1... "; }
 ok() { echo -e "${GREEN}Done.${NC}"; }
 fail() { echo -e "${RED}Failed.${NC}"; }
 
-# Setup virtualization
 header "Configuring Virtualization"
 
-# --- PACKAGE INSTALLATION SECTION ---
-VIRTUALIZATION_PACKAGES=(qemu-full libvirt virt-manager dnsmasq bridge-utils)
-MISSING_PACKAGES=()
+# PACKAGE INSTALLATION ---
+VIRTUALIZATION_PACKAGES=(
+    qemu-full libvirt virt-manager dnsmasq iptables-nft 
+    swtpm edk2-ovmf iproute2 openbsd-netcat dmidecode
+)
 
-for pkg in "${VIRTUALIZATION_PACKAGES[@]}"; do
-    if ! pacman -Qq "$pkg" &>/dev/null; then
-        MISSING_PACKAGES+=("$pkg")
-    fi
-done
+log_task "Checking dependencies"
+read -r -a MISSING_PACKAGES <<< "$(pacman -T "${VIRTUALIZATION_PACKAGES[@]}" 2>/dev/null || true)"
 
-if [ ${#MISSING_PACKAGES[@]} -eq 0 ]; then
-    log_task "All virtualization packages are already installed."
+if [[ ${#MISSING_PACKAGES[@]} -eq 0 ]]; then
+    ok
+    log_task "All packages are already installed."
     ok
 else
-    log_task "Installing missing packages: ${MISSING_PACKAGES[*]}"
+    fail
+    log "Installing: ${MISSING_PACKAGES[*]}"
     sudo pacman -S --needed --noconfirm "${MISSING_PACKAGES[@]}"
-    ok
 fi
 
-# ----------------------------------------
+# KERNEL MODULES ---
+CPU_VENDOR=$(grep -m 1 'vendor_id' /proc/cpuinfo | awk '{print $3}')
+if [[ "$CPU_VENDOR" == "GenuineIntel" ]]; then
+    log_task "Loading kvm_intel"
+    sudo modprobe kvm_intel
+    ok
+elif [[ "$CPU_VENDOR" == "AuthenticAMD" ]]; then
+    log_task "Loading kvm_amd"
+    sudo modprobe kvm_amd
+    ok
+fi
+log_task "Loading vhost_net"
+sudo modprobe vhost_net
+ok
 
-# Add user to groups
+# USER GROUPS 
 for group in libvirt kvm; do
     if getent group "$group" >/dev/null; then
-        if groups "$(whoami)" | grep &>/dev/null "\b$group\b"; then
-            log_task "User already in $group group"
-            ok
-        else
-            log_task "Adding $(whoami) to $group group"
+        if ! id -nG "$(whoami)" | grep -qw "$group"; then
+            log_task "Adding $(whoami) to $group"
             if sudo usermod -aG "$group" "$(whoami)"; then
-                touch /tmp/reboot_required
                 ok
+                touch /tmp/reboot_required
             else
                 fail
+                error "Failed to add user to $group. Check permissions."
             fi
+            touch /tmp/reboot_required
+        else
+            log_task "User already in $group"
+            ok
         fi
     fi
 done
 
-# Enable and start libvirtd
-if systemctl is-active --quiet libvirtd; then
-    log_task "libvirtd is already running"
+# MODULAR SERVICE CONFIGURATION ---
+# Critical: Mask monolithic libvirtd to prevent socket conflicts
+log_task "Neutralizing legacy monolithic libvirtd"
+sudo systemctl disable --now libvirtd.service libvirtd.socket libvirtd-ro.socket libvirtd-admin.socket >/dev/null 2>&1 || true
+sudo systemctl mask libvirtd.service libvirtd.socket libvirtd-ro.socket libvirtd-admin.socket >/dev/null 2>&1
+ok
+
+VIRT_SOCKETS=(
+    "virtqemud.socket"
+    "virtnetworkd.socket"
+    "virtstoraged.socket"
+    "virtnodedevd.socket"
+    "virtsecret.socket"
+    "virtinterfaced.socket"
+)
+
+log_task "Enabling virt sockets"
+if sudo systemctl enable --now "${VIRT_SOCKETS[@]}" >/dev/null 2>&1; then
     ok
 else
-    log_task "Enabling and starting libvirtd"
-    if sudo systemctl enable --now libvirtd &>/dev/null; then
+    # Check if they are actually active despite the exit code
+    if systemctl is-active --quiet virtqemud.socket; then
+        ok
+        log_task "Sockets were already active."
         ok
     else
         fail
+        error "Check 'systemctl status virtqemud.socket' for details."
     fi
 fi
 
-# Wait for the socket to be ready
-SOCKET_READY=false
-for _ in {1..5}; do
-    if sudo virsh -c qemu:///system list --all >/dev/null 2>&1; then
-        SOCKET_READY=true
-        break
-    fi
+# NETWORK CONFIGURATION
+log_task "Waiting for virtnetworkd readiness"
+TIMEOUT=10
+while ! sudo virsh uri >/dev/null 2>&1 && [ $TIMEOUT -gt 0 ]; do
     sleep 1
+    ((TIMEOUT--))
 done
 
-if [ "$SOCKET_READY" = false ]; then
+if [ $TIMEOUT -eq 0 ]; then
     fail
+    error "Libvirt failed to respond within 10 seconds."
+    exit 1
+fi
+ok
+
+# Define default network if missing
+if ! sudo virsh net-list --all --name | grep -q "^default$"; then
+    if [ -f /usr/share/libvirt/networks/default.xml ]; then
+        sudo virsh net-define /usr/share/libvirt/networks/default.xml >/dev/null
+        log "Defined 'default' network from template."
+    else
+        error "Default network XML not found."
+    fi
 fi
 
-# Robust check for the network status
-NET="default"
-URI="qemu:///system"
+# Ensure active and autostart
+if ! sudo virsh net-list --all | grep -q "default.*active"; then
+    sudo virsh net-start default >/dev/null
+    log "Started 'default' network."
+fi
 
-# Check if the network is in the 'active' column of the list
-IF_ACTIVE=$(sudo virsh -c "$URI" net-list --all | grep " $NET " | awk '{print $2}')
-if [ "$IF_ACTIVE" = "active" ]; then
-    log_task "Default network already active"
+if [[ $(sudo virsh net-info default | grep -i 'Autostart' | awk '{print $2}') == "no" ]]; then
+    sudo virsh net-autostart default >/dev/null
+    log "Enabled autostart for 'default' network."
+fi
+
+# FINAL VERIFICATION
+log_task "Verifying connection to qemu:///system verified"
+if sudo virsh uri | grep -q "qemu:///system"; then
     ok
 else
-    log_task "Activating default network"
-    
-    # Try to start it
-    if sudo virsh -c "$URI" net-start "$NET" &>/dev/null; then
-        # Ensure autostart is enabled for the future
-        sudo virsh -c "$URI" net-autostart "$NET" &>/dev/null
-        ok
-    else
-        # Final verification check
-        if sudo virsh -c "$URI" net-list --all | grep " $NET " | grep -q "active"; then
-            ok
-        else
-            fail "Could not start network $NET"
-        fi
-    fi
+    fail
+    error "Could not verify connection to qemu:///system."
+    exit 1
 fi
