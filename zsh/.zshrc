@@ -98,3 +98,4 @@ alias grub='sudoedit /etc/default/grub'                # Edit GRUB config
 
 # QoL
 alias git-reset-hard='git reset --hard origin/main'
+alias gd='git diff HEAD'
