@@ -26,7 +26,7 @@ mkdir -p "$XDG_DATA_HOME" "$XDG_CONFIG_HOME" "$XDG_STATE_HOME" "$XDG_CACHE_HOME"
 
 # This MUST stay here to actually trigger the session.
 [ "$(tty)" = "/dev/tty1" ] && exec uwsm start hyprland
-[ "$(tty)" = "/dev/tty2" ] && ~/.local/bin/launch-gamescope.sh
+[ "$(tty)" = "/dev/tty2" ] && ~/.local/bin/launch-gamescope
 
 ### Testing ###
-# [ "$(tty)" = "/dev/tty2" ] && exec uwsm start -- ~/.local/bin/launch-gamescope.sh
+# [ "$(tty)" = "/dev/tty2" ] && exec uwsm start -- ~/.local/bin/launch-gamescope
