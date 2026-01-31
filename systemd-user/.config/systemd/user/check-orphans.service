@@ -1,9 +1,0 @@
-[Unit]
-Description=Check for orphaned packages
-
-[Service]
-Type=oneshot
-ExecStart=/usr/local/bin/check-orphans
-
-[Install]
-WantedBy=multi-user.target
