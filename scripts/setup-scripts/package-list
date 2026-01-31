@@ -20,13 +20,13 @@ PACMAN_PACKAGES=(
 
     # Shell & CLI
     kitty zsh zsh-completions zsh-syntax-highlighting zsh-autosuggestions starship
-    fzf zoxide fd tmux stow bat eza ripgrep ncdu trash-cli man-db
+    fzf zoxide fd tmux stow bat eza ripgrep trash-cli man-db
 
     # Security & Networking
     gnome-keyring seahorse keepassxc networkmanager bluez bluez-utils
 
     # Maintenance
-    reflector pacman-contrib
+    reflector pacman-contrib ncdu
 
     # Containerization
     flatpak
