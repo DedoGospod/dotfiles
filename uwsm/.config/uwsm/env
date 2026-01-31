@@ -1,24 +1,17 @@
-# Set XDG paths according to the XDG Base Directory Specification
-export XDG_DATA_HOME="$HOME/.local/share"    # User-specific data files
-export XDG_CONFIG_HOME="$HOME/.config"       # User-specific configuration files
-export XDG_STATE_HOME="$HOME/.local/state"   # User-specific state files (logs, history)
-export XDG_CACHE_HOME="$HOME/.cache"         # User-specific non-essential cached files
+# Application-specific redirects
+export CARGO_HOME="${XDG_DATA_HOME:-$HOME/.local/share}/cargo"
+export GNUPGHOME="${XDG_DATA_HOME:-$HOME/.local/share}/gnupg"
+export PYTHONHISTORY="${XDG_STATE_HOME:-$HOME/.local/state}/python/history"
 
-# Application-specific XDG paths
-export CARGO_HOME="$XDG_DATA_HOME/cargo"                              # Rust package manager
-export GNUPGHOME="$XDG_DATA_HOME/gnupg"                               # GnuPG (encryption)
-export PYTHONHISTORY="$XDG_STATE_HOME/python/history"                 # Python command history
-export HISTFILE="${XDG_STATE_HOME}/zsh/history"                       # Store zsh history
-
-# Theme for qt applications
+# Toolkit & Theming
 export QT_QPA_PLATFORMTHEME="qt6ct"
 export QT_QPA_PLATFORM="wayland;xcb"
 export ADW_DISABLE_PORTAL=1
 
-# SSH agent
+# Services
 export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/ssh-agent.socket"
 
-# Export nvidia env variables if a nvidia card is detected
+# Hardware Specifics
 if [ -d "/sys/module/nvidia" ]; then
-    . "${XDG_CONFIG_HOME:-$HOME/.config}/uwsm/env-nvidia"
+    . "${XDG_CONFIG_HOME}/uwsm/env-nvidia"
 fi
