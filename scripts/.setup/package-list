@@ -15,12 +15,14 @@ PACMAN_PACKAGES=(
 
     # Apps & Utils
     neovim nautilus yazi mpv imv fastfetch btop gnome-disk-utility
-    obsidian pavucontrol gnome-keyring seahorse rsync ffmpeg
-    ffmpegthumbnailer pipewire wireplumber
+    obsidian pavucontrol rsync ffmpeg ffmpegthumbnailer pipewire wireplumber
 
     # Shell & CLI
     kitty zsh zsh-completions zsh-syntax-highlighting zsh-autosuggestions starship
-    fzf zoxide fd tmux stow bat eza ripgrep trash-cli man-db
+    fzf zoxide fd tmux stow bat eza ripgrep trash-cli
+
+    # Documentation
+    man-db tealdeer wikiman
 
     # Security & Networking
     gnome-keyring seahorse keepassxc networkmanager bluez bluez-utils
