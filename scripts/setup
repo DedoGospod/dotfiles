@@ -28,7 +28,7 @@ ask "Setup wakeonlan?" && setup_wol="y"
 if ask "Install gaming packages?"; then
     install_gaming="y"
     if ask "Install OBS and game recording tools?"; then
-        AUR_PACKAGES+=("obs-studio" "obs-vkcapture" "obs-pipewire-audio-capture")
+        AUR_PACKAGES+=("obs-studio" "obs-vkcapture" "obs-pipewire-audio-capture" "obs-cmd")
     fi
 fi
 
