@@ -45,3 +45,8 @@ sort_by      	 = "none"
 sort_sensitive = false
 sort_reverse 	 = false
 sort_translit  = false
+
+[opener]
+edit = [
+    { run = 'zsh -ic "nv \"$@\"" -- "$@"', block = true, for = "unix" },
+]
