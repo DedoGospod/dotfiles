@@ -5,7 +5,7 @@
 # ==============================================================================
 
 # Source functions
-FUNCTIONS_DIR="$HOME/dotfiles/scripts/setup-scripts/functions/"
+FUNCTIONS_DIR="$HOME/dotfiles/scripts/.setup/functions/"
 # shellcheck source=/dev/null
 source "$FUNCTIONS_DIR/service-management-functions"
 # shellcheck source=/dev/null
