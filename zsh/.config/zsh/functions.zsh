@@ -62,3 +62,14 @@ gm() {
         git switch testing
     )
 }
+
+# Open yazi with sudo IF in a root directory
+y() {
+    # Check if the current directory exists and is NOT owned by the current user
+    if [ -d "." ] && [ ! -O "." ]; then
+        echo "Root-owned directory detected. Using 'sy' (sudo -E yazi)..."
+        command sudo -E yazi "$@"
+    else
+        command yazi "$@"
+    fi
+}
