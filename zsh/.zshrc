@@ -69,6 +69,7 @@ alias yay='paru'             # Use paru as yay alternative
 alias pacman='sudo pacman'   # Always use sudo with pacman
 
 # Apps
+alias y='yazi'                                         # Use Yazi as a terminal file manager
 alias top='btop'                                       # Modern system monitor
 alias cls='clear'                                      # Clear screen
 alias kssh='kitty +kitten ssh'                         # SSH with kitty terminal features
