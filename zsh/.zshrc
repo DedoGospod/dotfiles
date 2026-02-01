@@ -69,8 +69,6 @@ alias yay='paru'             # Use paru as yay alternative
 alias pacman='sudo pacman'   # Always use sudo with pacman
 
 # Apps
-alias y='yazi'                                         # Use Yazi as a terminal file manager
-alias sy='sudo -E yazi'                                # Use Yazi with sudo and preserve environment
 alias top='btop'                                       # Modern system monitor
 alias cls='clear'                                      # Clear screen
 alias kssh='kitty +kitten ssh'                         # SSH with kitty terminal features
@@ -90,12 +88,12 @@ alias hist="fc -nil 1"      # Always show history with readable dates
 alias du='du -h'
 alias df='df -h'
 
+# Github
+alias git-reset-hard='git reset --hard origin/main'
+alias gd='git diff HEAD'
+
 # Configs
 alias zshrc='nvim ~/.zshrc'                            # Edit zsh config
 alias zshfunc='nvim ~/.config/zsh/functions.zsh'       # Edit zsh functions
 alias hypr='nvim ~/.config/hypr/hyprland.conf'         # Edit Hyprland config
 alias grub='sudoedit /etc/default/grub'                # Edit GRUB config
-
-# QoL
-alias git-reset-hard='git reset --hard origin/main'
-alias gd='git diff HEAD'
