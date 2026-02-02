@@ -38,5 +38,11 @@ GAMESCOPE_OPTS+=(
     -H "$TARGET_H"        # Output Height (Monitor Res)
 )
 
-# Launch Gamescope + Steam
-exec gamescope --backend drm "${GAMESCOPE_OPTS[@]}" -- steam -steamos3 # -gamepadui
+# Check if we are in a Wayland or X11 session (Nested) or a TTY (Embedded)
+if [ -z "$DISPLAY" ] && [ -z "$WAYLAND_DISPLAY" ]; then
+    echo "Running Embedded gamescope (DRM)"
+    exec gamescope --backend drm "${GAMESCOPE_OPTS[@]}" --fullscreen -- steam -gamepadui -steamos3 
+else
+    echo "Running Nested gamescope"
+    exec gamescope "${GAMESCOPE_OPTS[@]}" -- steam -gamepadui -steamos3 
+fi
