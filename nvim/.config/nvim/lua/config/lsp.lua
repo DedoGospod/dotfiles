@@ -123,9 +123,9 @@ require("conform").setup({
 -- nvim-lint setup
 local lint = require("lint")
 lint.linters_by_ft = {
-	sh = { "shellcheck" },
-	bashrc = { "shellcheck" },
-	env = { "shellcheck" },
+	-- sh = { "shellcheck" },
+	-- bashrc = { "shellcheck" },
+	-- env = { "shellcheck" },
 	python = { "pylint" },
 	go = { "golangci_lint" },
 	html = { "htmlhint" },
@@ -176,4 +176,13 @@ vim.api.nvim_create_autocmd({ "BufWritePost", "BufReadPost", "InsertLeave" }, {
 	callback = function()
 		require("lint").try_lint()
 	end,
+})
+
+vim.diagnostic.config({
+  virtual_text = {
+    source = "always", -- This adds (pylint) or (basedpyright) to the end of the line
+  },
+  float = {
+    source = "always", -- Also shows source in the popup window
+  },
 })
