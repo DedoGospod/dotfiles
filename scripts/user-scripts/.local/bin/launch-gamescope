@@ -6,8 +6,8 @@ set -e
 GAMESCOPE_OPTS=(
     # Display
     --prefer-vk-device 0
-    --rt              # Real-time scheduling
-    --hdr-enabled     # Enable HDR if available
+    # --rt              # Real-time scheduling
+    # --hdr-enabled     # Enable HDR if available
     --framerate-limit "$(( ${GAMESCOPE_REFRESH:-165} * 2 ))"
     --nested-refresh "${GAMESCOPE_REFRESH:-165}"
 
@@ -37,12 +37,3 @@ GAMESCOPE_OPTS+=(
     -W "$TARGET_W"        # Output Width (Monitor Res)
     -H "$TARGET_H"        # Output Height (Monitor Res)
 )
-
-# Check if we are in a Wayland or X11 session (Nested) or a TTY (Embedded)
-if [ -z "$DISPLAY" ] && [ -z "$WAYLAND_DISPLAY" ]; then
-    echo "Running Embedded gamescope (DRM)"
-    exec gamescope --backend drm "${GAMESCOPE_OPTS[@]}" --fullscreen -- steam -gamepadui -steamos3 
-else
-    echo "Running Nested gamescope"
-    exec gamescope "${GAMESCOPE_OPTS[@]}" -- steam -gamepadui -steamos3 
-fi
