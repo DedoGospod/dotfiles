@@ -20,6 +20,7 @@ if ! command -v rustup &>/dev/null; then
         ok
     else
         fail
+        exit 1
     fi
 else
     log_task "Rustup already installed."
@@ -36,6 +37,8 @@ if ! command -v paru &>/dev/null; then
         ok
     else
         fail
+        rm -rf /tmp/paru
+        exit 1
     fi
 else
     log_task "Paru already installed."
