@@ -22,6 +22,7 @@ log_task() { echo -ne "${GREEN}[INFO]${NC} $1... "; }
 ok() { echo -e "${GREEN}Done.${NC}"; }
 fail() { echo -e "${RED}Failed.${NC}"; }
 
+# Package list
 GAMING_PACKAGES=(gamemode gamescope mangohud steam scopebuddy-git)
 FLATPAK_APPS+=("com.vysp3r.ProtonPlus")
 MISSING_PACKAGES=()
@@ -49,13 +50,14 @@ else
     warn "Proton-cachyos packages not found in repos; skipping optimized builds."
 fi
 
-# Package installation section
+# Check if packages exist on system
 for pkg in "${GAMING_PACKAGES[@]}"; do
     if ! paru -Qq "$pkg" &>/dev/null; then
         MISSING_PACKAGES+=("$pkg")
     fi
 done
 
+# Install any missing packages
 if [ ${#MISSING_PACKAGES[@]} -eq 0 ]; then
     log_task "All gaming system packages are already installed."
     ok
