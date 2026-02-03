@@ -21,7 +21,7 @@ header "CONFIGURATION QUESTIONS"
 
 # Core Setup Choices
 ask "Install Neovim dev tools?" && PACMAN_PACKAGES+=("${NEOVIM_DEPS[@]}")
-# ask "Setup virtualization?" && setup_virt="y"
+ask "Setup virtualization?" && setup_virt="y"
 ask "Setup wakeonlan?" && setup_wol="y"
 
 # Conditional Gaming Group
@@ -56,7 +56,7 @@ fi
 
 # Conditional Setups
 [[ "$install_gaming" =~ ^[Yy]$ ]] && run_setup_script "setup-gaming.sh" 
-# [[ "$setup_virt" =~ ^[Yy]$ ]] && run_setup_script "setup-virtualization.sh"
+[[ "$setup_virt" =~ ^[Yy]$ ]] && run_setup_script "setup-virtualization.sh"
 [[ "$setup_wol" =~ ^[Yy]$ ]] && run_setup_script "setup-wol.sh"
 
 # --- FINISH ---
