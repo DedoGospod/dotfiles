@@ -18,14 +18,26 @@ log_task() { echo -ne "${GREEN}[INFO]${NC} $1... "; }
 ok()       { echo -e "${GREEN}Done.${NC}"; }
 fail()     { echo -e "${RED}Failed.${NC}"; }
 
-# Install necessary packages if needed
+# Package list
 PACMAN_PACKAGES=(qemu-full virt-manager dnsmasq swtpm)
-log_task "Installing necessary packages"
-if sudo pacman -S --needed --noconfirm "${PACMAN_PACKAGES[@]}"; then
+MISSING_PACKAGES=()
+
+# Check if packages exist on system
+for pkg in "${PACMAN_PACKAGES[@]}"; do
+    if ! pacman -Qq "$pkg" &>/dev/null; then
+        MISSING_PACKAGES+=("$pkg")
+    fi
+done
+
+# Install any missing packages
+if [ ${#MISSING_PACKAGES[@]} -eq 0 ]; then
+    log_task "All Virtualization packages are already installed"
     ok
 else
-    fail
-    exit 1
+    log_task "Installing missing packages: ${MISSING_PACKAGES[*]}"
+    sudo pacman -S --needed --noconfirm "${MISSING_PACKAGES[@]}"
+    touch /tmp/reboot_required
+    ok
 fi
 
 # Add user to libvirt group
