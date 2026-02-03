@@ -54,7 +54,7 @@ if command -v imv >/dev/null 2>&1 || command -v imvr >/dev/null 2>&1; then
         IMAGE_APP="imvr.desktop"
     fi
 
-    log_task "Setting $IMAGE_APP as default for images..."
+    log_task "Setting IMV as default for images..."
     for mime in "${IMAGE_MIMETYPES[@]}"; do
         xdg-mime default "$IMAGE_APP" "$mime"
     done
