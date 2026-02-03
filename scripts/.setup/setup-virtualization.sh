@@ -19,11 +19,13 @@ ok()       { echo -e "${GREEN}Done.${NC}"; }
 fail()     { echo -e "${RED}Failed.${NC}"; }
 
 # Install necessary packages if needed
+PACMAN_PACKAGES=(qemu-full virt-manager dnsmasq swtpm)
 log_task "Installing necessary packages"
-if sudo pacman -S --needed --noconfirm qemu-full virt-manager dnsmasq swtpm; then
+if sudo pacman -S --needed --noconfirm "${PACMAN_PACKAGES[@]}"; then
     ok
 else
     fail
+    exit 1
 fi
 
 # Add user to libvirt group
