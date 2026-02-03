@@ -26,16 +26,15 @@ zlh() {
 
 # nv: Smart Neovim wrapper. Uses sudoedit automatically for root-protected files
 nv() {
-    if [ -z "$1" ]; then
+    if [[ -z "$1" ]]; then
         command nvim
         return
     fi
 
     local target="$1"
-    local dir
-    dir=$(dirname "$target")
+    local dir="$(dirname "$target")"
 
-    if ([ -e "$target" ] && [ ! -w "$target" ]) || ([ ! -e "$target" ] && [ -d "$dir" ] && [ ! -w "$dir" ]); then
+    if [[ ( -e "$target" && ! -w "$target" ) || ( ! -e "$target" && -d "$dir" && ! -w "$dir" ) ]]; then
         echo "Using sudoedit for root-protected path: $target"
         command sudoedit "$@"
     else
