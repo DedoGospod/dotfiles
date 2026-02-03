@@ -103,6 +103,7 @@ if sudo pacman -S --needed --noconfirm "${PACMAN_PACKAGES[@]}"; then
     ok
 else
     fail
+    exit 1
 fi
 
 # Enable btrfs related services
