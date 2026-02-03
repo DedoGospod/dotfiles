@@ -25,22 +25,12 @@ fail() { echo -e "${RED}Failed.${NC}"; }
 # --- FIREWALL CONFIGURATION ---
 header "Firewall Configuration"
 
-# --- PACKAGE INSTALLATION SECTION ---
-FIREWALL_PACKAGES=(ufw)
-MISSING_PACKAGES=()
-
-for pkg in "${FIREWALL_PACKAGES[@]}"; do
-    if ! pacman -Qq "$pkg" &>/dev/null; then
-        MISSING_PACKAGES+=("$pkg")
-    fi
-done
-
-if [ ${#MISSING_PACKAGES[@]} -eq 0 ]; then
-    log_task "All firewall packages are already installed."
+# Install UFW if necessary
+if ! command -v ufw &> /dev/null; then
+    sudo pacman -S --noconfirm ufw
     ok
 else
-    log_task "Installing missing packages: ${MISSING_PACKAGES[*]}"
-    sudo pacman -S --needed --noconfirm "${MISSING_PACKAGES[@]}"
+    log_task "UFW is already installed."
     ok
 fi
 
