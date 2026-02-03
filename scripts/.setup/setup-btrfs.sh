@@ -69,7 +69,7 @@ log_task "Configuring /etc/snapper-rollback.conf"
 ROOT_DEV=$(df / | tail -1 | awk '{print $1}')
 ROOT_UUID=$(lsblk -dno UUID "$ROOT_DEV")
 
-# Generate the config (same as before)
+# Generate the config
 log_task "generating snapper-rollback.conf UUID: $ROOT_UUID"
 cat <<EOF | sudo tee /etc/snapper-rollback.conf > /dev/null
 [root]
@@ -97,10 +97,13 @@ elif [ "$BOOTLOADER" == "limine" ]; then
     btrfs_units+=("limine-snapper-watcher.service" "limine-snapper-sync.service")
 fi
 
-# Install Packages
-log_task "Installing Official Packages"
-paru -S --needed --noconfirm "${PACMAN_PACKAGES[@]}"
-ok
+# Install necessary packages if needed
+log_task "Installing necessary packages"
+if sudo pacman -S --needed --noconfirm "${PACMAN_PACKAGES[@]}"; then
+    ok
+else
+    fail
+fi
 
 # Enable btrfs related services
 for unit in "${btrfs_units[@]}"; do
