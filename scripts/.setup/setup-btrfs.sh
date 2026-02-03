@@ -39,9 +39,9 @@ run_task() {
 
 # Function to detect bootloader
 detect_bootloader() {
-    if [ -d "/boot/grub" ] || command -v grub-install >/dev/null; then
+    if [[ -d "/boot/grub" ]] || command -v grub-install >/dev/null; then
         echo "grub"
-    elif [ -d "/boot/limine" ] || [ -f "/boot/limine.conf" ] || [ -f "/boot/EFI/limine/limine.conf" ]; then
+    elif [[ -d "/boot/limine" ]] || [[ -f "/boot/limine.conf" ]] || [[ -f "/boot/EFI/limine/limine.conf" ]]; then
         echo "limine"
     else
         echo "unknown"
@@ -106,7 +106,7 @@ for pkg in "${PACKAGES[@]}"; do
 done
 
 # Install any missing packages
-if [ ${#MISSING_PACKAGES[@]} -eq 0 ]; then
+if [[ ${#MISSING_PACKAGES[@]} -eq 0 ]]; then
     log_task "All BTRFS packages are already installed"
     ok
 else
