@@ -54,7 +54,8 @@ BOOTLOADER=$(detect_bootloader)
 log "Detected bootloader: $BOOTLOADER"
 
 # Needed packages
-PACMAN_PACKAGES=(btrfsmaintenance snapper snapper-rollback snap-pac inotify-tools)
+PACKAGES=(btrfsmaintenance snapper snapper-rollback snap-pac inotify-tools)
+MISSING_PACKAGES=()
 
 # Ensure /btrfsroot exists and is secure for snapper-rollback
 if [ ! -d "/btrfsroot" ]; then
@@ -90,20 +91,28 @@ btrfs_units=(
 
 # Add bootloader-specific packages for the in use bootloader
 if [ "$BOOTLOADER" == "grub" ]; then
-    PACMAN_PACKAGES+=(grub-btrfs)
+    PACKAGES+=(grub-btrfs)
     btrfs_units+=("grub-btrfsd.service")
 elif [ "$BOOTLOADER" == "limine" ]; then
-    PACMAN_PACKAGES+=(limine-snapper-sync limine-mkinitcpio-hook)
+    PACKAGES+=(limine-snapper-sync limine-mkinitcpio-hook)
     btrfs_units+=("limine-snapper-watcher.service" "limine-snapper-sync.service")
 fi
 
-# Install necessary packages if needed
-log_task "Installing necessary packages"
-if sudo pacman -S --needed --noconfirm "${PACMAN_PACKAGES[@]}"; then
+# Check if packages exist on system
+for pkg in "${PACKAGES[@]}"; do
+    if ! pacman -Qq "$pkg" &>/dev/null; then
+        MISSING_PACKAGES+=("$pkg")
+    fi
+done
+
+# Install any missing packages
+if [ ${#MISSING_PACKAGES[@]} -eq 0 ]; then
+    log_task "All BTRFS packages are already installed"
     ok
 else
-    fail
-    exit 1
+    log_task "Installing missing packages: ${MISSING_PACKAGES[*]}"
+    paru -S --needed --noconfirm "${MISSING_PACKAGES[@]}"
+    ok
 fi
 
 # Enable btrfs related services
