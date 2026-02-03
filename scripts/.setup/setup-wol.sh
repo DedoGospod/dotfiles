@@ -36,7 +36,7 @@ fi
 # Identify the primary ethernet interface
 INTERFACE=$(ip -o link show | awk -F': ' '{print $2}' | grep -v 'lo' | grep '^e' | head -n 1)
 
-if [ -z "$INTERFACE" ]; then
+if [[ -z "$INTERFACE" ]]; then
     fail
     error "No ethernet interface found starting with 'e' (e.g., enp3s0)."
     exit 1
@@ -74,7 +74,7 @@ if systemctl is-active --quiet NetworkManager; then
     log_task "NetworkManager detected. Configuring connection settings"
     UUID=$(nmcli -t -f UUID,DEVICE connection show --active | grep ":$INTERFACE$" | cut -d: -f1)
     
-    if [ -n "$UUID" ]; then
+    if [[ -n "$UUID" ]]; then
         sudo nmcli connection modify "$UUID" 802-3-ethernet.wake-on-lan magic
         ok
     else
