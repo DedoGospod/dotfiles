@@ -25,8 +25,8 @@ fail() { echo -e "${RED}Failed.${NC}"; }
 # Stow Packages
 STOW_FOLDERS=(
     backgrounds kwalletrc fastfetch wayland-pipewire-idle-inhibit hypr kitty 
-    mpv nvim starship swaync waybar wofi yazi zsh tmux uwsm systemd-user aria2
-    scopebuddy mangohud
+    mpv nvim starship swaync waybar wofi yazi zsh tmux uwsm systemd-user scopebuddy 
+    mangohud
 )
 
 # Dotfiles
@@ -65,7 +65,7 @@ if [ -d "$DOTFILES_DIR" ]; then
         "$SCRIPTS_SRC/check-orphans|/usr/local/bin/check-orphans|755"
 
         "$CONFIGS_SRC/root|/etc/snapper/configs/root|644"
-        "$CONFIGS_SRC/orphan-check.hook/etc/pacman.d/hooks/orphan-check.hook|755"
+        "$CONFIGS_SRC/orphan-check.hook|/etc/pacman.d/hooks/orphan-check.hook|755"
 
     )
 
