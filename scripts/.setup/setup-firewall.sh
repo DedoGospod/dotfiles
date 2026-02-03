@@ -83,7 +83,7 @@ if command -v ufw &>/dev/null; then
 
         log_task "Enabling UFW"
 
-        # Enable system service
+        # Enable systemd service
         sudo systemctl enable ufw.service &>/dev/null
 
         # Enable firewall rules
