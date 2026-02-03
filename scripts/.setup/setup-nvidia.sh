@@ -48,12 +48,14 @@ fi
 NVIDIA_PACKAGES=("$DRIVER_PKG" nvidia-settings nvidia-utils libva-nvidia-driver lib32-nvidia-utils egl-wayland)
 MISSING_PACKAGES=()
 
+# Check if packages exist on system
 for pkg in "${NVIDIA_PACKAGES[@]}"; do
     if ! pacman -Qq "$pkg" &>/dev/null; then
         MISSING_PACKAGES+=("$pkg")
     fi
 done
 
+# Install any missing packages
 if [ ${#MISSING_PACKAGES[@]} -eq 0 ]; then
     log_task "All NVIDIA packages are already installed."
     ok
