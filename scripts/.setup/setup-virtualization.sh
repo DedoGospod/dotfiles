@@ -30,7 +30,7 @@ for pkg in "${PACMAN_PACKAGES[@]}"; do
 done
 
 # Install any missing packages
-if [ ${#MISSING_PACKAGES[@]} -eq 0 ]; then
+if [[ ${#MISSING_PACKAGES[@]} -eq 0 ]]; then
     log_task "All Virtualization packages are already installed"
     ok
 else
