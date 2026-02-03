@@ -50,7 +50,7 @@ IMAGE_APP="imv.desktop"
 if command -v imv >/dev/null 2>&1 || command -v imvr >/dev/null 2>&1; then
     
     # Detect if we should use imv.desktop or imvr.desktop
-    if [ ! -f "/usr/share/applications/$IMAGE_APP" ]; then
+    if [[ ! -f "/usr/share/applications/$IMAGE_APP" ]]; then
         IMAGE_APP="imvr.desktop"
     fi
 
@@ -79,7 +79,7 @@ TPM_PATH="$HOME/.tmux/plugins/tpm"
 if command -v tmux >/dev/null 2>&1; then
     TPM_PATH="${TPM_PATH:-$HOME/.tmux/plugins/tpm}"
 
-    if [ ! -d "$TPM_PATH" ]; then
+    if [[ ! -d "$TPM_PATH" ]]; then
         log_task "Installing TPM"
         if git clone --depth 1 https://github.com/tmux-plugins/tpm "$TPM_PATH"; then ok; else fail; fi
     else
