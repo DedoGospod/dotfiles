@@ -29,12 +29,12 @@ header "NVIDIA SETUP"
 GENERIC_KERNELS=$(pacman -Qq | grep -E '^linux(-zen|-lts|-hardened|-rt)?$' || true)
 CACHY_KERNELS=$(pacman -Qq | grep -E '^linux-cachyos(-bin|-rc|-lts)?$' || true)
 
-if [ -n "$GENERIC_KERNELS" ]; then
+if [[ -n "$GENERIC_KERNELS" ]]; then
     DRIVER_PKG="nvidia-open-dkms"
     log "Generic/Zen kernel(s) detected: $(echo "$GENERIC_KERNELS" | tr '\n' ' ')"
     log_task "Using $DRIVER_PKG to ensure compatibility across all kernels."
     ok
-elif [ -n "$CACHY_KERNELS" ]; then
+elif [[ -n "$CACHY_KERNELS" ]]; then
     DRIVER_PKG="linux-cachyos-nvidia-open"
     log_task "Only CachyOS kernel(s) detected. Using optimized modules: $DRIVER_PKG"
     ok
@@ -56,7 +56,7 @@ for pkg in "${NVIDIA_PACKAGES[@]}"; do
 done
 
 # Install any missing packages
-if [ ${#MISSING_PACKAGES[@]} -eq 0 ]; then
+if [[ ${#MISSING_PACKAGES[@]} -eq 0 ]]; then
     log_task "All NVIDIA packages are already installed."
     ok
 else
@@ -70,7 +70,7 @@ fi
 CONF_FILE="/etc/modprobe.d/nvidia.conf"
 SETTING="options nvidia-drm modeset=1"
 
-if [ ! -f "$CONF_FILE" ] || ! grep -Fxq "$SETTING" "$CONF_FILE"; then
+if [[ ! -f "$CONF_FILE" ]] || ! grep -Fxq "$SETTING" "$CONF_FILE"; then
     log_task "Enabling NVIDIA Kernel Mode Setting (KMS)..."
     if echo "$SETTING" | sudo tee "$CONF_FILE" >/dev/null; then 
         touch /tmp/reboot_required
