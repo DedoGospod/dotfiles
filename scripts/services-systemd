@@ -53,9 +53,9 @@ manage_service "obs.service"                            "--user" "enable" "OBS s
 # ==============================================================================
 header "Systemd timer configuration"
 
-# Enable specifc timers for arch linux
+# Enable specifc distro-specific timers
 configure_arch_timers
 
 
 # Systemd user
-run_task "Enabling failed systemd service check timer" systemctl --user enable --now failed-units-cheak.timer
+run_task "Enabling failed systemd service check timer" systemctl --user enable --now failed-units-check.timer
