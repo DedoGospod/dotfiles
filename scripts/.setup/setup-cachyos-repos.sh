@@ -29,7 +29,7 @@ sudo pacman -Syu --needed --noconfirm
 PACMAN_PACKAGES=()
 
 # Prompt the user
-read -r -p "$(echo -e "  ${YELLOW}??${NC} Install CachyOS bore kernel? (y/N): ")" install_cachy_kernel
+read -r -p "$(echo -e "  ${YELLOW}??${NC} Install CachyOS kernel? (y/N): ")" install_cachy_kernel
 
 # If yes, add the strings directly to the main array
 if [[ "$install_cachy_kernel" =~ ^[Yy]$ ]]; then 
