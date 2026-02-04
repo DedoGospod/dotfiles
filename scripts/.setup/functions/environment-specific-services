@@ -8,7 +8,8 @@ configure_arch_timers() {
     fi
 
     log "Arch detected: Installing systemd units..."
-    systemctl --user enable --now check-orphans.timer
+    run_task "Enabling aur-trim.timer" "systemctl --user enable --now aur-trim.timer"
+    
 }
 
 configure_hyprland_services() {
@@ -19,12 +20,12 @@ configure_hyprland_services() {
     fi
 
     if $IS_HYPRLAND; then
-        manage_service "hypridle.service"       "--user" "enable" "Idle daemon"          "Y"
-        manage_service "hyprpaper.service"      "--user" "enable" "Wallpaper daemon"     "Y"
-        manage_service "pyprland.service"       "--user" "enable" "Pyprland plugins"     "Y"
+        manage_service "hypridle.service"        "--user" "enable" "Idle daemon"          "Y"
+        manage_service "hyprpaper.service"       "--user" "enable" "Wallpaper daemon"     "Y"
+        manage_service "pyprland.service"        "--user" "enable" "Pyprland plugins"     "Y"
         manage_service "hyprpolkitagent.service" "--user" "enable" "Polkit Authentication" "Y"
-        manage_service "waybar.service"         "--user" "enable" "Status bar"           "Y"
-        manage_service "hyprsunset.service"     "--user" "enable" "Blue light filter"    "Y"
+        manage_service "waybar.service"          "--user" "enable" "Status bar"           "Y"
+        manage_service "hyprsunset.service"      "--user" "enable" "Blue light filter"    "Y"
     else
         log "Not in Hyprland. Skipping Hyprland-specific services."
     fi
