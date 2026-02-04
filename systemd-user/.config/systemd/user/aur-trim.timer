@@ -1,0 +1,9 @@
+[Unit]
+Description=Weekly trim of paru build cache
+
+[Timer]
+OnCalendar=weekly
+Persistent=true
+
+[Install]
+WantedBy=timers.target
