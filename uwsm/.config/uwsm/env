@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 # Application-specific redirects
 export CARGO_HOME="${XDG_DATA_HOME:-$HOME/.local/share}/cargo"
 export GNUPGHOME="${XDG_DATA_HOME:-$HOME/.local/share}/gnupg"
@@ -8,11 +10,8 @@ export QT_QPA_PLATFORMTHEME="qt6ct"
 export QT_QPA_PLATFORM="wayland;xcb"
 export ADW_DISABLE_PORTAL=1
 
-# Services
-export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/ssh-agent.socket"
-
 # Hardware Specifics
-if [ -d "/sys/module/nvidia" ]; then
+if [[ -d "/sys/module/nvidia" ]]; then
     # --- CORE NVIDIA / WAYLAND STABILITY ---
     export LIBVA_DRIVER_NAME=nvidia
     export __GLX_VENDOR_LIBRARY_NAME=nvidia
@@ -20,7 +19,7 @@ if [ -d "/sys/module/nvidia" ]; then
     export ELECTRON_OZONE_PLATFORM_HINT=auto
 
     # --- GAMING RELATED ---
-    export __GL_MaxFramesAllowed=1   # Prevents the GPU from queuing frames (Good for cpu bottleneck)
+    export __GL_MaxFramesAllowed=1 # Prevents the GPU from queuing frames (Good for cpu bottleneck)
 
     # Enables the capability for G-Sync/VRR
     export __GL_GSYNC_ALLOWED=1
