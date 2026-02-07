@@ -1,7 +1,9 @@
 [Unit]
 Description=Trim AUR build cache (Keep 3 versions)
+ConditionPathExists=%h/.cache/paru/clone
 ConditionDirectoryNotEmpty=%h/.cache/paru/clone
 
 [Service]
 Type=oneshot
-ExecStart=/usr/bin/find %h/.cache/paru/clone -maxdepth 1 -mindepth 1 -type d -exec /usr/bin/paccache -rk3 -q -c {} \;
+IOSchedulingClass=idle
+ExecStart=%h/.local/bin/paru-aur-trim
