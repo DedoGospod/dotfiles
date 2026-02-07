@@ -1,0 +1,18 @@
+[pyprland]
+plugins = [
+  "scratchpads",
+]
+
+[scratchpads.obsidian]
+animation = "fromTop" 
+command = "obsidian"
+class = "obsidian" 
+size = "75% 75%"
+lazy = false
+
+[scratchpads.pavucontrol]
+animation = "fromTop"
+command = "pavucontrol"
+class = "org.pulseaudio.pavucontrol"
+size = "75% 75%"
+lazy = false
