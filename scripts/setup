@@ -38,26 +38,26 @@ echo ""
 import_install_phase
 
 # Mandatory Setup
-run_setup_script "setup-dotfiles.sh"
-run_setup_script "setup-user-env.sh"
-run_setup_script "setup-theme.sh"
-run_setup_script "setup-firewall.sh"
+run_setup_script "setup-dotfiles"
+run_setup_script "setup-user-env"
+run_setup_script "setup-theme"
+run_setup_script "setup-firewall"
 
 # Install btrfs maintnence packages if btrfs is root file system
 ROOT_FS=$(findmnt -n -o FSTYPE --target /)
 if [[ "$ROOT_FS" == "btrfs" ]]; then
-    run_setup_script "setup-btrfs.sh"
+    run_setup_script "setup-btrfs"
 fi
 
 # Install and setup nvidia drivers if a nvidia gpu is detected
 if lspci | grep -iq "nvidia"; then
-    run_setup_script "setup-nvidia.sh"
+    run_setup_script "setup-nvidia"
 fi
 
 # Conditional Setups
-[[ "$install_gaming" =~ ^[Yy]$ ]] && run_setup_script "setup-gaming.sh" 
-[[ "$setup_virt" =~ ^[Yy]$ ]] && run_setup_script "setup-virtualization.sh"
-[[ "$setup_wol" =~ ^[Yy]$ ]] && run_setup_script "setup-wol.sh"
+[[ "$install_gaming" =~ ^[Yy]$ ]] && run_setup_script "setup-gaming" 
+[[ "$setup_virt" =~ ^[Yy]$ ]] && run_setup_script "setup-virtualization"
+[[ "$setup_wol" =~ ^[Yy]$ ]] && run_setup_script "setup-wol"
 
 # --- FINISH ---
 echo ""

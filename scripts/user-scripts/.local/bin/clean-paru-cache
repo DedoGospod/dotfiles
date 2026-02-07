@@ -1,8 +1,0 @@
-#!/usr/bin/env bash
-
-# Clean paru clone directories, keeping last 3 versions
-for d in "${HOME}/.cache/paru/clone/"*/; do
-    if [ -d "$d" ]; then
-        /usr/bin/paccache -rk3 -q -c "$d"
-    fi
-done
