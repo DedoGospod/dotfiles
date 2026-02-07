@@ -2,6 +2,14 @@
 # ZSH Configuration
 # ======================
 
+# Initialize ZSH completion system
+autoload -Uz compinit
+if [[ -n "$ZSH_COMPDUMP(#qN.m-1)" ]]; then
+  compinit -C -d "$ZSH_COMPDUMP"
+else
+  compinit -d "$ZSH_COMPDUMP"
+fi
+
 # History settings configured to be XDG-compliant
 HISTSIZE=10000                                   # Number of commands kept in memory
 SAVEHIST=10000                                   # Number of commands saved to HISTFILE
@@ -9,13 +17,6 @@ setopt inc_append_history                        # Save commands to history imme
 setopt share_history                             # Sync history across sessions
 setopt extended_history                          # Save timestamps
 setopt hist_ignore_all_dups                      # Avoid saving any duplicate commands entirely
-
-# Invalid commands dont get stored in history
-zshaddhistory() { whence ${${(z)1}[1]} >| /dev/null || return 1 }
-
-# Initialize ZSH completion system
-autoload -Uz compinit 
-compinit -d "${ZSH_COMPDUMP}"  # Explicitly use the custom XDG-compliant path
 
 # ======================
 # Shell Initialization
@@ -44,16 +45,6 @@ bindkey -s '^Z' 'zi\n'
 [ -f /usr/share/fzf/key-bindings.zsh ] && source /usr/share/fzf/key-bindings.zsh
 [ -f /usr/share/fzf/completion.zsh ] && source /usr/share/fzf/completion.zsh
 
-# Editor preferences
-export EDITOR="nvim"                  # Set Neovim as default editor
-export SUDO_EDITOR="$EDITOR"          # Editor for sudo operations
-export VISUAL="$EDITOR"               # Set VISUAL to nvim for applications that prefer this
-export MANPAGER='nvim +Man!'          # Use Neovim for man pages
-
-# Executable search paths
-export PATH="$HOME/.local/bin:$PATH"  # User scripts and local binaries
-export PATH="$CARGO_HOME/bin:$PATH"   # Rust/Cargo binaries (XDG compliant)
-
 # ======================
 # Aliases 
 # ======================
@@ -65,8 +56,8 @@ alias updatemirrors='sudo reflector --verbose --country $(curl -s https://ipinfo
 alias update-grub="grub-mkconfig -o /boot/grub/grub.cfg"
 
 # Package Management
-alias yay='paru'             # Use paru as yay alternative
 alias pacman='sudo pacman'   # Always use sudo with pacman
+alias yay='paru'             # Use paru as yay alternative
 
 # Apps
 alias y='yazi'                                         # Use Yazi as a terminal file manager
@@ -76,16 +67,17 @@ alias kssh='kitty +kitten ssh'                         # SSH with kitty terminal
 alias cat='bat'                                        # Use bat instead of cat
 
 # Files
+alias ls='ls -1 --color=always --group-directories-first'  # Colorized ls output
+alias ll='eza -l --group-directories-first'                # Long listing
+alias llh='eza -lA --group-directories-first'              # Long listing + show hidden
+alias lsh='ls -A'           # Show all files including hidden
 alias cp='cp -i'            # Interactive copy
 alias mv='mv -i'            # Interactive move
 alias rm='trash -v'         # Safe delete using trash-cli
 alias mkdir='mkdir -p'      # Create parent directories automatically
-alias ls='ls -1 --color=always --group-directories-first'  # Colorized ls output
-alias ll='eza -l --group-directories-first'                # Long listing
-alias lsh='ls -A'           # Show all files including hidden
 alias h='fc -nil 1 | grep'  # Search history for a specific terminal command
 alias hist="fc -nil 1"      # Always show history with readable dates
-alias du='du -h'
+alias du='du -h'           
 alias df='df -h'
 
 # Github
