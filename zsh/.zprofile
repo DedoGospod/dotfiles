@@ -5,5 +5,4 @@
 # ======================
 
 # TTY Autostart
-[ "$(tty)" = "/dev/tty1" ] && exec uwsm start hyprland
-[ "$(tty)" = "/dev/tty2" ] && gamescope --backend drm -w 3840 -h 2160 -r 165 -- steam -gamepadui
+[[ "$(tty)" = "/dev/tty1" ]] && exec uwsm start hyprland
