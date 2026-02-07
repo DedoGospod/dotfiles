@@ -13,5 +13,19 @@ export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/ssh-agent.socket"
 
 # Hardware Specifics
 if [ -d "/sys/module/nvidia" ]; then
-    . "${XDG_CONFIG_HOME}/uwsm/env-nvidia"
+    # --- CORE NVIDIA / WAYLAND STABILITY ---
+    export LIBVA_DRIVER_NAME=nvidia
+    export __GLX_VENDOR_LIBRARY_NAME=nvidia
+    export NVD_BACKEND=direct
+    export ELECTRON_OZONE_PLATFORM_HINT=auto
+
+    # --- GAMING RELATED ---
+    export __GL_MaxFramesAllowed=1   # Prevents the GPU from queuing frames (Good for cpu bottleneck)
+
+    # Enables the capability for G-Sync/VRR
+    export __GL_GSYNC_ALLOWED=1
+    export __GL_VRR_ALLOWED=1
+
+    # --- ENABLE ONLY WHEN GPU IS THE BOTTLENECK ---
+    #export __GL_THREADED_OPTIMIZATIONS=1
 fi
