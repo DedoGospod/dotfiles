@@ -6,3 +6,4 @@
 
 # TTY Autostart
 [[ "$(tty)" = "/dev/tty1" ]] && exec uwsm start hyprland
+[[ "$(tty)" = "/dev/tty2" ]] && ~/.local/bin/launch-gamescope
