@@ -1,5 +1,6 @@
 [Unit]
 Description=Pyprland - Hyprland-specific helper daemon
+ConditionEnvironment=HYPRLAND_INSTANCE_SIGNATURE
 PartOf=graphical-session.target
 After=graphical-session.target
 StartLimitIntervalSec=60
