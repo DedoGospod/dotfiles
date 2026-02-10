@@ -53,7 +53,7 @@ manage_service "obs.service"                            "--user" "enable" "OBS s
 # ==============================================================================
 header "Systemd timer configuration"
 
-# Enable specifc distro-specific timers
+# Enable distro-specific timers
 configure_arch_timers
 
 
