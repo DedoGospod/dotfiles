@@ -23,17 +23,15 @@ ok() { echo -e "${GREEN}Done.${NC}"; }
 fail() { echo -e "${RED}Failed.${NC}"; }
 
 run_task() {
-    local desc="$1"
-    local cmd="$2"
-
-    log_task "$desc"
-
-    if eval "$cmd" >/dev/null 2>&1; then
+    local task_desc="$1"
+    shift 
+    
+    log_task "$task_desc"
+    
+    if "$@" > /dev/null 2>&1; then
         ok
-        return 0
     else
         fail
-        return 1
     fi
 }
 
@@ -69,6 +67,7 @@ fi
 log_task "Configuring /etc/snapper-rollback.conf"
 ROOT_DEV=$(df / | tail -1 | awk '{print $1}')
 ROOT_UUID=$(lsblk -dno UUID "$ROOT_DEV")
+ok
 
 # Generate the config
 log_task "generating snapper-rollback.conf UUID: $ROOT_UUID"
@@ -120,6 +119,6 @@ for unit in "${btrfs_units[@]}"; do
     if systemctl is-enabled --quiet "$unit" 2>/dev/null; then
         log "$unit is already enabled"
     else
-        run_task "Enabling $unit" "sudo systemctl enable --now $unit"
+        run_task "Enabling $unit" sudo systemctl enable --now "$unit"
     fi
 done

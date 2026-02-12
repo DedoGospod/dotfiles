@@ -5,11 +5,16 @@
 # ==============================================================================
 
 # Source functions
-FUNCTIONS_DIR="$HOME/dotfiles/scripts/.setup/functions/"
-# shellcheck source=/dev/null
-source "$FUNCTIONS_DIR/service-management-functions"
-# shellcheck source=/dev/null
-source "$FUNCTIONS_DIR/environment-specific-services"
+FUNCTIONS_DIR="$HOME/dotfiles/scripts/.setup/lib"
+if [[ -d "$FUNCTIONS_DIR" ]] ; then
+    # shellcheck source=/dev/null
+    source "$FUNCTIONS_DIR/services-systemd-functions"
+    # shellcheck source=/dev/null
+    source "$FUNCTIONS_DIR/environment-specific-services"
+else
+    error "Could not import functions from $FUNCTIONS_DIR"
+    exit 1
+fi
 
 # ==============================================================================
 #  Initialization
@@ -55,7 +60,6 @@ header "Systemd timer configuration"
 
 # Enable distro-specific timers
 configure_arch_timers
-
 
 # Systemd user
 run_task "Enabling failed systemd service check timer" systemctl --user enable --now failed-units-check.timer

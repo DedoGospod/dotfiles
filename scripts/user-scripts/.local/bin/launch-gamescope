@@ -9,6 +9,9 @@ GAMESCOPE_ARGS=(
     --hdr-enabled          # Enables High Dynamic Range support
     --fullscreen           # Start Gamescope in fullscreen mode
 
+    # Scheduling
+    --rt                   # Real-time scheduling
+
     # --- HDR & Sync Features ---
     --adaptive-sync        # Enables VRR (FreeSync/G-Sync) support
     --immediate-flips      # Reduces latency by skipping VSync (can cause tearing)
@@ -16,7 +19,7 @@ GAMESCOPE_ARGS=(
     # --- Hardware & Performance ---
     --prefer-vk-device 0   # Forces usage of the first Vulkan device (usually primary GPU)
     --disable-layers       # Disables Vulkan layers (useful for compatibility/performance)
-    
+
     # --- Input Control ---
     --mouse-sensitivity 1.0 # Sets the mouse scale factor
     --force-grab-cursor     # Keeps the mouse locked inside the game window
@@ -30,8 +33,8 @@ STEAM_OPTS=(
 if [[ -z "$display" && -z "$wayland_display" ]]; then
     echo "running embedded gamescope"
     gamescope_args+=(
-        --backend drm   # enables backend drm for embedded mode
-        # --steam         # enables steam integration features (overlays/steam menu)
+        --backend drm   # Enables backend drm for embedded mode
+        # --steam         # Enables steam integration features (overlays/steam menu)
     )
     steam_opts+=(
         -steamos3

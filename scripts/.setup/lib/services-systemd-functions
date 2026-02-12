@@ -2,7 +2,7 @@
 # Note: This file contains logic for managing systemd services and system config.
 
 # ==============================================================================
-# 1. UI & LOGGING CONFIGURATION
+# UI & LOGGING CONFIGURATION
 # ==============================================================================
 
 # Colors for logging
@@ -24,7 +24,7 @@ ok()       { echo -e "${GREEN}Done.${NC}"; }
 fail()     { echo -e "${RED}Failed.${NC}"; }
 
 # ==============================================================================
-# 2. SERVICE CORE FUNCTIONS
+# SERVICE CORE FUNCTIONS
 # ==============================================================================
 
 # Check if service exists
@@ -75,23 +75,22 @@ manage_service() {
     fi
 }
 
+# Task runner
 run_task() {
-    local desc="$1"
-    local cmd="$2"
-
-    log_task "$desc"
+    local task_desc="$1"
+    shift 
     
-    if eval "$cmd" >/dev/null 2>&1; then
+    log_task "$task_desc"
+    
+    if "$@" > /dev/null 2>&1; then
         ok
-        return 0
     else
         fail
-        return 1
     fi
 }
 
 # ==============================================================================
-# 3. EXCLUSIVE SELECTION & PROCESSING
+# EXCLUSIVE SELECTION & PROCESSING
 # ==============================================================================
 
 # Pick which service to use if multiple are in the same category (e.g. multiple notifications)

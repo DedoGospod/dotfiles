@@ -2,7 +2,7 @@
 # Note: This file relies on variables and functions defined in the main script.
 
 # ==============================================================================
-# 1. UI & LOGGING CONFIGURATION
+# UI & LOGGING CONFIGURATION
 # ==============================================================================
 
 # Colors for logging
@@ -24,18 +24,21 @@ ok()       { echo -e "${GREEN}Done.${NC}"; }
 fail()     { echo -e "${RED}Failed.${NC}"; }
 
 # ==============================================================================
-# 2. PATH & DEPENDENCY MANAGEMENT
+# PATH & DEPENDENCY MANAGEMENT
 # ==============================================================================
 
 # Dynamically find the script directory relative to this file
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
-import_setup_scripts() {
+prepare_setup_scripts() {
     header "SYSTEM PREPARATION"
 
-    # Ensure all setup scripts are executable
-    if [ -d "$SCRIPT_DIR" ]; then
-        chmod u+x "$SCRIPT_DIR"/*.sh 2>/dev/null
+    if [[ -d "$SCRIPT_DIR" ]]; then
+        for file in "$SCRIPT_DIR"/*; do
+            if [[ -f "$file" ]]; then
+                chmod u+x "$file"
+            fi
+        done
         log_task "Permissions updated for setup scripts"
         ok
     else
@@ -71,11 +74,11 @@ import_install_phase() {
 }
 
 # ==============================================================================
-# 3. SYSTEM & SECURITY CHECKS
+# SYSTEM & SECURITY CHECKS
 # ==============================================================================
 
 check_if_root() {
-    if [ "$EUID" -eq 0 ]; then
+    if [[ "$EUID" -eq 0 ]]; then
         error "Please do not run this script as root."
         error "Run it as a normal user. You will be prompted for sudo password when needed."
         exit 1
@@ -83,21 +86,20 @@ check_if_root() {
 }
 
 keep_sudo_alive() {
+    # Ask for the password upfront
     sudo -v
-    # Run the keep-alive loop in a background subshell
-    (while true; do
+
+    # Update existing sudo time stamp until the script has finished
+    while true; do
         sudo -n true
         sleep 60
+        # Kill the loop if the parent process (the main script) is no longer running
         kill -0 "$$" || exit
-    done 2>/dev/null) &
-
-    local SUDO_LOOP_PID=$!
-    # Set the trap to kill ONLY this specific loop when the script exits
-    trap 'kill '"$SUDO_LOOP_PID"' 2>/dev/null' EXIT
+    done 2>/dev/null &
 }
 
 # ==============================================================================
-# 4. DIRECTORY & ENVIRONMENT SETUP
+# DIRECTORY & ENVIRONMENT SETUP
 # ==============================================================================
 
 xdg_setup() {
@@ -119,7 +121,7 @@ xdg_setup() {
 }
 
 # ==============================================================================
-# 5. EXECUTION & INTERACTION HELPERS
+# EXECUTION & INTERACTION HELPERS
 # ==============================================================================
 
 ask() {
@@ -139,7 +141,7 @@ run_setup_script() {
 }
 
 is_reboot_required() {
-    if [ -f /tmp/reboot_required ]; then
+    if [[ -f /tmp/reboot_required ]]; then
         rm /tmp/reboot_required
         if ask "System changes detected. Reboot now?"; then
             log "Rebooting..."

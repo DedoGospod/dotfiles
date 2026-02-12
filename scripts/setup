@@ -5,15 +5,20 @@ set -e
 set -o pipefail
 
 # Source functions
-FUNCTIONS_DIR="$HOME/dotfiles/scripts/.setup/functions"
-# shellcheck source=/dev/null
-source "$FUNCTIONS_DIR/setup-functions"
+FUNCTIONS_DIR="$HOME/dotfiles/scripts/.setup/lib"
+if [[ -d "$FUNCTIONS_DIR" ]]; then
+    # shellcheck source=/dev/null
+    source "$FUNCTIONS_DIR/setup-functions"
+else 
+    error "Could not import functions from $FUNCTIONS_DIR"
+    exit 1
+fi
 
 # Import functions
 check_if_root         # Ensure user doesnt run this as root
 keep_sudo_alive       # Keep sudo active for the duration of the script
 xdg_setup             # Setup xdg directory structure
-import_setup_scripts  # Import setup scripts
+prepare_setup_scripts # Prepare setup scripts with chmod u+x
 import_package_list   # Import the package list
 
 # --- USER INTERACTION ---

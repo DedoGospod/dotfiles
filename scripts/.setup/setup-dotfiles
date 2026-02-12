@@ -24,8 +24,8 @@ fail() { echo -e "${RED}Failed.${NC}"; }
 
 # Stow Packages
 STOW_FOLDERS=(
-    backgrounds kwalletrc fastfetch wayland-pipewire-idle-inhibit hypr kitty 
-    mpv nvim starship swaync waybar wofi yazi zsh tmux uwsm systemd-user scopebuddy 
+    backgrounds kwalletrc fastfetch wayland-pipewire-idle-inhibit hypr kitty
+    mpv nvim starship swaync waybar wofi yazi zsh tmux uwsm systemd-user scopebuddy
     mangohud
 )
 
@@ -62,13 +62,13 @@ if [ -d "$DOTFILES_DIR" ]; then
     FILES_TO_SYNC=(
         "$SCRIPTS_SRC/reboot-to-windows|/usr/local/bin/reboot-to-windows|755"
         "$SCRIPTS_SRC/check-units|/usr/local/bin/check-units|755"
-        "$SCRIPTS_SRC/check-orphans|/usr/local/bin/check-orphans|755"
+        "$SCRIPTS_SRC/check-orphans|/usr/local/bin/check-orphans|644"
 
         "$CONFIGS_SRC/root|/etc/snapper/configs/root|644"
         "$CONFIGS_SRC/orphan-check.hook|/etc/pacman.d/hooks/orphan-check.hook|755"
 
     )
-
+    
     for entry in "${FILES_TO_SYNC[@]}"; do
         IFS='|' read -r src target mode <<<"$entry"
 
@@ -85,4 +85,7 @@ if [ -d "$DOTFILES_DIR" ]; then
             warn "Source file missing: $src"
         fi
     done
+
 fi
+
+

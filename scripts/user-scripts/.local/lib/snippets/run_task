@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+# ==============================================================================
+# USAGE: 
+#   run_task "Description of task" <command>
+#
+# EXAMPLE:
+#   run_task "Updating system" sudo pacman -Syu
+#   run_task "Cleaning temp" rm -rf ./tmp
+# ==============================================================================
+
+# Task runner
+run_task() {
+    local task_desc="$1"
+    shift 
+    
+    log_task "$task_desc"
+    
+    if "$@" > /dev/null 2>&1; then
+        ok
+    else
+        fail
+    fi
+}
