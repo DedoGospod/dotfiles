@@ -61,3 +61,21 @@ gm() {
         git switch testing
     )
 }
+
+# Custom Snapper manual snapshot function
+snapper-create() {
+    # Define some colors
+    local RED='\033[0;31m'
+    local CYAN='\033[0;36m'
+    local GREEN='\033[0;32m'
+    local NC='\033[0m'
+
+    if [[ -z "$1" ]]; then
+        echo -e "${RED}Error:${NC} Please provide a description."
+        echo -e "${CYAN}Usage:${NC} snapper-create <description>"
+        return 1
+    fi
+
+    sudo snapper -c root create --description "$1" --cleanup-algorithm number
+    echo -e "${GREEN}Snapshot created:${NC} $1"
+}
