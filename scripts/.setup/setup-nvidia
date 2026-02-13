@@ -83,6 +83,17 @@ else
     ok
 fi
 
+# Enable NVIDIA KMS in grub
+if [[ -d "/boot/grub" ]] || command -v grub-install >/dev/null; then
+    log_task "Adding nvidia kernel peramaters to grub"
+    sudo sed -i '/GRUB_CMDLINE_LINUX_DEFAULT/ s/"$/ nvidia-drm.modeset=1 nvidia-drm.fbdev=1"/' /etc/default/grub
+    touch /tmp/reboot_required
+    ok
+else
+    fail
+    exit 1
+fi
+
 # Inject NVIDIA modules into mkinitcpio for initramfs regeneration
 MK_CONF="/etc/mkinitcpio.conf"
 
@@ -95,6 +106,7 @@ if ! grep -E "^MODULES=.*nvidia_drm" "$MK_CONF" >/dev/null 2>&1 &&
         ok 
     else 
         fail 
+        exit 1
     fi
 
     log_task "Regenerating initramfs (this may take a moment)..."
@@ -103,6 +115,7 @@ if ! grep -E "^MODULES=.*nvidia_drm" "$MK_CONF" >/dev/null 2>&1 &&
         ok
     else 
         fail
+        exit 1
     fi
 else
     log_task "NVIDIA modules already present in mkinitcpio"
