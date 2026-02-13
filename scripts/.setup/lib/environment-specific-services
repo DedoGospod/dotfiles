@@ -8,6 +8,7 @@ configure_arch_timers() {
     fi
 
     log "Arch detected: Installing systemd units..."
+    run_task "Enabling paccache.timer" sudo systemctl enable --now paccache.timer
     run_task "Enabling aur-trim.timer" systemctl --user enable --now aur-trim.timer
     
 }
