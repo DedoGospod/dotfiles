@@ -64,7 +64,6 @@ gm() {
 
 # Custom Snapper manual snapshot function
 snapper-create() {
-    # Define some colors
     local RED='\033[0;31m'
     local CYAN='\033[0;36m'
     local GREEN='\033[0;32m'
