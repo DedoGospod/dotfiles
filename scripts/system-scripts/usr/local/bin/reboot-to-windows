@@ -1,38 +1,44 @@
 #!/usr/bin/env bash
 
-# Dynamically find the GRUB index for Windows
-WINDOWS_INDEX=$(grep -i "^menuentry" /boot/grub/grub.cfg | cut -d"'" -f2 | grep -ni "Windows" | cut -d":" -f1)
+LIB_FOLDER="$HOME/.local/lib/snippets/"
+# shellcheck source=/dev/null
+source "$LIB_FOLDER/logs"
 
-# GRUB indices are 0-based, so we subtract 1 from the line number found
-if [ -n "$WINDOWS_INDEX" ]; then
-    WINDOWS_INDEX=$((WINDOWS_INDEX - 1))
-    echo "Found Windows at GRUB index: $WINDOWS_INDEX"
+# Ensure the script is running with root privileges
+if [[ $EUID -ne 0 ]]; then
+   error "This script must be run with sudo or as root."
+   exit 1
+fi
+
+log "Searching for Windows boot entries..."
+
+# Attempt to find the exact Menu Entry String
+WINDOWS_ENTRY=$(grep -iP "menuentry '.*Windows.*'" /boot/grub/grub.cfg | head -n 1 | cut -d"'" -f2)
+
+if [[ -n "$WINDOWS_ENTRY" ]]; then
+    log "Found GRUB entry: $WINDOWS_ENTRY"
+    grub-reboot "$WINDOWS_ENTRY"
+    BOOT_METHOD_LOADED=true
 else
-    echo "Could not find Windows in /boot/grub/grub.cfg"
+    error "Could not find Windows in grub.cfg"
 fi
 
-# Try grub-reboot
-if [ -n "$WINDOWS_INDEX" ]; then
-    sudo grub-reboot "$WINDOWS_INDEX" || {
-        echo "grub-reboot failed, trying grub-editenv..."
-        sudo grub-editenv /boot/grub/grubenv set next_entry="$WINDOWS_INDEX"
-    }
-fi
+# Fallback/Parallel: Set EFI BootNext (Direct UEFI bypass)
+WINDOWS_BOOTNUM=$(efibootmgr | grep -i "Windows Boot Manager" | sed -n 's/Boot\([0-9A-F]\{4\}\).*/\1/p' | head -n 1)
 
-# Fallback to efibootmgr (UEFI direct boot)
-WINDOWS_BOOTNUM=$(sudo efibootmgr | grep -i "Windows Boot Manager" | sed -n 's/Boot\([0-9A-F]\{4\}\).*/\1/p')
-
-if [ -n "$WINDOWS_BOOTNUM" ]; then
-    echo "Setting EFI BootNext to: $WINDOWS_BOOTNUM"
-    sudo efibootmgr --bootnext "$WINDOWS_BOOTNUM"
+if [[ -n "$WINDOWS_BOOTNUM" ]]; then
+    log "Setting EFI BootNext to: $WINDOWS_BOOTNUM"
+    efibootmgr --bootnext "$WINDOWS_BOOTNUM" --quiet
+    BOOT_METHOD_LOADED=true
 else
-    echo "No Windows UEFI entry found."
+    error "No Windows UEFI entry found."
 fi
 
-# Final check: Only reboot if one of the methods succeeded
-if [ -z "$WINDOWS_INDEX" ] && [ -z "$WINDOWS_BOOTNUM" ]; then
-    echo "Error: Could not identify Windows boot entry. Aborting reboot."
+# Final Execution
+if [[ "$BOOT_METHOD_LOADED" = true ]]; then
+    log "Rebooting to Windows now..."
+    reboot
+else
+    error "No Windows boot methods succeeded. Aborting."
     exit 1
 fi
-
-sudo reboot -h now
