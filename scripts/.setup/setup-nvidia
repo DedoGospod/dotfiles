@@ -84,11 +84,19 @@ else
 fi
 
 # Enable NVIDIA KMS in grub
+GRUB_FILE="/etc/default/grub"
+PARAM="nvidia-drm.modeset=1 nvidia-drm.fbdev=1"
+
 if [[ -d "/boot/grub" ]] || command -v grub-install >/dev/null; then
-    log_task "Adding nvidia kernel peramaters to grub"
-    sudo sed -i '/GRUB_CMDLINE_LINUX_DEFAULT/ s/"$/ nvidia-drm.modeset=1 nvidia-drm.fbdev=1"/' /etc/default/grub
-    touch /tmp/reboot_required
-    ok
+    if grep -q "$PARAM" "$GRUB_FILE"; then
+        log_task "NVIDIA KMS parameters already set in $GRUB_FILE"
+        ok
+    else
+        log_task "Adding nvidia kernel parameters to grub"
+        sudo sed -i "/GRUB_CMDLINE_LINUX_DEFAULT/ s/\"$/ $PARAM\"/" "$GRUB_FILE"
+        touch /tmp/reboot_required
+        ok
+    fi
 else
     fail
     exit 1
