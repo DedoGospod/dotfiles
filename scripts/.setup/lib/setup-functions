@@ -86,16 +86,20 @@ check_if_root() {
 }
 
 keep_sudo_alive() {
-    # Ask for the password upfront
+    # Update the timestamp immediately (prompts for password if needed)
     sudo -v
 
-    # Update existing sudo time stamp until the script has finished
+    # Create a background loop that updates the timestamp every 60s
     while true; do
-        sudo -n true
+        sudo -n -v
         sleep 60
-        # Kill the loop if the parent process (the main script) is no longer running
-        kill -0 "$$" || exit
     done 2>/dev/null &
+
+    # Capture the PID of the background loop
+    local SUDO_PID=$!
+
+    # Set a trap to kill the loop when the script exits (or receives a signal)
+    trap 'kill "$SUDO_PID" 2>/dev/null' EXIT
 }
 
 # ==============================================================================
