@@ -62,7 +62,7 @@ alias yay='paru'             # Use paru as yay alternative
 # Apps
 alias y='yazi'                                         # Use Yazi as a terminal file manager
 alias top='btop'                                       # Modern system monitor
-alias cat'bat'                                         # Cat alternative
+alias cat='bat'                                         # Cat alternative
 alias cls='clear'                                      # Clear screen
 alias kssh='kitty +kitten ssh'                         # SSH with kitty terminal features
 
