@@ -1,44 +1,34 @@
 #!/usr/bin/env bash
 
+# Request sudo upfront
+sudo -v
+
+# Import logs
 LIB_FOLDER="$HOME/.local/lib/snippets/"
 # shellcheck source=/dev/null
 source "$LIB_FOLDER/logs"
 
-# Ensure the script is running with root privileges
-if [[ $EUID -ne 0 ]]; then
-   error "This script must be run with sudo or as root."
-   exit 1
+# Automatically find thew windows index
+WINDOWS_INDEX=$(grep -i "^menuentry" /boot/grub/grub.cfg | cut -d"'" -f2 | grep -ni "Windows" | cut -d":" -f1)
+
+# Try grub-reboot first
+sudo grub-reboot "$WINDOWS_INDEX" || {
+    warn "grub-reboot failed, trying grub-editenv..."
+    sudo grub-editenv /boot/grub/grubenv set next_entry="$WINDOWS_INDEX"
+}
+
+# Fallback to efibootmgr if GRUB fails
+if ! sudo efibootmgr | grep -q "Windows"; then
+    warn "No Windows UEFI entry found."
+else
+    WINDOWS_BOOTNUM=$(sudo efibootmgr | grep "Windows" | sed 's/Boot\([0-9A-F]*\).*/\1/')
+    sudo efibootmgr --bootnext "$WINDOWS_BOOTNUM"
 fi
 
-log "Searching for Windows boot entries..."
-
-# Attempt to find the exact Menu Entry String
-WINDOWS_ENTRY=$(grep -iP "menuentry '.*Windows.*'" /boot/grub/grub.cfg | head -n 1 | cut -d"'" -f2)
-
-if [[ -n "$WINDOWS_ENTRY" ]]; then
-    log "Found GRUB entry: $WINDOWS_ENTRY"
-    grub-reboot "$WINDOWS_ENTRY"
-    BOOT_METHOD_LOADED=true
+# Execution
+read -rp "Reboot to Windows now? (y/N): " confirm
+if [[ "$confirm" =~ ^[yY] ]]; then
+    sudo reboot
 else
-    error "Could not find Windows in grub.cfg"
-fi
-
-# Fallback/Parallel: Set EFI BootNext (Direct UEFI bypass)
-WINDOWS_BOOTNUM=$(efibootmgr | grep -i "Windows Boot Manager" | sed -n 's/Boot\([0-9A-F]\{4\}\).*/\1/p' | head -n 1)
-
-if [[ -n "$WINDOWS_BOOTNUM" ]]; then
-    log "Setting EFI BootNext to: $WINDOWS_BOOTNUM"
-    efibootmgr --bootnext "$WINDOWS_BOOTNUM" --quiet
-    BOOT_METHOD_LOADED=true
-else
-    error "No Windows UEFI entry found."
-fi
-
-# Final Execution
-if [[ "$BOOT_METHOD_LOADED" = true ]]; then
-    log "Rebooting to Windows now..."
-    reboot
-else
-    error "No Windows boot methods succeeded. Aborting."
-    exit 1
+    log "Staged. Your next manual reboot will go to Windows."
 fi
