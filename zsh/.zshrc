@@ -35,8 +35,15 @@ eval "$(starship init zsh)"  # Custom shell prompt
 eval "$(zoxide init zsh)"    # Initialize zoxide
 
 # Source functions
-functions_file="${XDG_CONFIG_HOME:-$HOME/.config}/zsh/functions.zsh"
-[[ -f "$functions_file" ]] && source "$functions_file"
+typeset -r functions_dir="${XDG_CONFIG_HOME:-$HOME/.config}/zsh/functions.d"
+if [[ -d "$functions_dir" ]]; then
+  for func_file in "$functions_dir"/*.zsh(N.); do
+    source "$func_file"
+  done
+fi
+
+# Clean up the local loop variable
+unset func_file
 
 # File and directory searching
 export FZF_CTRL_T_COMMAND='fd --hidden --exclude .git'                                                          # File search
@@ -87,6 +94,6 @@ alias gd='git diff HEAD'
 
 # Configs
 alias zshrc='nvim ~/.zshrc'                            # Edit zsh config
-alias zshfunc='nvim ~/.config/zsh/functions.zsh'       # Edit zsh functions
+alias zshfunc='cd ~/.config/zsh/functions.d && ls'     # Edit zsh functions
 alias hypr='nvim ~/.config/hypr/hyprland.conf'         # Edit Hyprland config
 alias grub='sudoedit /etc/default/grub'                # Edit GRUB config
