@@ -94,5 +94,5 @@ snapper-create() {
     fi
 
     sudo snapper -c root create --description "$1" --cleanup-algorithm number
-    echo -e "${GREEN}Snapshot created:${NC} $1"
+    success "Snapshot created: $1"
 }
