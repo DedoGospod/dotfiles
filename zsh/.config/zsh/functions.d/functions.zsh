@@ -28,7 +28,7 @@ snapper-create() {
 extract() {
   if [[ $# -ne 1 ]]; then
     error "Please provide a file"
-    usage "Usage: extract <file_name>" >&2
+    usage "extract <file_name>" >&2
     return 1
   fi
 
@@ -57,8 +57,8 @@ tldr() {
     if [[ -n "$1" ]]; then
         command tldr "$@" | nvim -R -c "set ft=help" -
     else
-        error  "Please provide a command"
-        usage " tldr <package>"
+        error "Please provide a command"
+        usage "tldr <package>"
         return 1
     fi
 }
