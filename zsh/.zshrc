@@ -62,13 +62,15 @@ alias yay='paru'             # Use paru as yay alternative
 # Apps
 alias y='yazi'                                         # Use Yazi as a terminal file manager
 alias top='btop'                                       # Modern system monitor
+alias cat'bat'                                         # Cat alternative
 alias cls='clear'                                      # Clear screen
 alias kssh='kitty +kitten ssh'                         # SSH with kitty terminal features
 
 # Files
-alias ls='eza -1 --icons --group-directories-first'
-alias ll='eza -l --group-directories-first'           # Long listing
-alias llh='eza -lA --group-directories-first'         # Long listing + show hidden
+alias ls='eza -1 --icons --git --group-directories-first'
+alias ll='eza -lh --icons --git --group-directories-first'
+alias llh='eza -lhA --icons --git --group-directories-first'  # Long listing + show hidden
+alias lt='eza --tree --level=2 --icons --group-directories-first' # 
 alias lsh='ls -A'           # Show all files including hidden
 alias cp='cp -i'            # Interactive copy
 alias mv='mv -i'            # Interactive move
