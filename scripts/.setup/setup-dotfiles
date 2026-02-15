@@ -22,6 +22,25 @@ log_task() { echo -ne "${GREEN}[INFO]${NC} $1... "; }
 ok() { echo -e "${GREEN}Done.${NC}"; }
 fail() { echo -e "${RED}Failed.${NC}"; }
 
+sync_assets() {
+    local src_dir="$1"
+    local target_dir="$2"
+    local mode="$3"
+
+    if [[ -d "$src_dir" ]]; then
+        for src_file in "$src_dir"/*; do
+            if [[ -f "$src_file" ]]; then
+                local filename
+                filename=$(basename "$src_file")
+                local target="$target_dir/$filename"
+
+                log_task "Syncing: $target (mode: $mode)"
+                if sudo install -Dm "$mode" "$src_file" "$target"; then ok; else fail; fi
+            fi
+        done
+    fi
+}
+
 # Stow Packages
 STOW_FOLDERS=(
     backgrounds kwalletrc fastfetch wayland-pipewire-idle-inhibit hypr kitty
@@ -33,17 +52,17 @@ STOW_FOLDERS=(
 DOTFILES_DIR="$HOME/dotfiles"
 header "DOTFILE CONFIGURATION"
 
-if [ -d "$DOTFILES_DIR" ]; then
+if [[ -d "$DOTFILES_DIR" ]]; then
     log "Stowing dotfiles..."
     cd "$DOTFILES_DIR"
 
-    if [ -d "scripts/user-scripts" ]; then
+    if [[ -d "scripts/user-scripts" ]]; then
         log_task "Stowing user scripts"
         if stow -d "scripts" -t "$HOME" --restow user-scripts; then ok; else fail; fi
     fi
 
     for folder in "${STOW_FOLDERS[@]}"; do
-        if [ -d "$folder" ]; then
+        if [[ -d "$folder" ]]; then
             log_task "Stowing $folder"
             if stow -t "$HOME" --restow "$folder"; then ok; else fail; fi
         else
@@ -52,47 +71,35 @@ if [ -d "$DOTFILES_DIR" ]; then
     done
     cd - >/dev/null
 
-    # Sync system-level files
-    CONFIGS_SRC="$DOTFILES_DIR/system-files"
+    if [[ -d "$DOTFILES_DIR" ]]; then
 
-    # Format: "source|target|mode"
-    FILES_TO_SYNC=(
-        "$CONFIGS_SRC/root|/etc/snapper/configs/root|644"
-        "$CONFIGS_SRC/snap-pac.ini|/etc/snap-pac.ini|644"
-        "$CONFIGS_SRC/orphan-check.hook|/etc/pacman.d/hooks/orphan-check.hook|755"
+        # Sync System Binaries (Executables)
+        header "SYNCING SYSTEM BINARIES"
+        sync_assets "$DOTFILES_DIR/scripts/system-scripts/usr/local/bin" "/usr/local/bin" "755"
 
-    )
+        # Sync System Libraries (Data/Dependencies)
+        header "SYNCING SYSTEM LIBRARIES"
+        sync_assets "$DOTFILES_DIR/scripts/system-scripts/usr/local/lib/systemd-scripts" "/usr/local/lib/systemd-scripts" "755"
 
-    # Dynamically sync all system scripts to usr/local/bin
-    SCRIPTS_SRC="$DOTFILES_DIR/scripts/system-scripts/usr/local/bin"
-    if [[ -d "$SCRIPTS_SRC" ]]; then
-        for src_file in "$SCRIPTS_SRC"/*; do
-            if [ -f "$src_file" ]; then
-                filename=$(basename "$src_file")
-                target="/usr/local/bin/$filename"
-                
-                log_task "Syncing script: $target (mode: 755)"
-                if sudo install -Dm 755 "$src_file" "$target"; then ok; else fail; fi
+        # Sync Specific System Files
+        header "SYNCING CONFIGURATION FILES"
+        CONFIGS_SRC="$DOTFILES_DIR/system-files"
+        FILES_TO_SYNC=(
+            "$CONFIGS_SRC/root|/etc/snapper/configs/root|644"
+            "$CONFIGS_SRC/snap-pac.ini|/etc/snap-pac.ini|644"
+            "$CONFIGS_SRC/orphan-check.hook|/etc/pacman.d/hooks/orphan-check.hook|755"
+        )
+
+        for entry in "${FILES_TO_SYNC[@]}"; do
+            IFS='|' read -r src target mode <<<"$entry"
+            if [ -f "$src" ]; then
+                mode=${mode:-644}
+                log_task "Syncing $target (mode: $mode)"
+                if sudo install -Dm "$mode" "$src" "$target"; then ok; else fail; fi
+            else
+                warn "Source file missing: $src"
             fi
         done
     fi
-
-
-    for entry in "${FILES_TO_SYNC[@]}"; do
-        IFS='|' read -r src target mode <<<"$entry"
-
-        if [ -f "$src" ]; then
-            mode=${mode:-644}
-
-            log_task "Syncing $target (mode: $mode)"
-            if sudo install -Dm "$mode" "$src" "$target"; then
-                ok
-            else
-                fail
-            fi
-        else
-            warn "Source file missing: $src"
-        fi
-    done
 
 fi
