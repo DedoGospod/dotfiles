@@ -67,10 +67,10 @@ alias cls='clear'                                      # Clear screen
 alias kssh='kitty +kitten ssh'                         # SSH with kitty terminal features
 
 # Files
-alias ls='eza -1 --icons --git --group-directories-first'
-alias ll='eza -lh --icons --git --group-directories-first'
-alias llh='eza -lhA --icons --git --group-directories-first'  # Long listing + show hidden
-alias lt='eza --tree --level=2 --icons --group-directories-first' # 
+alias ls='eza -1 --icons --git --group-directories-first --time-style=long-iso'
+alias ll='ls -lh'           # Long listing
+alias llh='ls -lhA'         # Long listing + show hidden
+alias lt='ls -TL=2'         # List in tree format for 2 levels
 alias lsh='ls -A'           # Show all files including hidden
 alias cp='cp -i'            # Interactive copy
 alias mv='mv -i'            # Interactive move
@@ -78,8 +78,8 @@ alias rm='trash -v'         # Safe delete using trash-cli
 alias mkdir='mkdir -p'      # Create parent directories automatically
 alias h='fc -nil 1 | grep'  # Search history for a specific terminal command
 alias hist="fc -nil 1"      # Always show history with readable dates
-alias du='du -h'           
-alias df='df -h'
+alias du='du -h'            #
+alias df='df -h'            #
 
 # Github
 alias git-reset-hard='git reset --hard origin/main'
