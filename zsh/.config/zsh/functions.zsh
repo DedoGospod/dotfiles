@@ -96,3 +96,30 @@ snapper-create() {
     sudo snapper -c root create --description "$1" --cleanup-algorithm number
     success "Snapshot created: $1"
 }
+
+extract() {
+  if [[ $# -ne 1 ]]; then
+    error "Please provide a file"
+    usage "Usage: extract <file_name>" >&2
+    return 1
+  fi
+
+  if [[ -f "$1" ]]; then
+    case "${1:l}" in # :l converts to lowercase for case-insensitive matching
+      *.tar.bz2|*.tbz2) tar xjf "$1"    ;;
+      *.tar.gz|*.tgz)   tar xzf "$1"    ;;
+      *.bz2)            bunzip2 "$1"    ;;
+      *.rar)            unrar x "$1"    ;;
+      *.gz)             gunzip "$1"     ;;
+      *.tar)            tar xf "$1"     ;;
+      *.zip)            unzip "$1"      ;;
+      *.Z)              uncompress "$1" ;;
+      *.7z)             7z x "$1"       ;;
+      *)                print "Error: '$1' cannot be extracted via extract()" >&2
+                        return 1 ;;
+    esac
+  else
+    print "Error: '$1' is not a valid file" >&2
+    return 1
+  fi
+}
