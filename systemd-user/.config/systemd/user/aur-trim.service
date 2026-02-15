@@ -6,4 +6,4 @@ ConditionDirectoryNotEmpty=%h/.cache/paru/clone
 [Service]
 Type=oneshot
 IOSchedulingClass=idle
-ExecStart=/usr/local/bin/paru-aur-trim
+ExecStart=/usr/local/lib/systemd-scripts/paru-aur-trim
