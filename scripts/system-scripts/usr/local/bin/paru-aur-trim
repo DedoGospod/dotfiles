@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+# Clean paru clone directories, keeping last 3 versions
+
+# Senior Lead Dev Note: Use XDG variables for consistency
+CACHE_DIR="${XDG_CACHE_HOME:-$HOME/.cache}/paru/clone"
+TOTAL_REMOVED=0
+
+# Ensure the directory exists before proceeding
+[[ -d "$CACHE_DIR" ]] || exit 0
+
+# Use nullglob so the loop doesn't run if the directory is empty
+shopt -s nullglob
+
+# Iterate and capture paccache output
+for d in "$CACHE_DIR"/*/; do
+    # Run paccache and extract the number of removed packages
+    output=$(paccache -rk3 -q -c "$d" 2>&1)
+    
+    # Simple regex to find the number of removed files in the output
+    count=$(echo "$output" | grep -oP '\d+(?= candidate packages found)')
+    if [[ -n "$count" ]]; then
+        (( TOTAL_REMOVED += count ))
+    fi
+done
+
+# Send notification if items were cleared
+if (( TOTAL_REMOVED > 0 )); then
+    notify-send -a "AUR Maintenance" \
+                -i "user-trash" \
+                "Cache Trimmed" \
+                "Successfully removed $TOTAL_REMOVED stale AUR packages from cache."
+else
+    notify-send -t 1500 "AUR Maintenance" "✅ AUR cache is clean"
+fi
