@@ -53,23 +53,31 @@ if [ -d "$DOTFILES_DIR" ]; then
     cd - >/dev/null
 
     # Sync system-level files
-    SCRIPTS_SRC="$DOTFILES_DIR/scripts/system-scripts/usr/local/bin"
     CONFIGS_SRC="$DOTFILES_DIR/system-files"
-
-    # SYSTEMD_SYSTEM="/etc/systemd/system"
 
     # Format: "source|target|mode"
     FILES_TO_SYNC=(
-        "$SCRIPTS_SRC/reboot-to-windows|/usr/local/bin/reboot-to-windows|755"
-        "$SCRIPTS_SRC/check-units|/usr/local/bin/check-units|755"
-        "$SCRIPTS_SRC/check-orphans|/usr/local/bin/check-orphans|755"
-
         "$CONFIGS_SRC/root|/etc/snapper/configs/root|644"
         "$CONFIGS_SRC/snap-pac.ini|/etc/snap-pac.ini|644"
         "$CONFIGS_SRC/orphan-check.hook|/etc/pacman.d/hooks/orphan-check.hook|755"
 
     )
-    
+
+    # Dynamically sync all system scripts to usr/local/bin
+    SCRIPTS_SRC="$DOTFILES_DIR/scripts/system-scripts/usr/local/bin"
+    if [[ -d "$SCRIPTS_SRC" ]]; then
+        for src_file in "$SCRIPTS_SRC"/*; do
+            if [ -f "$src_file" ]; then
+                filename=$(basename "$src_file")
+                target="/usr/local/bin/$filename"
+                
+                log_task "Syncing script: $target (mode: 755)"
+                if sudo install -Dm 755 "$src_file" "$target"; then ok; else fail; fi
+            fi
+        done
+    fi
+
+
     for entry in "${FILES_TO_SYNC[@]}"; do
         IFS='|' read -r src target mode <<<"$entry"
 
