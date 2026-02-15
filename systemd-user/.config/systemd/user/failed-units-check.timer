@@ -2,6 +2,7 @@
 Description=Daily systemd failed units check
 
 [Timer]
+OnBootSec=2min
 OnCalendar=daily
 RandomizedDelaySec=30s
 Persistent=true
