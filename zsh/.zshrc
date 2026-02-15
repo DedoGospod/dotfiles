@@ -17,6 +17,7 @@ setopt inc_append_history                        # Save commands to history imme
 setopt share_history                             # Sync history across sessions
 setopt extended_history                          # Save timestamps
 setopt hist_ignore_all_dups                      # Avoid saving any duplicate commands entirely
+setopt hist_ignore_space                         # If you type a command with a leading space (e.g a command containing an API key or password), Zsh should arguably not record it.
 
 # ======================
 # Shell Initialization
@@ -34,7 +35,8 @@ eval "$(starship init zsh)"  # Custom shell prompt
 eval "$(zoxide init zsh)"    # Initialize zoxide
 
 # Source functions
-source "${XDG_CONFIG_HOME:-$HOME/.config}/zsh/functions.zsh"
+functions_file="${XDG_CONFIG_HOME:-$HOME/.config}/zsh/functions.zsh"
+[[ -f "$functions_file" ]] && source "$functions_file"
 
 # File and directory searching
 export FZF_CTRL_T_COMMAND='fd --hidden --exclude .git'                                                          # File search
@@ -52,11 +54,9 @@ bindkey -s '^Z' 'zi\n'
 # System
 alias sudo='sudo '                # Always use sudo explicitly
 alias rb='reboot'                 # Reboot system
-alias updatemirrors='sudo reflector --verbose --country $(curl -s https://ipinfo.io/country | tr -d "\n") --protocol https --score 5 --sort rate --save /etc/pacman.d/mirrorlist'
-alias update-grub="grub-mkconfig -o /boot/grub/grub.cfg"
+alias update-grub="grub-mkconfig -o /boot/grub/grub.cfg" # Update grub
 
 # Package Management
-alias pacman='sudo pacman'   # Always use sudo with pacman
 alias yay='paru'             # Use paru as yay alternative
 
 # Apps
@@ -64,12 +64,11 @@ alias y='yazi'                                         # Use Yazi as a terminal 
 alias top='btop'                                       # Modern system monitor
 alias cls='clear'                                      # Clear screen
 alias kssh='kitty +kitten ssh'                         # SSH with kitty terminal features
-alias cat='bat'                                        # Use bat instead of cat
 
 # Files
-alias ls='ls -1 --color=always --group-directories-first'  # Colorized ls output
-alias ll='eza -l --group-directories-first'                # Long listing
-alias llh='eza -lA --group-directories-first'              # Long listing + show hidden
+alias ls='eza -1 --icons --group-directories-first'
+alias ll='eza -l --group-directories-first'           # Long listing
+alias llh='eza -lA --group-directories-first'         # Long listing + show hidden
 alias lsh='ls -A'           # Show all files including hidden
 alias cp='cp -i'            # Interactive copy
 alias mv='mv -i'            # Interactive move
