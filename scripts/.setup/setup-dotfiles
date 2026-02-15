@@ -88,5 +88,3 @@ if [ -d "$DOTFILES_DIR" ]; then
     done
 
 fi
-
-
