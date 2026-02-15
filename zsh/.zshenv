@@ -25,16 +25,12 @@ export SUDO_EDITOR="$EDITOR"          # Editor for sudo operations
 export VISUAL="$EDITOR"               # Set VISUAL to nvim for applications that prefer this
 export MANPAGER='nvim +Man!'          # Use Neovim for man pages
 
-# Executable search paths
-export PATH="$HOME/.local/bin:$PATH"  # User scripts and local binaries
-export PATH="$CARGO_HOME/bin:$PATH"   # Rust/Cargo binaries (XDG compliant)
-
-# Configure path
+# Ensure path contains unique entries and is exported
 typeset -Ugx path
+
+# Single source of truth for binary paths
 path=(
   "$HOME/.local/bin"
-  "$CARGO_HOME/bin"
+  "${CARGO_HOME:-$HOME/.cargo}/bin"
   $path
 )
-# Export the tied PATH string so other apps can see it
-export PATH
