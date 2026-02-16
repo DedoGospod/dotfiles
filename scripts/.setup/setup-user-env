@@ -75,12 +75,12 @@ if command -v zsh >/dev/null 2>&1; then
 fi
 
 # Tmux Plugin Manager
-TPM_PATH="$HOME/.tmux/plugins/tpm"
+TPM_PATH="$HOME/.local/share/tmux/plugins/tpm"
 if command -v tmux >/dev/null 2>&1; then
-    TPM_PATH="${TPM_PATH:-$HOME/.tmux/plugins/tpm}"
+    mkdir -p "$HOME/.local/share/tmux/plugins"
 
     if [[ ! -d "$TPM_PATH" ]]; then
-        log_task "Installing TPM"
+        log_task "Installing TPM to XDG path"
         if git clone --depth 1 https://github.com/tmux-plugins/tpm "$TPM_PATH"; then ok; else fail; fi
     else
         log_task "TPM already installed."
