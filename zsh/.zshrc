@@ -1,13 +1,18 @@
+# .zshrc (Interactive Shells): Sourced only for interactive shell instances.
+# This is the place for terminal UI/UX: aliases, prompts, completion systems, 
+# syntax highlighting, and interactive function definitions.
+
 # ======================
 # ZSH Configuration
 # ======================
 
 # Initialize ZSH completion system
+zmodload zsh/complist
 autoload -Uz compinit
-if [[ -n "$ZSH_COMPDUMP(#qN.m-1)" ]]; then
-  compinit -C -d "$ZSH_COMPDUMP"
+if [[ -n "${ZSH_COMPDUMP}(#qN.m-1)" ]]; then
+    compinit -C -d "$ZSH_COMPDUMP"
 else
-  compinit -d "$ZSH_COMPDUMP"
+    compinit -d "$ZSH_COMPDUMP"
 fi
 
 # History settings configured to be XDG-compliant
@@ -19,40 +24,54 @@ setopt extended_history                          # Save timestamps
 setopt hist_ignore_all_dups                      # Avoid saving any duplicate commands entirely
 setopt hist_ignore_space                         # If you type a command with a leading space (e.g a command containing an API key or password), Zsh should arguably not record it.
 
+# Quality of life zsh options
+setopt autocd                                    # Change directory by typing the name
+setopt interactivecomments                       # Allow comments in interactive shell
+setopt magicequalsubst                           # Filename expansion for arguments after =
+
 # ======================
 # Shell Initialization
 # ======================
 
-# Load plugins with existence checks to prevent errors
-plugin_dir="/usr/share/zsh/plugins"
-[ -f "$plugin_dir/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ] && \
-    source "$plugin_dir/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
-[ -f "$plugin_dir/zsh-autosuggestions/zsh-autosuggestions.zsh" ] && \
-    source "$plugin_dir/zsh-autosuggestions/zsh-autosuggestions.zsh"
+# Load plugins via loop to maintain readability and prevent exit on failure
+typeset -a plugins=(
+    "/usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+    "/usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh"
+)
+for plugin in $plugins; do
+    [[ -f "$plugin" ]] && source "$plugin"
+done
 
-# Initialize tools
-eval "$(starship init zsh)"  # Custom shell prompt 
-eval "$(zoxide init zsh)"    # Initialize zoxide
+# Initialize tools only if binary exists
+(( $+commands[starship] )) && eval "$(starship init zsh)"
+(( $+commands[zoxide] )) && eval "$(zoxide init zsh)"
 
 # Source functions
-typeset -r functions_dir="${XDG_CONFIG_HOME:-$HOME/.config}/zsh/functions.d"
+typeset -U fpath 
+functions_dir="${XDG_CONFIG_HOME:-$HOME/.config}/zsh/functions.d"
 if [[ -d "$functions_dir" ]]; then
-  for func_file in "$functions_dir"/*.zsh(N.); do
-    source "$func_file"
-  done
+    fpath=("$functions_dir" $fpath)
+    autoload -Uz "$functions_dir"/*(N.:t)
 fi
 
-# Clean up the local loop variable
-unset func_file
-
 # File and directory searching
-export FZF_CTRL_T_COMMAND='fd --hidden --exclude .git'                                                          # File search
-export FZF_CTRL_T_OPTS=" --preview='bat --color=always --line-range :500 {}' --bind 'enter:execute(nvim {})'"   # Add preview and colors to file search
-bindkey -s '^Z' 'zi\n'
+if (( $+commands[fzf] )); then
+    # Source fzf Integration
+    [[ -f /usr/share/fzf/key-bindings.zsh ]] && source /usr/share/fzf/key-bindings.zsh
+    [[ -f /usr/share/fzf/completion.zsh ]] && source /usr/share/fzf/completion.zsh
 
-# FZF key bindings and completion
-[ -f /usr/share/fzf/key-bindings.zsh ] && source /usr/share/fzf/key-bindings.zsh
-[ -f /usr/share/fzf/completion.zsh ] && source /usr/share/fzf/completion.zsh
+    # Configure FD as the engine
+    if (( $+commands[fd] )); then
+        export FZF_DEFAULT_COMMAND='fd --hidden --exclude .git'
+        export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+        export FZF_CTRL_T_OPTS="--preview 'bat --color=always --line-range :500 {}' --bind 'enter:execute(nvim {})'"
+    fi
+
+    # Zoxide Interactive (zi)
+    if (( $+commands[zoxide] )); then
+        bindkey -s '^Z' 'zi\n'
+    fi
+fi
 
 # ======================
 # Aliases 
@@ -83,7 +102,7 @@ alias cp='cp -i'            # Interactive copy
 alias mv='mv -i'            # Interactive move
 alias rm='trash -v'         # Safe delete using trash-cli
 alias mkdir='mkdir -p'      # Create parent directories automatically
-alias h='fc -nil 1 | grep'  # Search history for a specific terminal command
+alias h='fc -nil 1 | grep --color=auto' # Search history for a specific terminal command
 alias hist="fc -nil 1"      # Always show history with readable dates
 alias du='du -h'            #
 alias df='df -h'            #
@@ -93,7 +112,7 @@ alias git-reset-hard='git reset --hard origin/main'
 alias gd='git diff HEAD'
 
 # Configs
-alias zshrc='nvim ~/.zshrc'                            # Edit zsh config
-alias zshfunc='cd ~/.config/zsh/functions.d && ls'     # Edit zsh functions
+alias zshrc='nvim ~/.zshrc && source ~/.zshrc'         # Edit zsh config
+alias zshfunc="cd $functions_dir && ls"                # Edit zsh functions
 alias hypr='nvim ~/.config/hypr/hyprland.conf'         # Edit Hyprland config
 alias grub='sudoedit /etc/default/grub'                # Edit GRUB config
