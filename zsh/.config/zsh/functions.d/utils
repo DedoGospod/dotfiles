@@ -1,0 +1,64 @@
+#!/usr/bin/env zsh
+
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+RED='\033[0;31m'
+CYAN='\033[0;36m'
+NC='\033[0m'
+
+warn()    { echo -e "${YELLOW}[WARN]${NC} $1"; }
+error()   { echo -e "${RED}[ERROR]${NC} $1"; }
+usage()   { echo -e "${CYAN}[Usage]${NC} $1"; } 
+success() { echo -e "${GREEN}[SUCCESS]${NC} $1"; }
+
+# Custom Snapper manual snapshot function
+snapper-create() {
+    if [[ -z "$1" ]]; then
+        error "Please provide a description."
+        usage "snapper-create <description>"
+        return 1
+    fi
+
+    sudo snapper -c root create --description "$1" --cleanup-algorithm number
+    success "Snapshot created: $1"
+}
+
+# Extract any common compressed file types
+extract() {
+  if [[ $# -eq 0 ]]; then
+    error "Please provide at least one file"
+    usage "extract <file1> <file2> ..." >&2
+    return 1
+  fi
+
+  # Iterate through every file passed to the function
+  for file in "$@"; do
+    if [[ -f "$file" ]]; then
+      case "${file:l}" in
+        *.tar.bz2|*.tbz2) tar xjf "$file"    ;;
+        *.tar.gz|*.tgz)   tar xzf "$file"    ;;
+        *.bz2)            bunzip2 "$file"    ;;
+        *.rar)            unrar x "$file"    ;;
+        *.gz)             gunzip "$file"     ;;
+        *.tar)            tar xf "$file"     ;;
+        *.zip)            unzip "$file"      ;;
+        *.Z)              uncompress "$file" ;;
+        *.7z)             7z x "$file"       ;;
+        *)                error "'$file' cannot be extracted via extract()" >&2 ;;
+      esac
+    else
+      error "'$file' is not a valid file" >&2
+    fi
+  done
+}
+
+# Open tldr manual in neovim
+tldr() {
+    if [[ -n "$1" ]]; then
+        command tldr "$@" | nvim -R -c "set ft=help" -
+    else
+        error "Please provide a command"
+        usage "tldr <package>"
+        return 1
+    fi
+}
