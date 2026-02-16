@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
 
-# sleep 10sec
-sleep 10
-
 sys_failed=$(systemctl --failed --no-legend)
 user_failed=$(systemctl --user --failed --no-legend 2>/dev/null)
 msg=""
