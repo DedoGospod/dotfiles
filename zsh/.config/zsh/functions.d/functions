@@ -25,30 +25,31 @@ snapper-create() {
 
 # Extract any common compressed file types
 extract() {
-  if [[ $# -ne 1 ]]; then
-    error "Please provide a file"
-    usage "extract <file_name>" >&2
+  if [[ $# -eq 0 ]]; then
+    error "Please provide at least one file"
+    usage "extract <file1> <file2> ..." >&2
     return 1
   fi
 
-  if [[ -f "$1" ]]; then
-    case "${1:l}" in # :l converts to lowercase for case-insensitive matching
-      *.tar.bz2|*.tbz2) tar xjf "$1"    ;;
-      *.tar.gz|*.tgz)   tar xzf "$1"    ;;
-      *.bz2)            bunzip2 "$1"    ;;
-      *.rar)            unrar x "$1"    ;;
-      *.gz)             gunzip "$1"     ;;
-      *.tar)            tar xf "$1"     ;;
-      *.zip)            unzip "$1"      ;;
-      *.Z)              uncompress "$1" ;;
-      *.7z)             7z x "$1"       ;;
-      *)                error "'$1' cannot be extracted via extract()" >&2
-                        return 1 ;;
-    esac
-  else
-    error "'$1' is not a valid file" >&2
-    return 1
-  fi
+  # Iterate through every file passed to the function
+  for file in "$@"; do
+    if [[ -f "$file" ]]; then
+      case "${file:l}" in
+        *.tar.bz2|*.tbz2) tar xjf "$file"    ;;
+        *.tar.gz|*.tgz)   tar xzf "$file"    ;;
+        *.bz2)            bunzip2 "$file"    ;;
+        *.rar)            unrar x "$file"    ;;
+        *.gz)             gunzip "$file"     ;;
+        *.tar)            tar xf "$file"     ;;
+        *.zip)            unzip "$file"      ;;
+        *.Z)              uncompress "$file" ;;
+        *.7z)             7z x "$file"       ;;
+        *)                error "'$file' cannot be extracted via extract()" >&2 ;;
+      esac
+    else
+      error "'$file' is not a valid file" >&2
+    fi
+  done
 }
 
 # Open tldr manual in neovim
