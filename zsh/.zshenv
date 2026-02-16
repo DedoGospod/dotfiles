@@ -9,8 +9,9 @@ export XDG_CACHE_HOME="${XDG_CACHE_HOME:-$HOME/.cache}"
 # --- Application Redirects ---
 export CARGO_HOME="${CARGO_HOME:-$XDG_DATA_HOME/cargo}"
 export GNUPGHOME="${GNUPGHOME:-$XDG_DATA_HOME/gnupg}"
-export PATH="$PATH:$GOPATH/bin"
 export PYTHONHISTORY="${PYTHONHISTORY:-$XDG_STATE_HOME/python/history}"
+
+# --- ZSH Specific ---
 export ZSH_COMPDUMP="$XDG_CACHE_HOME/zsh/zcompdump-$ZSH_VERSION"
 export HISTFILE="$XDG_STATE_HOME/zsh/history"
 
@@ -32,6 +33,7 @@ typeset -Ugx path
 # Single source of truth for binary paths
 path=(
   "$HOME/.local/bin"
-  "${CARGO_HOME:-$HOME/.cargo}/bin"
+  "$CARGO_HOME/bin"
+  "${GOPATH:-$HOME/go}/bin"
   $path
 )
