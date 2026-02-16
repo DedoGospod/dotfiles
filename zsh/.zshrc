@@ -24,7 +24,6 @@ setopt extended_history                          # Save timestamps
 setopt hist_ignore_all_dups                      # Avoid saving any duplicate commands entirely
 setopt hist_ignore_space                         # If you type a command with a leading space (e.g a command containing an API key or password), Zsh should arguably not record it.
 
-# Quality of life zsh options
 setopt autocd                                    # Change directory by typing the name
 setopt interactivecomments                       # Allow comments in interactive shell
 setopt magicequalsubst                           # Filename expansion for arguments after =
@@ -47,11 +46,11 @@ done
 (( $+commands[zoxide] )) && eval "$(zoxide init zsh)"
 
 # Source functions
-typeset -U fpath 
 functions_dir="${XDG_CONFIG_HOME:-$HOME/.config}/zsh/functions.d"
 if [[ -d "$functions_dir" ]]; then
-    fpath=("$functions_dir" $fpath)
-    autoload -Uz "$functions_dir"/*(N.:t)
+    for file in "$functions_dir"/*(N.); do
+        source "$file"
+    done
 fi
 
 # File and directory searching
