@@ -56,7 +56,7 @@ PACKAGES=(btrfsmaintenance snapper snapper-rollback snap-pac inotify-tools)
 MISSING_PACKAGES=()
 
 # Ensure /btrfsroot exists and is secure for snapper-rollback
-if [ ! -d "/btrfsroot" ]; then
+if [[ ! -d "/btrfsroot" ]]; then
     log_task "creating /btrfs root for rollbacks"
     sudo mkdir -p /btrfsroot
     sudo chmod 700 /btrfsroot
@@ -89,10 +89,10 @@ btrfs_units=(
 )
 
 # Add bootloader-specific packages for the in use bootloader
-if [ "$BOOTLOADER" == "grub" ]; then
+if [[ "$BOOTLOADER" == "grub" ]]; then
     PACKAGES+=(grub-btrfs)
     btrfs_units+=("grub-btrfsd.service")
-elif [ "$BOOTLOADER" == "limine" ]; then
+elif [[ "$BOOTLOADER" == "limine" ]]; then
     PACKAGES+=(limine-snapper-sync limine-mkinitcpio-hook)
     btrfs_units+=("limine-snapper-watcher.service" "limine-snapper-sync.service")
 fi
