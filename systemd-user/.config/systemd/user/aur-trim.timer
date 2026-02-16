@@ -3,6 +3,7 @@ Description=Weekly trim of paru build cache
 
 [Timer]
 OnCalendar=weekly
+RandomizedDelaySec=30s
 Persistent=true
 
 [Install]
