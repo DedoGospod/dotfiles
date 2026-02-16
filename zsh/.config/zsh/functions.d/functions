@@ -10,7 +10,6 @@ warn()    { echo -e "${YELLOW}[WARN]${NC} $1"; }
 error()   { echo -e "${RED}[ERROR]${NC} $1"; }
 usage()   { echo -e "${CYAN}[Usage]${NC} $1"; } 
 success() { echo -e "${GREEN}[SUCCESS]${NC} $1"; }
-success() { echo -e "${GREEN}[SUCCESS]${NC} $1"; }
 
 # Custom Snapper manual snapshot function
 snapper-create() {
