@@ -7,7 +7,7 @@ FREE_LIMIT=0.2
 
 # --- Permissions ---
 ALLOW_USERS=dylan
-ALLOW_GROUPS=
+ALLOW_GROUPS=wheel
 SYNC_ACL=no
 
 # --- Comparison & Performance ---
