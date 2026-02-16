@@ -126,11 +126,21 @@ xdg_setup() {
     export NPM_CONFIG_USERCONFIG="$XDG_CONFIG_HOME/npm/npmrc"
     export GOPATH="${XDG_DATA_HOME:-$HOME/.local/share}/go"
 
-    log_task "Creating directory structure"
+    # --- Other Shit --- 
+    export CUDA_CACHE_PATH="$XDG_CACHE_HOME/nv"
+    export GTK2_RC_FILES="$XDG_CONFIG_HOME/gtk-2.0/gtkrc"
+
+log_task "Creating directory structure"
     if mkdir -p \
         "$XDG_DATA_HOME" "$XDG_CONFIG_HOME" "$XDG_STATE_HOME" "$XDG_CACHE_HOME" \
+        "${XDG_CONFIG_HOME}/zsh" \
+        "${XDG_CONFIG_HOME}/gtk-2.0" \
         "${XDG_STATE_HOME}/zsh" "${XDG_CACHE_HOME}/zsh" \
-        "${XDG_DATA_HOME}/gnupg" "${XDG_STATE_HOME}/python"; then 
+        "${XDG_CACHE_HOME}/nv" \
+        "${XDG_DATA_HOME}/gnupg" \
+        "${XDG_DATA_HOME}/tmux/plugins" \
+        "${XDG_DATA_HOME}/pki" \
+        "${XDG_STATE_HOME}/python"; then 
         ok
     else 
         fail
