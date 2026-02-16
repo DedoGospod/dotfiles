@@ -19,6 +19,10 @@ export PARALLEL_HOME="$XDG_CONFIG_HOME/parallel"
 export NPM_CONFIG_USERCONFIG="$XDG_CONFIG_HOME/npm/npmrc"
 export GOPATH="${XDG_DATA_HOME:-$HOME/.local/share}/go"
 
+# Other Shit
+export CUDA_CACHE_PATH="$XDG_CACHE_HOME/nv"
+export GTK2_RC_FILES="$XDG_CONFIG_HOME/gtk-2.0/gtkrc"
+
 # Toolkit & Theming
 export QT_QPA_PLATFORMTHEME="qt6ct"
 export QT_QPA_PLATFORM="wayland;xcb"
