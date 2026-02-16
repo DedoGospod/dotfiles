@@ -20,8 +20,8 @@ gsettings set org.gnome.desktop.interface cursor-size $CURSOR_SIZE
 # --- 3. GTK CONFIG GENERATION ---
 mkdir -p ~/.config/gtk-3.0 ~/.config/gtk-4.0
 
-# GTK2 (Flat file, no absolute /home/dylan paths for portability)
-cat <<EOF > ~/.gtkrc-2.0
+# GTK2
+cat <<EOF > ~/.config/gtk-2.0/gtkrc
 gtk-theme-name="$THEME"
 gtk-icon-theme-name="$ICONS"
 gtk-font-name="$FONT"
