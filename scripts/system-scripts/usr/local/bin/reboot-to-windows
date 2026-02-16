@@ -8,16 +8,7 @@ LIB_FOLDER="$HOME/.local/lib/snippets/"
 # shellcheck source=/dev/null
 source "$LIB_FOLDER/logs"
 
-# Automatically find thew windows index
-WINDOWS_INDEX=$(grep -i "^menuentry" /boot/grub/grub.cfg | cut -d"'" -f2 | grep -ni "Windows" | cut -d":" -f1)
-
-# Try grub-reboot first
-sudo grub-reboot "$WINDOWS_INDEX" || {
-    warn "grub-reboot failed, trying grub-editenv..."
-    sudo grub-editenv /boot/grub/grubenv set next_entry="$WINDOWS_INDEX"
-}
-
-# Fallback to efibootmgr if GRUB fails
+# Set next boot to Windows via efibootmgr
 if ! sudo efibootmgr | grep -q "Windows"; then
     warn "No Windows UEFI entry found."
 else
