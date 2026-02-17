@@ -112,8 +112,8 @@ alias git-reset-hard='git reset --hard origin/main'
 alias gd='git diff HEAD'
 
 # Configs
-alias zshrc='nvim ~/.config/zsh/.zshrc && source ~/.config/.zshrc'  # Edit zsh config
-alias zshenv='nvim ~/.zshenv'                                       # Edit zsh env file
-alias zshfunc="cd $functions_dir && ls"                             # Edit zsh functions
-alias hypr='nvim ~/.config/hypr/hyprland.conf'                      # Edit Hyprland config
-alias grub='sudoedit /etc/default/grub'                             # Edit GRUB config
+alias zshrc='nvim ~/.config/zsh/.zshrc && source ~/.config/zsh/.zshrc'  # Edit zsh config
+alias zshenv='nvim ~/.zshenv'                                           # Edit zsh env file
+alias zshfunc="cd $functions_dir && ls"                                 # Edit zsh functions
+alias hypr='nvim ~/.config/hypr/hyprland.conf'                          # Edit Hyprland config
+alias grub='sudoedit /etc/default/grub'                                 # Edit GRUB config
