@@ -23,6 +23,8 @@ export GNUPGHOME="${GNUPGHOME:-$XDG_DATA_HOME/gnupg}"
 export PYTHONHISTORY="${PYTHONHISTORY:-$XDG_STATE_HOME/python/history}"
 export GOPATH="${GOPATH:-$XDG_DATA_HOME/go}"
 
+export PULSE_COOKIE="$XDG_CONFIG_HOME/pulse/cookie"
+
 # Development Frameworks
 export DOTNET_CLI_HOME="$XDG_DATA_HOME/dotnet"
 export NUGET_PACKAGES="$XDG_DATA_HOME/nuget/packages"
