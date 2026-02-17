@@ -56,7 +56,7 @@ ok
 
 # GTK2
 log_task "Writing GTK2 config (~/.gtkrc-2.0)"
-cat <<EOF > ~/.config/gtkrc-2.0/gtkrc
+cat <<EOF > ~/.config/gtk-2.0/gtkrc
 gtk-theme-name="$THEME"
 gtk-icon-theme-name="$ICONS"
 gtk-font-name="$FONT"
