@@ -15,7 +15,7 @@ export SUDO_EDITOR="$EDITOR"
 export VISUAL="$EDITOR"
 export MANPAGER='nvim +Man!'
 
-# Zsh Specific
+# ZSH Specific re-directs
 export ZSH_COMPDUMP="$XDG_CACHE_HOME/zsh/zcompdump-$ZSH_VERSION"
 export HISTFILE="$XDG_STATE_HOME/zsh/history"
 
