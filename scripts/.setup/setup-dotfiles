@@ -103,27 +103,3 @@ if [[ -d "$DOTFILES_DIR" ]]; then
     fi
 
 fi
-
-# Make ZSH XDG compliant
-
-# Set target (and Fallback check for distros that use /etc/zshenv)
-TARGET="/etc/zsh/zshenv"
-[[ ! -f "$TARGET" && -f "/etc/zshenv" ]] && TARGET="/etc/zshenv"
-
-# shellcheck disable=SC2016
-LINE='export ZDOTDIR="$XDG_CONFIG_HOME/zsh"'
-
-# Idempotency check
-if grep -Fxq "$LINE" "$TARGET" 2>/dev/null; then
-    log_task "✅ Configuration already exists in $TARGET."
-    ok
-    exit 0
-fi
-
-log_task "Updating $TARGET"
-if echo "$LINE" | sudo tee -a "$TARGET" > /dev/null; then
-    ok
-else
-    error "Failed to write to $TARGET. Do you have sudo access?"
-    exit 1
-fi
