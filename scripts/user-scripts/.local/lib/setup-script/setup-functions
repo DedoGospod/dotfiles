@@ -36,7 +36,7 @@ prepare_setup_scripts() {
     if [[ -d "$SCRIPT_DIR" ]]; then
         for file in "$SCRIPT_DIR"/*; do
             if [[ -f "$file" ]]; then
-                chmod u+x "$file"
+                chmod 755 "$file"
             fi
         done
         log_task "Permissions updated for setup scripts"
@@ -107,7 +107,7 @@ keep_sudo_alive() {
 # ==============================================================================
 
 ask() {
-    read -r -p "$(echo -e "  ${YELLOW}??${NC} $1 (y/N): ")" response
+    read -rp "$(echo -e "  ${YELLOW}??${NC} $1 (y/N): ")" response
     [[ "$response" =~ ^[Yy]$ ]]
 }
 

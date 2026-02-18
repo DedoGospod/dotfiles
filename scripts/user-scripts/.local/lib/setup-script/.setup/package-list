@@ -30,6 +30,9 @@ PACMAN_PACKAGES=(
     # Maintenance
     reflector pacman-contrib ncdu rsync rsnapshot
 
+    # Power management
+    power-profiles-daemon
+
     # Containerization
     flatpak
 
