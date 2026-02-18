@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+# Start OBS service
+systemctl --user start obs.service
+sleep 2 # Give OBS a moment to initialize its websocket
+
+# Start Replay Buffer
+obs-cmd replay start
+
+# Run the game (Steam passes the game command as arguments)
+# "$@" captures all arguments passed by Steam's %command%
+scopebuddy -- "$@"
+
+# Cleanup after game exits
+obs-cmd replay stop
+systemctl --user stop obs.service
