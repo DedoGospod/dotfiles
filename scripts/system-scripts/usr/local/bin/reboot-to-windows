@@ -16,10 +16,5 @@ else
     sudo efibootmgr --bootnext "$WINDOWS_BOOTNUM"
 fi
 
-# Execution
-read -rp "Reboot to Windows now? (y/N): " confirm
-if [[ "$confirm" =~ ^[yY] ]]; then
-    sudo reboot
-else
-    log "Staged. Your next manual reboot will go to Windows."
-fi
+# Reboot
+sudo reboot
