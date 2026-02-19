@@ -16,3 +16,10 @@ command = "pavucontrol"
 class = "org.pulseaudio.pavucontrol"
 size = "75% 75%"
 lazy = false
+
+[scratchpads.youtubemusic]
+animation = "fromTop"
+command = "youtube-music"
+class = "com.github.th_ch.youtube_music"
+size = "75% 75%"
+lazy = false
