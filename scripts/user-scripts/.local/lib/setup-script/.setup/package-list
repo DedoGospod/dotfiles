@@ -55,5 +55,5 @@ FLATPAK_APPS=(
 
 # AUR Packages
 AUR_PACKAGES=(
-    wayland-pipewire-idle-inhibit brave-bin nvibrant-bin pyprland downgrade
+    wayland-pipewire-idle-inhibit brave-bin nvibrant-bin pyprland downgrade youtube-music
 )
