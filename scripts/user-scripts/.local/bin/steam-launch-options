@@ -1,15 +1,23 @@
 #!/usr/bin/env bash
 
-# Start OBS service
-systemctl --user start obs.service
-sleep 2 # Give OBS a moment to initialize its websocket
+# Start obs if it isnt running
+if ! pgrep -x "obs" > /dev/null; then
+    systemctl --user start obs.service
+    sleep 2
+fi
 
 # Start Replay Buffer
-obs-cmd replay start
+if command -v obs-cmd; then
+    obs-cmd replay start
+fi
 
-# Run the game
-scopebuddy -- "$@"
+# Run the game via scopebuddy
+if command -v scb; then
+    scopebuddy -- "$@"
+fi
 
 # Cleanup after game exits
-obs-cmd replay stop
-systemctl --user stop obs.service
+if command -v obs-cmd; then
+    obs-cmd replay stop
+    systemctl --user stop obs.service
+fi
