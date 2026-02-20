@@ -7,19 +7,12 @@ plugins = [
 animation = "fromTop" 
 command = "obsidian"
 class = "obsidian" 
-size = "75% 75%"
-lazy = false
-
-[scratchpads.pavucontrol]
-animation = "fromTop"
-command = "pavucontrol"
-class = "org.pulseaudio.pavucontrol"
-size = "75% 75%"
+size = "90% 90%"
 lazy = false
 
 [scratchpads.youtubemusic]
 animation = "fromTop"
 command = "youtube-music"
 class = "com.github.th_ch.youtube_music"
-size = "75% 75%"
+size = "90% 90%"
 lazy = false
