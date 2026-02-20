@@ -1,17 +1,16 @@
 #!/usr/bin/env bash
 
-# Exit immediately if a command exits with a non-zero status
-set -e
-set -o pipefail
-
 # Source functions
 FUNCTIONS_DIR="$HOME/dotfiles/scripts/user-scripts/.local/lib/setup-script"
+LIBS=("setup-functions" "xdg_setup")
+
+# Source functions
 if [[ -d "$FUNCTIONS_DIR" ]]; then
     # shellcheck source=/dev/null
-    source "$FUNCTIONS_DIR/setup-functions"
-    # shellcheck source=/dev/null
-    source "$FUNCTIONS_DIR/xdg_setup"
-else 
+    for lib in "${LIBS[@]}"; do
+        source "$FUNCTIONS_DIR/$lib"
+    done
+else
     error "Could not import functions from $FUNCTIONS_DIR"
     exit 1
 fi
