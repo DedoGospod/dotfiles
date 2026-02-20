@@ -6,11 +6,13 @@
 
 # Source functions
 FUNCTIONS_DIR="$HOME/dotfiles/scripts/user-scripts/.local/lib/setup-script"
-if [[ -d "$FUNCTIONS_DIR" ]] ; then
+LIBS=("services-systemd-functions" "environment-specific-services")
+
+if [[ -d "$FUNCTIONS_DIR" ]]; then
     # shellcheck source=/dev/null
-    source "$FUNCTIONS_DIR/services-systemd-functions"
-    # shellcheck source=/dev/null
-    source "$FUNCTIONS_DIR/environment-specific-services"
+    for lib in "${LIBS[@]}"; do
+        source "$FUNCTIONS_DIR/$lib"
+    done
 else
     error "Could not import functions from $FUNCTIONS_DIR"
     exit 1
