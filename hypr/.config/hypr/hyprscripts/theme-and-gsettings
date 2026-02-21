@@ -18,7 +18,7 @@ gsettings set org.gnome.desktop.interface cursor-theme "$CURSOR"
 gsettings set org.gnome.desktop.interface cursor-size $CURSOR_SIZE
 
 # --- 3. GTK CONFIG GENERATION ---
-mkdir -p ~/.config/gtk-3.0 ~/.config/gtk-4.0
+mkdir -p ~/.config/gtk-2.0 ~/.config/gtk-3.0 ~/.config/gtk-4.0
 
 # GTK2
 cat <<EOF > ~/.config/gtk-2.0/gtkrc
