@@ -44,6 +44,7 @@ manage_service "sshd.service"                   "" "enable" "SSH Daemon"        
 
 # Environment specific user Services
 configure_hyprland_services
+configure_ext4_services
 
 header "Configuring general user services"
 
