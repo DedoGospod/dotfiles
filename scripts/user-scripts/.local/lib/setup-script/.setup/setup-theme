@@ -51,7 +51,7 @@ header "Generating GTK configurations"
 
 # --- GTK CONFIG GENERATION ---
 log_task "Creating directories"
-mkdir -p ~/.config/gtk-3.0 ~/.config/gtk-4.0
+mkdir -p ~/.config/gtk-2.0 ~/.config/gtk-3.0 ~/.config/gtk-4.0
 ok
 
 # GTK2
