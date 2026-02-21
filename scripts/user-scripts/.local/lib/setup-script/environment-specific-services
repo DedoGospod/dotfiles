@@ -31,3 +31,18 @@ configure_hyprland_services() {
         log "Not in Hyprland. Skipping Hyprland-specific services."
     fi
 }
+
+configure_ext4_services() {
+    if [[ ! -x /usr/sbin/e4defrag ]]; then
+        error "e4defrag not found. Please install 'e2fsprogs'."
+        exit 1
+    fi
+
+    EXT4_MOUNTS=$(lsblk -ln -o FSTYPE,MOUNTPOINT | awk '$1=="ext4" && $2!="" {print $2}')
+    if [[ -z "$EXT4_MOUNTS" ]]; then
+        log "No ext4 filesystems found. Skipping."
+    else
+        log "Ext4 drives detected. Starting maintenance..."
+        run_task "Enabling fstrim.timer" sudo systemctl enable --now fstrim.timer
+    fi
+}
