@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # --- SET VARIABLES (The Single Source of Truth) ---
-THEME="Adwaita-dark"
+# THEME="Adwaita"
 ICONS="Adwaita"
 FONT="Adwaita Sans 11"
 CURSOR="default"
