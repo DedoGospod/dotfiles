@@ -24,7 +24,8 @@ fail() { echo -e "${RED}Failed.${NC}"; }
 
 
 # --- SET VARIABLES (The Single Source of Truth) ---
-THEME="Adwaita-dark"
+# THEME="Adwaita-dark"
+THEME="Adwaita"
 ICONS="Adwaita"
 FONT="Adwaita Sans 11"
 CURSOR="default"
