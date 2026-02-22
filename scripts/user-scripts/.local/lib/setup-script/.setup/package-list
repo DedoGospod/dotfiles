@@ -22,7 +22,7 @@ PACMAN_PACKAGES=(
     fzf zoxide fd tmux stow bat eza ripgrep trash-cli
 
     # Documentation
-    man-db tealdeer wikiman
+    man-db tealdeer wikiman arch-wiki-docs
 
     # Security & Networking
     gnome-keyring seahorse keepassxc networkmanager bluez bluez-utils
