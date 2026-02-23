@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 # Source & run XDG env file
-if [[ -f "$HOME/.local/lib/setup-script/xdg_setup" ]]; then 
+if [[ -f "$HOME/.local/lib/xdg_setup" ]]; then 
     # shellcheck source=/dev/null
-    source "$HOME/.local/lib/setup-script/xdg_setup"
+    source "$HOME/.local/lib/xdg_setup"
     xdg_setup
 fi
