@@ -21,12 +21,12 @@ configure_hyprland_services() {
     fi
 
     if $IS_HYPRLAND; then
-        manage_service "hypridle.service"        "--user" "enable" "Idle daemon"          "Y"
-        manage_service "hyprpaper.service"       "--user" "enable" "Wallpaper daemon"     "Y"
-        manage_service "pyprland.service"        "--user" "enable" "Pyprland plugins"     "Y"
-        manage_service "hyprpolkitagent.service" "--user" "enable" "Polkit Authentication" "Y"
-        manage_service "waybar.service"          "--user" "enable" "Status bar"           "Y"
-        manage_service "hyprsunset.service"      "--user" "enable" "Blue light filter"    "Y"
+        enable_user_service "Enabling hypridle" hypridle.service
+        enable_user_service "Enabling hyprpaper" hyprpaper.service
+        enable_user_service "Enabling pyprland" pyprland.service
+        enable_user_service "Enabling hyprpolkitagent" hyprpolkitagent.service
+        enable_user_service "Enabling waybar" waybar.service
+        enable_user_service "Enabling hyprsunset" hyprsunset.service
     else
         log "Not in Hyprland. Skipping Hyprland-specific services."
     fi
@@ -42,7 +42,7 @@ configure_ext4_services() {
     if [[ -z "$EXT4_MOUNTS" ]]; then
         log "No ext4 filesystems found. Skipping."
     else
-        log "Ext4 drives detected. Starting maintenance..."
+        log "Ext4 drive detected. Configuring services"
         run_task "Enabling fstrim.timer" sudo systemctl enable --now fstrim.timer
     fi
 }
