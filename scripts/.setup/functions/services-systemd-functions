@@ -89,6 +89,16 @@ run_task() {
     fi
 }
 
+# User service enabler
+enable_user_service() {
+    run_task "$1" systemctl --user enable --now "$2"
+}
+
+# System service enabler
+enable_system_service() {
+    run_task "$1" sudo systemctl enable --now "$2"
+}
+
 # ==============================================================================
 # EXCLUSIVE SELECTION & PROCESSING
 # ==============================================================================
