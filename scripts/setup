@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Source functions
-FUNCTIONS_DIR="$HOME/dotfiles/scripts/user-scripts/.local/lib/setup-script"
+FUNCTIONS_DIR="$HOME/dotfiles/scripts/.setup/functions"
 LIBS=("setup-functions" "xdg_setup")
 
 # Source functions
@@ -68,7 +68,7 @@ fi
 # --- FINISH ---
 echo ""
 echo "------------------------------------------------------"
-success "Installation Complete! 🎉"
+success "Installation Complete!"
 echo "------------------------------------------------------"
 
 # Check if reboot is required

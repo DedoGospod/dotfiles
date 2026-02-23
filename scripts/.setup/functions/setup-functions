@@ -27,8 +27,8 @@ fail()     { echo -e "${RED}Failed.${NC}"; }
 # PATH & DEPENDENCY MANAGEMENT
 # ==============================================================================
 
-# Dynamically find the script directory relative to this file
-SCRIPT_DIR="$HOME/dotfiles/scripts/user-scripts/.local/lib/setup-script/.setup"
+# Find the script directory
+SCRIPT_DIR="$HOME/dotfiles/scripts/.setup"
 
 prepare_setup_scripts() {
     header "SYSTEM PREPARATION"
