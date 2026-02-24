@@ -1,0 +1,33 @@
+#!/usr/bin/env sh
+# Senior Lead Dev Refactor: Fixed word splitting and truncation
+
+STATE_FILE="/tmp/snapper-num"
+
+[ ! -f "$STATE_FILE" ] && exit 0
+
+PRE=$(cat "$STATE_FILE")
+FULL_PKGS=$(cat)
+
+# We want the shell to split the string into individual words/packages.
+set -- $FULL_PKGS
+COUNT=$#
+
+if [ "$COUNT" -gt 5 ]; then
+    # 2. Grab the first 5 positional parameters individually
+    DESC_PKGS="$1 $2 $3 $4 $5... ($COUNT pkgs)"
+else
+    DESC_PKGS="$FULL_PKGS"
+fi
+
+# 3. Use quotes here for safety when passing to snapper
+if POST=$(snapper create -t post --pre-number "$PRE" -c number -d "Packages: $DESC_PKGS" -p); then
+    echo "--- Packages Processed ($COUNT) ---"
+    # Format the output for the terminal
+    echo "$FULL_PKGS" | tr ' ' '\n' | column
+    echo "--- Filesystem Changes ($PRE -> $POST) ---"
+    snapper status "$PRE..$POST"
+    rm "$STATE_FILE"
+else
+    echo "Error: Failed to create post-snapshot for $PRE" >&2
+    exit 1
+fi
