@@ -11,4 +11,4 @@ Target = mkinitcpio*
 [Action]
 Description = [CRITICAL] Creating Important Snapper pre-snapshot...
 When = PreTransaction
-Exec = /usr/local/lib/snapper-pre important
+Exec = /usr/local/lib/pacman-hooks/snapper-pre important

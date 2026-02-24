@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+# Colors for logging
+GREEN='\033[0;32m'
+RED='\033[0;31m'
+NC='\033[0m'
+
+# Helper Functions
+log()     { echo -e "${GREEN}[INFO]${NC} $1"; }
+error()   { echo -e "${RED}[ERROR]${NC} $1"; }
+
+# Check if CachyOS repos are actually enabled in pacman.conf
+IS_CACHY=$(grep -q "\[cachyos\]" /etc/pacman.conf && echo "true" || echo "false")
+
+# Check if the Cachy-specific rating tool is installed
+HAS_CACHY_TOOL=$(pacman -Qq cachyos-rate-mirrors 2>/dev/null)
+
+if [[ "$IS_CACHY" = "true" ]] && [[ -n "$HAS_CACHY_TOOL" ]]; then
+    log "--- CachyOS detected. Running cachyos-rate-mirrors ---"
+    /usr/bin/cachyos-rate-mirrors
+elif command -v reflector &>/dev/null; then
+    log "--- Standard Arch/Stock detected. Running Reflector ---"
+    /usr/bin/reflector --latest 20 --protocol https --sort rate --save /etc/pacman.d/mirrorlist
+else
+    error "No mirror tool found (cachyos-rate-mirrors or reflector)"
+    exit 1
+fi
+

@@ -14,4 +14,4 @@ Target = !mkinitcpio*
 [Action]
 Description = Creating routine Snapper pre-snapshot...
 When = PreTransaction
-Exec = /usr/local/lib/snapper-pre routine
+Exec = /usr/local/lib/pacman-hooks/snapper-pre routine
