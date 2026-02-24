@@ -17,5 +17,3 @@ fi
 
 # Create snapshot and save ID to temp file
 snapper create -t pre -c number -d "$DESC" --userdata "${USERDATA:-}" -p > "$STATE_FILE"
-
-echo "Snapper: Pre-snapshot ($TYPE) created."
