@@ -6,8 +6,7 @@ Type = Package
 Target = *
 
 [Action]
-Description = Finalizing Snapper post-snapshot...
+Description = Finalizing Snapper snapshot...
 When = PostTransaction
+Exec = /usr/local/lib/snapper-post
 NeedsTargets
-Exec = /usr/bin/sh -c 'if [ -f /tmp/snapper-num ]; then PRE=$(cat /tmp/snapper-num); FULL_PKGS=$(set -- $(cat); echo "$@"); COUNT=$(echo "$FULL_PKGS" | wc -w); if [ "$COUNT" -gt 5 ]; then DESC_PKGS=$(echo "$FULL_PKGS" | cut -d" " -f1-5)"... ($COUNT pkgs)"; else DESC_PKGS="$FULL_PKGS"; fi; POST=$(snapper create -t post --pre-number $PRE -c number -d "Packages: $DESC_PKGS" -p); echo "--- Packages Processed ($COUNT) ---"; echo "$FULL_PKGS" | tr " " "\n" | column; echo "--- Filesystem Changes ---"; snapper status $PRE..$POST; rm /tmp/snapper-num; fi'
-
