@@ -123,5 +123,5 @@ if [[ -d "$DOTFILES_DIR" ]]; then
 
     # Sync Configuration Files (system-files tree)
     header "SYNCING CONFIGURATION FILES"
-    sync_root_tree "$DOTFILES_DIR/system-files"
+    sync_root_tree "$DOTFILES_DIR/root"
 fi
