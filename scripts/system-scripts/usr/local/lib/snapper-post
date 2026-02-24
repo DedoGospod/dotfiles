@@ -1,5 +1,4 @@
 #!/usr/bin/env sh
-# Senior Lead Dev Refactor: Fixed word splitting and truncation
 
 STATE_FILE="/tmp/snapper-num"
 
@@ -13,16 +12,15 @@ set -- $FULL_PKGS
 COUNT=$#
 
 if [ "$COUNT" -gt 5 ]; then
-    # 2. Grab the first 5 positional parameters individually
+    # Grab the first 5 positional parameters individually
     DESC_PKGS="$1 $2 $3 $4 $5... ($COUNT pkgs)"
 else
     DESC_PKGS="$FULL_PKGS"
 fi
 
-# 3. Use quotes here for safety when passing to snapper
+#  Use quotes here for safety when passing to snapper
 if POST=$(snapper create -t post --pre-number "$PRE" -c number -d "Packages: $DESC_PKGS" -p); then
     echo "--- Packages Processed ($COUNT) ---"
-    # Format the output for the terminal
     echo "$FULL_PKGS" | tr ' ' '\n' | column
     echo "--- Filesystem Changes ($PRE -> $POST) ---"
     snapper status "$PRE..$POST"
