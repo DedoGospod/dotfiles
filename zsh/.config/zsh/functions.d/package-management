@@ -2,17 +2,12 @@
 
 # Search for packages
 s() {
-    paru -Slq | strings | fzf \
+    paru -Slq | grep -vE '\-(bin|git|debug|devel)$' | fzf \
         --query "$1" \
-        --ansi \
-        --height 40% \
-        --layout=reverse \
         --multi \
-        --header "Tab: Select | Enter: Install | CTRL-X: Reload" \
-        --preview 'paru -Si {1} | strings' \
-        --preview-window='right:wrap:60%' \
-        --bind 'enter:execute(paru -S {+})+accept' \
-        --bind 'ctrl-x:reload(paru -Slq)'
+        --header "ctrl-p: toggle preview | enter: install" \
+        --preview 'paru -Si {1}' \
+        --bind 'enter:become(paru -S {+})' \
 }
 
 # Install packages
