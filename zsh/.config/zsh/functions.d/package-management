@@ -5,8 +5,20 @@ s() {
     paru -Slq | grep -vE '\-(bin|git|debug|devel)$' | fzf \
         --query "$1" \
         --multi \
+        --ansi \
+        --layout=reverse \
+        --border=rounded \
+        --info=inline \
+        --header "─── [Enter]: Install | [TAB]: Select | [CTRL-A]: Select All ───" \
+        --header-first \
+        --prompt="󰈺 Search: " \
+        --pointer="▶" \
+        --marker="✓" \
+        --color="header:italic:cyan,border:blue" \
         --preview 'paru -Si {1}' \
+        --preview-window='right:60%:wrap' \
         --bind 'enter:become(paru -S {+})' \
+        --bind 'ctrl-a:select-all'
 }
 
 # Install packages
