@@ -1,0 +1,14 @@
+[Trigger]
+Operation = Upgrade
+Type = Package
+Target = linux*
+Target = systemd*
+Target = nvidia*
+Target = mesa*
+Target = grub*
+Target = mkinitcpio*
+
+[Action]
+Description = [CRITICAL] Creating Important Snapper pre-snapshot...
+When = PreTransaction
+Exec = /usr/local/lib/pacman-hooks/snapper-pre important

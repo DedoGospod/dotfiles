@@ -1,0 +1,12 @@
+[Trigger]
+Operation = Install
+Operation = Upgrade
+Operation = Remove
+Type = Package
+Target = *
+
+[Action]
+Description = Finalizing Snapper snapshot...
+When = PostTransaction
+Exec = /usr/local/lib/pacman-hooks/snapper-post
+NeedsTargets
