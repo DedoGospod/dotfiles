@@ -1,0 +1,21 @@
+#!/usr/bin/env zsh
+
+# Search for packages
+s() {
+    paru -Slq | strings | fzf \
+        --query "$1" \
+        --ansi \
+        --height 40% \
+        --layout=reverse \
+        --multi \
+        --header "Tab: Select | Enter: Install | CTRL-X: Reload" \
+        --preview 'paru -Si {1} | strings' \
+        --preview-window='right:wrap:60%' \
+        --bind 'enter:execute(paru -S {+})+accept' \
+        --bind 'ctrl-x:reload(paru -Slq)'
+}
+
+# Install packages
+S() {
+    paru -S "$@"
+}
