@@ -84,7 +84,6 @@ alias update-grub="grub-mkconfig -o /boot/grub/grub.cfg" # Update grub
 
 # Package Management
 alias yay='paru'             # Use paru as yay alternative
-alias s='yay -Ss'            # Search packages easier
 
 # Apps
 alias y='yazi'                                         # Use Yazi as a terminal file manager
