@@ -1,31 +1,23 @@
 #!/usr/bin/env sh
 
+GREEN='\033[0;32m'
+RED='\033[0;31m'
+NC='\033[0m'
+
+log()  { printf "${GREEN}[INFO]${NC} %s\n" "$1"; }
+error()   { printf "${RED}[ERROR]${NC} %s\n" "$1"; }
+
 STATE_FILE="/tmp/snapper-num"
 
+# If no pre-snapshot state exists, just stop
 [ ! -f "$STATE_FILE" ] && exit 0
 
 PRE=$(cat "$STATE_FILE")
-FULL_PKGS=$(cat)
 
-# We want the shell to split the string into individual words/packages.
-set -- $FULL_PKGS
-COUNT=$#
-
-if [ "$COUNT" -gt 5 ]; then
-    # Grab the first 5 positional parameters individually
-    DESC_PKGS="$1 $2 $3 $4 $5... ($COUNT pkgs)"
-else
-    DESC_PKGS="$FULL_PKGS"
-fi
-
-#  Use quotes here for safety when passing to snapper
-if POST=$(snapper create -t post --pre-number "$PRE" -c number -d "Packages: $DESC_PKGS" -p); then
-    echo "--- Packages Processed ($COUNT) ---"
-    echo "$FULL_PKGS" | tr ' ' '\n' | column
-    echo "--- Filesystem Changes ($PRE -> $POST) ---"
-    snapper status "$PRE..$POST"
+# Create the post-snapshot silently
+if POST=$(snapper create -t post --pre-number "$PRE" -c number -d "Pacman update" -p); then
+    log "Snapshot created: $PRE -> $POST"
     rm "$STATE_FILE"
 else
-    echo "Error: Failed to create post-snapshot for $PRE" >&2
-    exit 1
+    error "Failed to create post-snapshot" >&2
 fi
