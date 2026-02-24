@@ -1,0 +1,10 @@
+[Trigger]
+Operation = Upgrade
+Type = Package
+Target = *-mirrorlist
+
+[Action]
+Description = Updating mirrorlist 
+When = PostTransaction
+Depends = bash
+Exec = /usr/local/lib/pacman-hooks/refresh-mirrors
