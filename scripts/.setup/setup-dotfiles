@@ -62,13 +62,13 @@ sync_root_tree() {
     command -v rsync >/dev/null || { error "rsync not available"; exit 1; }
 
     for top_dir in "$src_root"/*; do
-        [ -d "$top_dir" ] || continue
+        [[ -d "$top_dir" ]] || continue
         
         local parent_name
         parent_name=$(basename "$top_dir") # e.g., "etc"
 
         for config_item in "$top_dir"/*; do
-            [ -e "$config_item" ] || continue
+            [[ -e "$config_item" ]] || continue
             
             local config_name
             config_name=$(basename "$config_item")
