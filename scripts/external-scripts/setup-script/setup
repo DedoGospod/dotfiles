@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Source functions
-FUNCTIONS_DIR="$HOME/dotfiles/setup-script/.setup/functions/"
+FUNCTIONS_DIR="$HOME/dotfiles/scripts/external-scripts/setup-script/.setup/functions"
 LIBS=("setup-functions" "xdg_setup")
 
 # Source functions

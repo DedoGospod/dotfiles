@@ -28,7 +28,7 @@ fail()     { echo -e "${RED}Failed.${NC}"; }
 # ==============================================================================
 
 # Find the script directory
-SCRIPT_DIR="$HOME/dotfiles/scripts/.setup"
+SCRIPT_DIR="$HOME/dotfiles/scripts/external-scripts/setup-script/.setup"
 
 prepare_setup_scripts() {
     header "SYSTEM PREPARATION"
