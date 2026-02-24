@@ -52,7 +52,7 @@ BOOTLOADER=$(detect_bootloader)
 log "Detected bootloader: $BOOTLOADER"
 
 # Needed packages
-PACKAGES=(btrfsmaintenance snapper snapper-rollback snap-pac inotify-tools)
+PACKAGES=(btrfsmaintenance snapper snapper-rollback inotify-tools)
 MISSING_PACKAGES=()
 
 # Ensure /btrfsroot exists and is secure for snapper-rollback
