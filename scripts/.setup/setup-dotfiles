@@ -86,8 +86,12 @@ if [[ -d "$DOTFILES_DIR" ]]; then
         CONFIGS_SRC="$DOTFILES_DIR/system-files"
         FILES_TO_SYNC=(
             "$CONFIGS_SRC/root|/etc/snapper/configs/root|644"
-            "$CONFIGS_SRC/snap-pac.ini|/etc/snap-pac.ini|644"
-            "$CONFIGS_SRC/orphan-check.hook|/etc/pacman.d/hooks/orphan-check.hook|755"
+            "$CONFIGS_SRC/snapper-important-pre.hook|/etc/pacman.d/hooks/snapper-important-pre.hook|644"
+            "$CONFIGS_SRC/snapper-routine-pre.hook|/etc/pacman.d/hooks/snapper-routine-pre.hook|644"
+            "$CONFIGS_SRC/snapper-post.hook|/etc/pacman.d/hooks/snapper-post.hook|644"
+
+            "$CONFIGS_SRC/orphan-check.hook|/etc/pacman.d/hooks/orphan-check.hook|644"
+            
         )
 
         for entry in "${FILES_TO_SYNC[@]}"; do
