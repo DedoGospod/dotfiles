@@ -76,6 +76,7 @@ if [[ -d "$DOTFILES_DIR" ]]; then
         # Sync System Binaries (Executables)
         header "SYNCING SYSTEM BINARIES"
         sync_assets "$DOTFILES_DIR/scripts/system-scripts/usr/local/bin" "/usr/local/bin" "755"
+        sync_assets "$DOTFILES_DIR/scripts/system-scripts/usr/local/lib" "/usr/local/lib" "755"
 
         # Sync System Libraries (Data/Dependencies)
         header "SYNCING SYSTEM LIBRARIES"
@@ -96,7 +97,7 @@ if [[ -d "$DOTFILES_DIR" ]]; then
 
         for entry in "${FILES_TO_SYNC[@]}"; do
             IFS='|' read -r src target mode <<<"$entry"
-            if [ -f "$src" ]; then
+            if [[ -f "$src" ]]; then
                 mode=${mode:-644}
                 log_task "Syncing $target (mode: $mode)"
                 if sudo install -Dm "$mode" "$src" "$target"; then ok; else fail; fi

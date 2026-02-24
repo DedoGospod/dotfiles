@@ -1,0 +1,21 @@
+#!/usr/bin/env sh
+
+TYPE="${1:-routine}" # Expects 'routine' or 'important'
+STATE_FILE="/tmp/snapper-num"
+
+# Capture the parent process command (the package manager command)
+CMD=$(ps -p "$PPID" -o args= || echo "unknown process")
+
+# Determine metadata based on type
+if [ "$TYPE" = "important" ]; then
+    DESC="[CRITICAL] $CMD"
+    USERDATA="important=yes"
+else
+    DESC="Routine: $CMD"
+    USERDATA="important=no"
+fi
+
+# Create snapshot and save ID to temp file
+snapper create -t pre -c number -d "$DESC" --userdata "${USERDATA:-}" -p > "$STATE_FILE"
+
+echo "Snapper: Pre-snapshot ($TYPE) created."
