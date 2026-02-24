@@ -76,11 +76,11 @@ if [[ -d "$DOTFILES_DIR" ]]; then
         # Sync System Binaries (Executables)
         header "SYNCING SYSTEM BINARIES"
         sync_assets "$DOTFILES_DIR/scripts/system-scripts/usr/local/bin" "/usr/local/bin" "755"
-        sync_assets "$DOTFILES_DIR/scripts/system-scripts/usr/local/lib" "/usr/local/lib" "755"
 
         # Sync System Libraries (Data/Dependencies)
         header "SYNCING SYSTEM LIBRARIES"
-        sync_assets "$DOTFILES_DIR/scripts/system-scripts/usr/local/lib/systemd-scripts" "/usr/local/lib/systemd-scripts" "755"
+        sync_assets "$DOTFILES_DIR/scripts/system-scripts/usr/local/lib" "/usr/local/lib" "755"
+        # sync_assets "$DOTFILES_DIR/scripts/system-scripts/usr/local/lib/systemd-scripts" "/usr/local/lib/systemd-scripts" "755"
 
         # Sync Specific System Files
         header "SYNCING CONFIGURATION FILES"
