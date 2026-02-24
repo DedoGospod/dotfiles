@@ -91,7 +91,7 @@ sync_root_tree() {
 STOW_FOLDERS=(
     backgrounds kwalletrc fastfetch wayland-pipewire-idle-inhibit hypr kitty
     mpv nvim starship swaync waybar wofi yazi zsh tmux uwsm systemd-user scopebuddy
-    mangohud
+    mangohud scripts
 )
 
 # Dotfiles
@@ -101,11 +101,6 @@ header "DOTFILE CONFIGURATION"
 if [[ -d "$DOTFILES_DIR" ]]; then
     log "Stowing dotfiles..."
     cd "$DOTFILES_DIR" || { error "Cannot enter $DOTFILES_DIR"; exit 1; }
-
-    if [[ -d "scripts/user-scripts" ]]; then
-        log_task "Stowing user scripts"
-        if stow -d "scripts" -t "$HOME" --restow user-scripts; then ok; else fail; fi
-    fi
 
     for folder in "${STOW_FOLDERS[@]}"; do
         if [[ -d "$folder" ]]; then
@@ -118,8 +113,8 @@ if [[ -d "$DOTFILES_DIR" ]]; then
 
     # Sync System Binaries (Executables) and Libraries (Data/Dependencies)
     header "SYNCING SYSTEM BINARIES & LIBRARIES"
-    sync_assets "$DOTFILES_DIR/scripts/system-scripts/usr/local/bin" "/usr/local/bin" "755"
-    sync_assets "$DOTFILES_DIR/scripts/system-scripts/usr/local/lib" "/usr/local/lib" "644"
+    sync_assets "$DOTFILES_DIR/scripts/usr/local/bin" "/usr/local/bin" "755"
+    sync_assets "$DOTFILES_DIR/scripts/usr/local/lib" "/usr/local/lib" "644"
 
     # Sync Configuration Files (system-files tree)
     header "SYNCING CONFIGURATION FILES"

@@ -5,7 +5,7 @@
 # ==============================================================================
 
 # Source functions
-FUNCTIONS_DIR="$HOME/dotfiles/scripts/.setup/functions"
+FUNCTIONS_DIR="$HOME/dotfiles/setup-script/.setup/functions/"
 LIBS=("services-systemd-functions" "environment-specific-services")
 
 if [[ -d "$FUNCTIONS_DIR" ]]; then
