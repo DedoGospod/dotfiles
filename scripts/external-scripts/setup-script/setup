@@ -1,0 +1,75 @@
+#!/usr/bin/env bash
+
+# Source functions
+FUNCTIONS_DIR="$HOME/dotfiles/scripts/external-scripts/setup-script/.setup/functions"
+LIBS=("setup-functions" "xdg_setup")
+
+# Source functions
+if [[ -d "$FUNCTIONS_DIR" ]]; then
+    # shellcheck source=/dev/null
+    for lib in "${LIBS[@]}"; do
+        source "$FUNCTIONS_DIR/$lib"
+    done
+else
+    error "Could not import functions from $FUNCTIONS_DIR"
+    exit 1
+fi
+
+# Import functions
+check_if_root         # Ensure user doesnt run this as root
+keep_sudo_alive       # Keep sudo active for the duration of the script
+xdg_setup             # Setup xdg directory structure
+prepare_setup_scripts # Prepare setup scripts with chmod u+x
+import_package_list   # Import the package list
+
+# --- USER INTERACTION ---
+header "CONFIGURATION QUESTIONS"
+
+# Core Setup Choices
+ask "Install Neovim dev tools?" && PACMAN_PACKAGES+=("${NEOVIM_DEPS[@]}")
+ask "Setup virtualization?" && setup_virt="y"
+ask "Setup wakeonlan?" && setup_wol="y"
+
+# Conditional Gaming Group
+if ask "Install gaming packages?"; then
+    install_gaming="y"
+    if ask "Install OBS and game recording tools?"; then
+        AUR_PACKAGES+=("obs-studio" "obs-vkcapture" "obs-pipewire-audio-capture" "obs-cmd")
+    fi
+fi
+
+echo ""
+
+# Import install phase
+import_install_phase
+
+# Mandatory Setup
+run_setup_script "setup-dotfiles"
+run_setup_script "setup-user-env"
+run_setup_script "setup-theme"
+run_setup_script "setup-firewall"
+
+# Install btrfs maintnence packages if btrfs is root file system
+ROOT_FS=$(findmnt -n -o FSTYPE --target /)
+if [[ "$ROOT_FS" == "btrfs" ]]; then
+    run_setup_script "setup-btrfs"
+fi
+
+# Install and setup nvidia drivers if a nvidia gpu is detected
+if lspci | grep -iq "nvidia"; then
+    run_setup_script "setup-nvidia"
+fi
+
+# Conditional Setups
+[[ "$install_gaming" =~ ^[Yy]$ ]] && run_setup_script "setup-gaming" 
+[[ "$setup_virt" =~ ^[Yy]$ ]] && run_setup_script "setup-virtualization"
+[[ "$setup_wol" =~ ^[Yy]$ ]] && run_setup_script "setup-wol"
+
+# --- FINISH ---
+echo ""
+echo "------------------------------------------------------"
+success "Installation Complete!"
+echo "------------------------------------------------------"
+
+# Check if reboot is required
+is_reboot_required

@@ -1,0 +1,70 @@
+#!/usr/bin/env bash
+
+# ==============================================================================
+#  Setup & Dependencies
+# ==============================================================================
+
+# Source functions
+FUNCTIONS_DIR="$HOME/dotfiles/scripts/external-scripts/setup-script/.setup/functions"
+LIBS=("services-systemd-functions" "environment-specific-services")
+
+if [[ -d "$FUNCTIONS_DIR" ]]; then
+    # shellcheck source=/dev/null
+    for lib in "${LIBS[@]}"; do
+        source "$FUNCTIONS_DIR/$lib"
+    done
+else
+    error "Could not import functions from $FUNCTIONS_DIR"
+    exit 1
+fi
+
+# ==============================================================================
+#  Initialization
+# ==============================================================================
+log "Verifying sudo access..."
+sudo -v
+
+log_task "Reloading systemd daemons"
+sudo systemctl daemon-reload
+systemctl --user daemon-reload
+ok
+
+# ==============================================================================
+#  System Services (Root)
+# ==============================================================================
+header "Configuring system services"
+manage_service "NetworkManager.service"         "" "enable" "Network management"     "Y"
+manage_service "bluetooth.service"              "" "enable" "Bluetooth connectivity" "n"
+manage_service "power-profiles-daemon.service"  "" "enable" "Power profiles"         "Y"
+manage_service "sshd.service"                   "" "enable" "SSH Daemon"             "Y"
+
+# ==============================================================================
+#  System Services
+# ==============================================================================
+
+# Environment specific user Services
+configure_hyprland_services
+configure_ext4_services
+
+header "Configuring general user services"
+
+# Conditional Selection
+select_exclusive_service "Blue light filter"            "--user" "wlsunset.service" "hyprsunset.service"
+
+# General services
+manage_service "wayland-pipewire-idle-inhibit.service"  "--user" "enable" "Prevent sleep when playing audio"  "Y"
+manage_service "swaync.service"                         "--user" "enable" "Notification daemon"               "Y"
+manage_service "obs.service"                            "--user" "enable" "OBS studio autostart with replay"  "n"
+manage_service "syncthing.service"                      "--user" "enable" "Syncthing background daemon"       "n"
+
+
+# ==============================================================================
+#  Systemd Timers
+# ==============================================================================
+header "Systemd timer configuration"
+
+# Enable distro-specific timers
+configure_arch_timers
+
+# Systemd user
+run_task "Enabling failed systemd service check timer" systemctl --user enable --now failed-units-check.timer
