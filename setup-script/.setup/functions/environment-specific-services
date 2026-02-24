@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+# Note: This file relies on variables and functions defined in the main script.
+
+configure_arch_timers() {
+    # Check inside the function
+    if ! grep -qE "ID=arch|ID_LIKE=arch" /etc/os-release; then
+        return 0 # Exit quietly if not Arch
+    fi
+
+    log "Arch detected: Installing systemd units..."
+    run_task "Enabling paccache.timer" sudo systemctl enable --now paccache.timer
+    run_task "Enabling aur-trim.timer" systemctl --user enable --now aur-trim.timer
+    
+}
+
+configure_hyprland_services() {
+    local IS_HYPRLAND=false
+    if [[ "${XDG_SESSION_DESKTOP:-}" == "Hyprland" || -n "${HYPRLAND_INSTANCE_SIGNATURE:-}" ]]; then
+        IS_HYPRLAND=true
+        header "Configuring Hyprland-specific services"
+    fi
+
+    if $IS_HYPRLAND; then
+        enable_user_service "Enabling hypridle" hypridle.service
+        enable_user_service "Enabling hyprpaper" hyprpaper.service
+        enable_user_service "Enabling pyprland" pyprland.service
+        enable_user_service "Enabling hyprpolkitagent" hyprpolkitagent.service
+        enable_user_service "Enabling waybar" waybar.service
+        enable_user_service "Enabling hyprsunset" hyprsunset.service
+    else
+        log "Not in Hyprland. Skipping Hyprland-specific services."
+    fi
+}
+
+configure_ext4_services() {
+    if [[ ! -x /usr/sbin/e4defrag ]]; then
+        error "e4defrag not found. Please install 'e2fsprogs'."
+        exit 1
+    fi
+
+    EXT4_MOUNTS=$(lsblk -ln -o FSTYPE,MOUNTPOINT | awk '$1=="ext4" && $2!="" {print $2}')
+    if [[ -z "$EXT4_MOUNTS" ]]; then
+        log "No ext4 filesystems found. Skipping."
+    else
+        log "Ext4 drive detected. Configuring services"
+        run_task "Enabling fstrim.timer" sudo systemctl enable --now fstrim.timer
+    fi
+}

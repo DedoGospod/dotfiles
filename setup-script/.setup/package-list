@@ -1,0 +1,59 @@
+#!/usr/bin/env bash
+# Note: This file relies on variables and functions defined in the main script.
+
+# shellcheck disable=SC2034
+
+# Base Pacman Packages
+PACMAN_PACKAGES=(
+    # Core Desktop
+    hyprland hypridle hyprlock hyprpaper hyprshot hyprpolkitagent
+    hyprland-guiutils hyprutils uwsm waybar wofi swaync dbus hyprsunset
+
+    # Portals & Theming
+    xdg-desktop-portal xdg-desktop-portal-gtk xdg-desktop-portal-hyprland
+    qt5-wayland qt6-wayland qt6ct gnome-themes-extra
+
+    # Apps & Utils
+    neovim nautilus yazi mpv imv fastfetch btop gnome-disk-utility
+    obsidian pavucontrol ffmpeg ffmpegthumbnailer pipewire wireplumber
+
+    # Shell & CLI
+    kitty zsh zsh-completions zsh-syntax-highlighting zsh-autosuggestions starship
+    fzf zoxide fd tmux stow bat eza ripgrep trash-cli
+
+    # Documentation
+    man-db tealdeer wikiman arch-wiki-docs
+
+    # Security & Networking
+    gnome-keyring seahorse keepassxc networkmanager bluez bluez-utils
+
+    # Maintenance
+    reflector pacman-contrib ncdu rsync rsnapshot
+
+    # Power management
+    power-profiles-daemon
+
+    # Containerization
+    flatpak
+
+    # Kernel & Headers
+    ## linux-headers
+
+    # Fonts
+    ttf-cascadia-code-nerd ttf-ubuntu-font-family ttf-font-awesome
+    ttf-dejavu ttf-liberation ttf-croscore noto-fonts noto-fonts-cjk noto-fonts-emoji
+)
+
+# Optional Groups
+NEOVIM_DEPS=(npm nodejs unzip clang go shellcheck zig luarocks dotnet-sdk cmake gcc imagemagick)
+
+# Flatpaks
+FLATPAK_APPS=(
+    it.mijorus.gearlever com.github.tchx84.Flatseal com.stremio.Stremio com.usebottles.bottles
+    io.github.ebonjaeger.bluejay com.github.wwmm.easyeffects
+)
+
+# AUR Packages
+AUR_PACKAGES=(
+    wayland-pipewire-idle-inhibit brave-bin nvibrant-bin pyprland downgrade youtube-music
+)
