@@ -5,7 +5,6 @@ s() {
     paru -Slq | grep -vE '\-(bin|git|debug|devel)$' | fzf \
         --query "$1" \
         --multi \
-        --header "ctrl-p: toggle preview | enter: install" \
         --preview 'paru -Si {1}' \
         --bind 'enter:become(paru -S {+})' \
 }
