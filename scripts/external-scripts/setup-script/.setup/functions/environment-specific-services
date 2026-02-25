@@ -4,21 +4,21 @@
 configure_arch_timers() {
     grep -qE "ID=arch|ID_LIKE=arch" /etc/os-release || return 0
     
-    run "Enabling paccache.timer" sudo systemctl enable --now paccache.timer
-    run "Enabling aur-trim.timer" systemctl --user enable --now aur-trim.timer
+    run "Starting paccache.timer" sudo systemctl enable --now paccache.timer
+    run "Starting aur-trim.timer" systemctl --user enable --now aur-trim.timer
 }
 
 configure_ext4_services() {
     [[ ! -x /usr/sbin/e4defrag ]] && { error "e2fsprogs missing"; return 1; }
     lsblk -no FSTYPE | grep -q "ext4" || return 0
 
-    run "Enabling fstrim.timer" sudo systemctl enable --now fstrim.timer
+    run "Starting fstrim.timer" sudo systemctl enable --now fstrim.timer
 }
 
 configure_hyprland_services() {
     [[ -z "$HYPRLAND_INSTANCE_SIGNATURE" ]] && return 0
 
-    echo -e "${BLUE}==== Hyprland Stack ====${NC}"
+    header "Hyprland Specific"
     local services=(
         hypridle.service 
         hyprpaper.service 
