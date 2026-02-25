@@ -17,7 +17,6 @@ fi
 
 # Import functions
 check_if_root         # Ensure user doesnt run this as root
-keep_sudo_alive       # Keep sudo active for the duration of the script
 xdg_setup             # Setup xdg directory structure
 prepare_setup_scripts # Prepare setup scripts with chmod u+x
 import_package_list   # Import the package list

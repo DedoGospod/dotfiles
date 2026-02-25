@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-## Source functions
+# Source functions
 FUNCTIONS_DIR="$HOME/dotfiles/scripts/external-scripts/setup-script/.setup/functions"
 LIBS=("services-systemd-functions" "environment-specific-services")
 
