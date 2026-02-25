@@ -35,7 +35,7 @@ prepare_setup_scripts() {
 
     if [[ -d "$SCRIPT_DIR" ]]; then
         for file in "$SCRIPT_DIR"/*; do
-            if [[ -f "$file" ]]; then
+            if [[ -f "$file" ]] && [[ "$(basename "$file")" != "package-list" ]] && [[ "$(basename "$file")" != "install-phase" ]]; then
                 chmod 755 "$file"
             fi
         done
