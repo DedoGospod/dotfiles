@@ -18,67 +18,59 @@ log_task() { echo -ne "${GREEN}[INFO]${NC} $1... "; }
 ok() { echo -e "${GREEN}Done.${NC}"; }
 fail() { echo -e "${RED}Failed.${NC}"; }
 
-# Faster check for empty directories
+# Global rsync defaults for system files
+RSYNC_BASE_OPTS=(-a --no-owner --no-group --no-perms --chown=root:root)
+
+# Fast check for empty directories
 is_dir_empty() {
-    local dir="$1"
-    [[ ! -d "$dir" ]] && return 0
-    (shopt -s dotglob; set -- "$dir"/*; [[ ! -e "$1" ]])
+    [[ ! -d "$1" ]] && return 0
+    [[ -z $(find "$1" -mindepth 1 -print -quit) ]]
 }
 
 sync_assets() {
-    local src_dir="$1"
-    local target_dir="$2"
-    local mode="${3:-644}"
+    local src="$1" target="$2" mode="${3:-644}"
+    
+    [[ ! -d "$src" ]] && return
+    is_dir_empty "$src" && { warn "Source $src is empty, skipping."; return; }
 
-    [[ -d "$src_dir" ]] || return
-    if is_dir_empty "$src_dir"; then
-        warn "Source $src_dir is empty, skipping."
-        return
-    fi
-
-    sudo mkdir -p "$target_dir"
-
-    if command -v rsync &>/dev/null; then
-        log_task "Syncing $target_dir"
-        if sudo rsync -a --no-owner --no-group --no-perms \
-            --chmod="$mode" --chown=root:root \
-            "$src_dir/" "$target_dir/"; then
-            ok
-        else
-            fail
-            return 1
-        fi
+    log_task "Syncing $target"
+    sudo mkdir -p "$target"
+    
+    if sudo rsync "${RSYNC_BASE_OPTS[@]}" --chmod="$mode" "$src/" "$target/"; then
+        ok
+    else
+        fail
     fi
 }
 
 sync_root_tree() {
     local src_root="$1"
-    
+    local root_perms="Du=rwx,Dg=rx,Do=rx,Fu=rw,Fg=r,Fo=r"
+
     if [[ ! -d "$src_root" ]] || is_dir_empty "$src_root"; then
-        warn "Source $src_root is empty or missing, skipping."
-        return
+        warn "Root $src_root missing/empty."
+        exit 1
     fi
 
-    command -v rsync >/dev/null || { error "rsync not available"; exit 1; }
-
+    # Iterate through top-level dirs (e.g., etc, usr)
     for top_dir in "$src_root"/*; do
         [[ -d "$top_dir" ]] || continue
         
-        local parent_name
-        parent_name=$(basename "$top_dir") # e.g., "etc"
+        local parent
+        parent=$(basename "$top_dir")
 
-        for config_item in "$top_dir"/*; do
-            [[ -e "$config_item" ]] || continue
+        # Iterate through actual config items (e.g., etc/snapper, etc/pacman.d)
+        for item in "$top_dir"/*; do
+            [[ -e "$item" ]] || continue
             
-            local config_name
-            config_name=$(basename "$config_item")
+            local child
+            child=$(basename "$item")
             
-            log_task "Syncing /$parent_name/$config_name"
+            # This gives you the "/etc/snapper" style output
+            log_task "Syncing /$parent/$child"
             
-            if sudo rsync -a --no-owner --no-group --no-perms \
-                --chown=root:root \
-                --chmod=Du=rwx,Dg=rx,Do=rx,Fu=rw,Fg=r,Fo=r \
-                "$config_item" "/$parent_name/"; then
+            # Sync to the corresponding system path (e.g., /etc/)
+            if sudo rsync "${RSYNC_BASE_OPTS[@]}" --chmod="$root_perms" "$item" "/$parent/"; then
                 ok
             else
                 fail
@@ -118,8 +110,8 @@ if [[ -d "$DOTFILES_DIR" ]]; then
 
     # Sync System Binaries (Executables) and Libraries (Data/Dependencies)
     header "SYNCING SYSTEM BINARIES & LIBRARIES"
-    sync_assets "$DOTFILES_DIR/scripts/usr/local/bin" "/usr/local/bin" "755"
-    sync_assets "$DOTFILES_DIR/scripts/usr/local/lib" "/usr/local/lib" "644"
+    sync_assets "$DOTFILES_DIR/scripts/system-scripts/usr/local/bin" "/usr/local/bin" "755"
+    sync_assets "$DOTFILES_DIR/scripts/system-scripts/usr/local/lib" "/usr/local/lib" "644"
 
     # Sync Configuration Files (system-files tree)
     header "SYNCING CONFIGURATION FILES"
