@@ -40,5 +40,5 @@ configure_hyprland_services
 
 # User Services
 header "User services"
-run "Enabling idle inhibitor" systemctl --user enable --now wayland-pipewire-idle-inhibit.service
-run "Enabling failed unit checker" systemctl --user enable --now failed-units-check.timer
+run "Starting idle inhibitor" systemctl --user enable --now wayland-pipewire-idle-inhibit.service
+run "Starting failed unit checker" systemctl --user enable --now failed-units-check.timer
