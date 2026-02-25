@@ -9,18 +9,21 @@ error() { printf "${RED}[ERROR]${NC} %s\n" "$1"; }
 
 STATE_FILE="/tmp/snapper-num"
 
-# Capture the package list from Pacman
-FULL_PKGS=$(cat)
+# Capture package list and flatten newlines into spaces immediately
+FULL_PKGS=$(cat | tr '\n' ' ' | xargs)
 
-# Allows the use of $1, $2, and $# (the count)
+# Split into positional parameters to count them
+# shellcheck disable=SC2086
 set -- $FULL_PKGS
 COUNT=$#
 
-# Now $COUNT and $1-$5 contain data
+# Format the description string
 if [ "$COUNT" -gt 5 ]; then
     DESC_PKGS="$1 $2 $3 $4 $5... ($COUNT pkgs)"
-else
+elif [ "$COUNT" -gt 0 ]; then
     DESC_PKGS="$FULL_PKGS"
+else
+    DESC_PKGS="No packages changed"
 fi
 
 # If no pre-snapshot state exists, just stop
