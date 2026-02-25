@@ -86,7 +86,6 @@ alias update-grub="grub-mkconfig -o /boot/grub/grub.cfg" # Update grub
 alias yay='paru'             # Use paru as yay alternative
 
 # Apps
-alias y='yazi'                                         # Use Yazi as a terminal file manager
 alias top='btop'                                       # Modern system monitor
 alias cat='bat'                                         # Cat alternative
 alias cls='clear'                                      # Clear screen
