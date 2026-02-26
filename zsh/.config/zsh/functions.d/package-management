@@ -2,7 +2,7 @@
 
 # Search for packages
 s() {
-    paru -Slq | grep -vE '\-(bin|git|debug|devel)$' | fzf \
+    paru -Slq | fzf \
         --query "$1" \
         --multi \
         --ansi \
