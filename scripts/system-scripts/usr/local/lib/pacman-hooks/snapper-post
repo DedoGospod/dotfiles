@@ -8,16 +8,17 @@ log()   { printf "${GREEN}[INFO]${NC} %s\n" "$1"; }
 error() { printf "${RED}[ERROR]${NC} %s\n" "$1"; }
 
 STATE_FILE="/tmp/snapper-num"
+DESC_LIMIT=65
 
-# Capture package list and flatten newlines into spaces immediately
-FULL_PKGS=$(cat | tr '\n' ' ' | xargs)
+# Clean and flatten input
+FULL_PKGS=$(cat | tr -s '[:space:]' ' ' | xargs)
 
-# Split into positional parameters to count them
+# Count packages
 # shellcheck disable=SC2086
 set -- $FULL_PKGS
 COUNT=$#
 
-# Format the description string
+# Initial formatting
 if [ "$COUNT" -gt 5 ]; then
     DESC_PKGS="$1 $2 $3 $4 $5... ($COUNT pkgs)"
 elif [ "$COUNT" -gt 0 ]; then
@@ -26,12 +27,28 @@ else
     DESC_PKGS="No packages changed"
 fi
 
-# If no pre-snapshot state exists, just stop
-[ ! -f "$STATE_FILE" ] && exit 0
+# If it's too long, chop it but keep the package count
+CURRENT_LEN=$(printf "Packages: %s" "$DESC_PKGS" | wc -c)
+
+if [ "$CURRENT_LEN" -gt "$DESC_LIMIT" ]; then
+    # Prepare the suffix
+    SUFFIX="... ($COUNT pkgs)"
+    SUFFIX_LEN=$(printf "%s" "$SUFFIX" | wc -c)
+    
+    # Calculate how much of the package list we can keep
+    KEEP_LEN=$((DESC_LIMIT - 10 - SUFFIX_LEN))
+    
+    # Slice the string and attach the suffix
+    DESC_PKGS="$(printf "%s" "$DESC_PKGS" | cut -c 1-"$KEEP_LEN")$SUFFIX"
+fi
+
+# Create the Post-Snapshot
+if [ ! -f "$STATE_FILE" ]; then
+    exit 0
+fi
 
 PRE=$(cat "$STATE_FILE")
 
-# Create the post-snapshot
 if POST=$(snapper create -t post --pre-number "$PRE" -c number -d "Packages: $DESC_PKGS" -p); then
     log "Snapshot created: $PRE -> $POST"
     rm "$STATE_FILE"
