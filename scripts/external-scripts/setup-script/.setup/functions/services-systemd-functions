@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# Note: This file relies on variables and functions defined in the main script.
 
 # Colors for logging
 GREEN='\033[0;32m'
