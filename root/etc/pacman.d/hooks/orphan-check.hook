@@ -8,4 +8,5 @@ Target = *
 [Action]
 Description = Checking for orphaned packages
 When = PostTransaction
+Depends = bash
 Exec = /usr/local/lib/systemd-scripts/check-orphans

@@ -8,5 +8,6 @@ Target = *
 [Action]
 Description = Creating Snapper pre-snapshot...
 When = PreTransaction
+Depends = bash
 Exec = /usr/local/lib/pacman-hooks/snapper-pre
 NeedsTargets
