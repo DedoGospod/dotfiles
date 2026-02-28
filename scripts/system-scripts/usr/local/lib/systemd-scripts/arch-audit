@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+# Search for vulnerabilities
+VULNS=$(/usr/bin/arch-audit -u -f "%n")
+
+if [[ -n "$VULNS" ]]; then
+    LIST=$(echo "$VULNS" | tr '\n' ',' | sed 's/,$//; s/,/, /g')
+    
+    /usr/bin/notify-send -u critical \
+        -i security-high \
+        "Security Updates Available" \
+        "The following packages have known vulnerabilities: \n\n$LIST"
+fi

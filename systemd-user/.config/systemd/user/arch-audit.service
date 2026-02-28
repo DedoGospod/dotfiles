@@ -1,0 +1,10 @@
+[Unit]
+Description=Arch Audit Notification Script
+After=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/lib/systemd-scripts/arch-audit
+
+[Install]
+WantedBy=default.target
