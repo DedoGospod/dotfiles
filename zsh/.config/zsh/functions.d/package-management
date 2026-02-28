@@ -1,8 +1,9 @@
 #!/usr/bin/env zsh
 
-# Search for packages
-s() {
-    paru -Slq | fzf \
+
+if grep -qE "ID=arch|ID_LIKE=arch" /etc/os-release; then
+    s() {
+            paru -Slq | fzf \
         --query "$1" \
         --multi \
         --ansi \
@@ -19,9 +20,9 @@ s() {
         --preview-window='right:60%:wrap' \
         --bind 'enter:become(paru -S {+})' \
         --bind 'ctrl-a:select-all'
-}
+    }
 
-# Install packages
-S() {
-    paru -S "$@"
-}
+    S() {
+        paru -S "$@"
+    }
+fi
