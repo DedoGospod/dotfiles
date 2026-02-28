@@ -9,4 +9,4 @@ Target = *
 Description = Checking for orphaned packages
 When = PostTransaction
 Depends = bash
-Exec = /usr/local/lib/check-orphans
+Exec = /usr/local/lib/pacman-hooks/check-orphans
