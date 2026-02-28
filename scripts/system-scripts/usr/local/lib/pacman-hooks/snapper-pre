@@ -1,10 +1,27 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 
-TYPE="${1:-routine}" # Expects 'routine' or 'important'
 STATE_FILE="/tmp/snapper-num"
 
-# Capture the parent process command (the package manager command)
+# Define your critical packages in an array
+CRITICAL_PKGS=(
+    "linux"
+    "systemd"
+    "nvidia"
+    "mesa"
+    "grub"
+    "mkinitcpio"
+)
+
+# Capture the parent process command
 CMD=$(ps -p "$PPID" -o args= || echo "unknown process")
+
+# Check if any array element exists in the CMD string
+for pkg in "${CRITICAL_PKGS[@]}"; do
+    if [[ "$CMD" == *"$pkg"* ]]; then
+        TYPE="important"
+        break
+    fi
+done
 
 # Determine metadata based on type
 if [ "$TYPE" = "important" ]; then
