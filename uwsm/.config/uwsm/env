@@ -1,8 +1,30 @@
 #!/usr/bin/env bash
 
 # Source & run XDG env file
-if [[ -f "$HOME/.local/lib/xdg_setup" ]]; then 
+if [[ -f "$HOME/.local/lib/xdg_setup" ]]; then
+    # shellcheck source=/dev/null
+    source "$HOME/.local/lib/logs"
     # shellcheck source=/dev/null
     source "$HOME/.local/lib/xdg_setup"
-    xdg_setup
+    bash xdg_setup
 fi
+
+# Nvidia specific
+if [[ -d "/sys/module/nvidia" ]]; then
+    export LIBVA_DRIVER_NAME=nvidia         # Hardware Video Acceleration
+    export __GLX_VENDOR_LIBRARY_NAME=nvidia # OpenGL Routing
+    export GBM_BACKEND=nvidia-drm           # The Wayland Handshake
+
+    # Explicitly enable G-Sync and VRR
+    export __GL_GSYNC_ALLOWED=1
+    export __GL_VRR_ALLOWED=1
+fi
+
+# Theme
+export QT_QPA_PLATFORMTHEME="qt6ct"
+export ADW_DISABLE_PORTAL=1
+
+# Wayland specific
+export QT_QPA_PLATFORM="wayland;xcb"
+export XCURSOR_THEME="Adwaita"
+export XCURSOR_SIZE=24
