@@ -11,7 +11,7 @@ if [[ -d "$FUNCTIONS_DIR" ]]; then
         source "$FUNCTIONS_DIR/$lib"
     done
 else
-    error "Could not import functions from $FUNCTIONS_DIR"
+    echo "Could not import functions from $FUNCTIONS_DIR"
     exit 1
 fi
 
@@ -45,7 +45,6 @@ import_install_phase
 # Mandatory Setup
 run_setup_script "setup-dotfiles"
 run_setup_script "setup-user-env"
-run_setup_script "setup-theme"
 run_setup_script "setup-firewall"
 
 # Install btrfs maintnence packages if btrfs is root file system

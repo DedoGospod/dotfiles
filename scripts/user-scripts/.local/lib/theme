@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+
+# SET VARIABLES
+GTK_THEME="Adwaita"
+ICONS="Adwaita"
+FONT="Adwaita Sans 11"
+CURSOR="Adwaita"
+CURSOR_SIZE=24
+
+# GSETTINGS THEME
+gsettings set org.gnome.desktop.interface gtk-theme "$GTK_THEME"
+gsettings set org.gnome.desktop.interface icon-theme "$ICONS"
+gsettings set org.gnome.desktop.interface font-name "$FONT"
+gsettings set org.gnome.desktop.interface cursor-theme "$CURSOR"
+gsettings set org.gnome.desktop.interface cursor-size $CURSOR_SIZE
+gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
+
+# GSETTINGS USER CONFIG
+gsettings set org.gnome.nautilus.preferences default-sort-order 'type'
+gsettings set org.gnome.desktop.privacy remember-recent-files false
+
+# Create config directories
+mkdir -p ~/.config/gtk-2.0 ~/.config/gtk-3.0 ~/.config/gtk-4.0
+mkdir -p ~/.config/qt5ct ~/.config/qt6ct
+
+# Configuration templates
+GTK_TEMPLATE=$(cat <<EOF
+[Settings]
+gtk-theme-name="$GTK_THEME"
+gtk-icon-theme-name="$ICONS"
+gtk-font-name=$FONT
+gtk-cursor-theme-name=$CURSOR
+gtk-cursor-theme-size=$CURSOR_SIZE
+gtk-application-prefer-dark-theme=1
+EOF
+)
+
+# We define the shared QT template to avoid duplication
+QT_TEMPLATE=$(cat <<EOF
+[Appearance]
+color_scheme_path=/usr/share/qt6ct/colors/darker.conf
+custom_palette=true
+standard_dialogs=default
+style=Fusion
+
+[Fonts]
+fixed="DejaVu LGC Sans,12,-1,5,50,0,0,0,0,0"
+general="DejaVu LGC Sans,12,-1,5,50,0,0,0,0,0"
+EOF
+)
+
+echo "$GTK_TEMPLATE" > ~/.config/gtk-3.0/settings.ini
+echo "$GTK_TEMPLATE" > ~/.config/gtk-4.0/settings.ini
+
+echo "$QT_TEMPLATE" > ~/.config/qt5ct/qt5ct.conf
+echo "$QT_TEMPLATE" > ~/.config/qt6ct/qt6ct.conf

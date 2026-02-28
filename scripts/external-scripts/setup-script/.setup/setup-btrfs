@@ -22,17 +22,21 @@ log_task() { echo -ne "${GREEN}[INFO]${NC} $1... "; }
 ok() { echo -e "${GREEN}Done.${NC}"; }
 fail() { echo -e "${RED}Failed.${NC}"; }
 
+# Task runner
 run_task() {
-    local task_desc="$1"
-    shift 
+    log_task "$1"
+    shift
     
-    log_task "$task_desc"
-    
-    if "$@" > /dev/null 2>&1; then
+    local err_log
+    err_log=$(mktemp)
+
+    if "$@" 2>"$err_log" >/dev/null; then
         ok
     else
         fail
+        [[ -s "$err_log" ]] && error "$(cat "$err_log")"
     fi
+    rm -f "$err_log"
 }
 
 # Function to detect bootloader
