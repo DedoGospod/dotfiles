@@ -19,6 +19,7 @@ log_task() { echo -ne "${GREEN}[INFO]${NC} $1... "; }
 ok()       { echo -e "${GREEN}Done.${NC}"; }
 fail()     { echo -e "${RED}Failed.${NC}"; }
 
+# HELPER FUNCTIONS
 run() {
     log_task "$1"
     shift
@@ -33,6 +34,14 @@ run() {
         [[ -s "$err_log" ]] && error "$(cat "$err_log")"
     fi
     rm -f "$err_log"
+}
+
+run_user_service(){
+    run "$1" systemctl --user enable --now "$2"
+}
+
+run_system_service() {
+    run "$1" sudo systemctl enable --now "$2"
 }
 
 manage() {

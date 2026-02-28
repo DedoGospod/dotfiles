@@ -1,18 +1,25 @@
 #!/usr/bin/env bash
 # Note: This file relies on variables and functions defined in the main script.
 
-configure_arch_timers() {
+configure_arch_services() { 
+    header "Arch linux specific"
     grep -qE "ID=arch|ID_LIKE=arch" /etc/os-release || return 0
-    
-    run "Starting paccache.timer" sudo systemctl enable --now paccache.timer
-    run "Starting aur-trim.timer" systemctl --user enable --now aur-trim.timer
-}
 
-configure_ext4_services() {
-    [[ ! -x /usr/sbin/e4defrag ]] && { error "e2fsprogs missing"; return 1; }
-    lsblk -no FSTYPE | grep -q "ext4" || return 0
+    local services=(
+        # USER
+        aur-trim.timer
 
-    run "Starting fstrim.timer" sudo systemctl enable --now fstrim.timer
+        # SYSTEM
+        paccache.timer
+    )
+
+    for srv in "${services[@]}"; do
+        if systemctl --user list-unit-files "$srv" &>/dev/null; then
+            run "Starting $srv" systemctl --user enable --now "$srv"
+        elif systemctl list-unit-files "$srv" &>/dev/null; then
+            run "Starting $srv" sudo systemctl enable --now "$srv"
+        fi
+    done
 }
 
 configure_hyprland_services() {
@@ -20,11 +27,11 @@ configure_hyprland_services() {
 
     header "Hyprland Specific"
     local services=(
-        hypridle.service 
-        hyprpaper.service 
-        pyprland.service 
-        hyprpolkitagent.service 
-        waybar.service 
+        hypridle.service
+        hyprpaper.service
+        pyprland.service
+        hyprpolkitagent.service
+        waybar.service
         hyprsunset.service
     )
 

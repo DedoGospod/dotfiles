@@ -3,13 +3,13 @@
 xdg_setup() {
     header "XDG DIRECTORY SETUP"
 
-    # Ensures applications follow the XDG Base Directory Specification
+    # XDG Base Directory Specification
     export XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
     export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
     export XDG_STATE_HOME="${XDG_STATE_HOME:-$HOME/.local/state}"
     export XDG_CACHE_HOME="${XDG_CACHE_HOME:-$HOME/.cache}"
 
-    # --- APPLICATION REDIRECTS ---
+    # APPLICATION REDIRECTS
 
     # Rust
     export CARGO_HOME="${CARGO_HOME:-$XDG_DATA_HOME/cargo}"
@@ -32,11 +32,6 @@ xdg_setup() {
     # Cache
     export CUDA_CACHE_PATH="$XDG_CACHE_HOME/nv"
 
-    # Toolkit
-    export QT_QPA_PLATFORMTHEME="qt6ct"
-    export QT_QPA_PLATFORM="wayland;xcb"
-    export ADW_DISABLE_PORTAL=1
-
     # Create directories if missing
     target_dirs=(
         "$XDG_DATA_HOME" "$XDG_CONFIG_HOME" "$XDG_STATE_HOME" "$XDG_CACHE_HOME"
@@ -56,16 +51,5 @@ xdg_setup() {
         ok
     else
         fail
-    fi
-
-    # Hardware Specifics
-    if [[ -d "/sys/module/nvidia" ]]; then
-        export LIBVA_DRIVER_NAME=nvidia         # Hardware Video Acceleration
-        export __GLX_VENDOR_LIBRARY_NAME=nvidia # OpenGL Routing
-        export GBM_BACKEND=nvidia-drm           # The Wayland Handshake
-
-        # Explicitly enable G-Sync and VRR
-        export __GL_GSYNC_ALLOWED=1
-        export __GL_VRR_ALLOWED=1
     fi
 }

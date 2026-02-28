@@ -1,0 +1,11 @@
+[Unit]
+Description=Apply GSettings and GTK themes
+After=graphical-session.target
+
+[Service]
+Type=oneshot
+ExecStart=%h/.local/lib/theme
+RemainAfterExit=yes
+
+[Install]
+WantedBy=graphical-session.target
