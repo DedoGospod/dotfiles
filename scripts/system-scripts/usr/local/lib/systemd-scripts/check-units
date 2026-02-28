@@ -1,28 +1,17 @@
 #!/usr/bin/env bash
 
+# Set variables
 sys_failed=$(systemctl --failed --no-legend)
 user_failed=$(systemctl --user --failed --no-legend 2>/dev/null)
-msg=""
 
-# Check if any root services failed
-if [[ -n "$sys_failed" ]]; then
-    msg="[System Units]
-$sys_failed"
-fi
+# Detect failed services
+msg=()
+[[ -n "$sys_failed" ]] && msg+=("[System Units]" "$sys_failed" "")
+[[ -n "$user_failed" ]] && msg+=("[User Units]" "$user_failed")
 
-# Check if any user services failed
-if [[ -n "$user_failed" ]]; then
-    [[ -n "$msg" ]] && msg="${msg}
-
-"
-    msg="${msg}[User Units]
-$user_failed"
-fi
-
-# Notify the user
-if [[ -n "$msg" ]]; then
-    notify-send -u critical "⚠️ Systemd Failure" "$msg"
+# Notify user
+if [[ ${#msg[@]} -gt 0 ]]; then
+    notify-send -u critical "⚠️ Systemd Failure" "$(printf '%s\n' "${msg[@]}")"
 else
     notify-send -u low -t 3000 "✅ System Healthy" "All units are running correctly."
 fi
-
