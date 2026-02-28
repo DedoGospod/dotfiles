@@ -40,7 +40,7 @@ else
 fi
 
 # Create the Post-Snapshot
-if POST=$(snapper create -t post --pre-number "$PRE" -c number -d "Post: $DESC_PKGS" -p); then
+if POST=$(snapper create -t post --pre-number "$PRE" -c number -d "Packages: $DESC_PKGS" -p); then
     log "Snapshot created: $PRE -> $POST"
     rm "$STATE_FILE"
 else
