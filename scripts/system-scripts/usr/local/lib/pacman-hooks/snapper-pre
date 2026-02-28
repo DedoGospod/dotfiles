@@ -1,8 +1,16 @@
 #!/usr/bin/env bash
 
-STATE_FILE="/tmp/snapper-num"
+# Secure Environment Setup
+SECURE_DIR="/run/snapper-hooks"
+if [[ ! -d "$SECURE_DIR" ]]; then
+    mkdir -p "$SECURE_DIR"
+    chmod 700 "$SECURE_DIR"
+fi
 
-# Define your critical packages in an array
+# Create a unique state file for this specific process
+STATE_FILE=$(mktemp -p "$SECURE_DIR" "snapper-pre-${PPID}.XXXXX")
+
+# Configuration & Detection
 CRITICAL_PKGS=(
     "linux"
     "systemd"
@@ -12,10 +20,9 @@ CRITICAL_PKGS=(
     "mkinitcpio"
 )
 
-# Capture the parent process command
 CMD=$(ps -p "$PPID" -o args= || echo "unknown process")
+TYPE="routine"
 
-# Check if any array element exists in the CMD string
 for pkg in "${CRITICAL_PKGS[@]}"; do
     if [[ "$CMD" == *"$pkg"* ]]; then
         TYPE="important"
@@ -23,14 +30,22 @@ for pkg in "${CRITICAL_PKGS[@]}"; do
     fi
 done
 
-# Determine metadata based on type
-if [ "$TYPE" = "important" ]; then
+# Metadata Construction
+if [[ "$TYPE" == "important" ]]; then
     DESC="[CRITICAL] $CMD"
     USERDATA="important=yes"
 else
     DESC="Routine: $CMD"
-    USERDATA="important=no"
+    USERDATA=""
 fi
 
-# Create snapshot and save ID to temp file
-snapper create -t pre -c number -d "$DESC" --userdata "${USERDATA:-}" -p > "$STATE_FILE"
+# Execution 
+SNAPPER_ARGS=(create -t pre -c number -d "$DESC" -p)
+
+# Only add the userdata flag if marked important
+if [[ -n "$USERDATA" ]]; then
+    SNAPPER_ARGS+=(--userdata "$USERDATA")
+fi
+
+# Execute snapper and save the ID to our secure temp file
+snapper "${SNAPPER_ARGS[@]}" > "$STATE_FILE"

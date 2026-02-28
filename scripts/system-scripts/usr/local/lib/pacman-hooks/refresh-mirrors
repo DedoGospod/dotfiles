@@ -25,4 +25,3 @@ else
     error "No mirror tool found (cachyos-rate-mirrors or reflector)"
     exit 1
 fi
-
