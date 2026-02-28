@@ -1,0 +1,12 @@
+[Trigger]
+Operation = Install
+Operation = Upgrade
+Operation = Remove
+Type = Package
+Target = *
+
+[Action]
+Description = Creating Snapper pre-snapshot...
+When = PreTransaction
+Exec = /usr/local/lib/pacman-hooks/snapper-pre
+NeedsTargets
