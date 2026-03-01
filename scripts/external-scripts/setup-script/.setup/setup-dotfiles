@@ -18,65 +18,39 @@ log_task() { echo -ne "${GREEN}[INFO]${NC} $1... "; }
 ok() { echo -e "${GREEN}Done.${NC}"; }
 fail() { echo -e "${RED}Failed.${NC}"; }
 
-# Global rsync defaults for system files
-RSYNC_BASE_OPTS=(-a --no-owner --no-group --no-perms --chown=root:root)
-
-# Fast check for empty directories
-is_dir_empty() {
-    [[ ! -d "$1" ]] && return 0
-    [[ -z $(find "$1" -mindepth 1 -print -quit) ]]
-}
-
-sync_assets() {
-    local src="$1" target="$2" mode="${3:-644}"
-    
-    [[ ! -d "$src" ]] && return
-    is_dir_empty "$src" && { warn "Source $src is empty, skipping."; return; }
-
-    log_task "Syncing $target"
-    sudo mkdir -p "$target"
-    
-    if sudo rsync "${RSYNC_BASE_OPTS[@]}" --chmod="$mode" "$src/" "$target/"; then
-        ok
-    else
-        fail
-    fi
-}
+# Global rsync defaults
+RSYNC_OPTS=(-rlt --chown=root:root)
 
 sync_root_tree() {
-    local src_root="$1"
-    local root_perms="Du=rwx,Dg=rx,Do=rx,Fu=rw,Fg=r,Fo=r"
+    local src="$1"
+    local perms="${2:-D755,F644}"
+    
+    shopt -s nullglob
 
-    if [[ ! -d "$src_root" ]] || is_dir_empty "$src_root"; then
-        warn "Root $src_root missing/empty."
-        exit 1
+    if [[ ! -d "$src" ]] || [[ -z "$(find "$src" -mindepth 1 -maxdepth 1 -print -quit)" ]]; then
+        warn "Source $src is invalid or empty."
+        return 1
     fi
 
-    # Iterate through top-level dirs (e.g., etc, usr)
-    for top_dir in "$src_root"/*; do
-        [[ -d "$top_dir" ]] || continue
-        
+    for top in "$src"/*/; do
         local parent
-        parent=$(basename "$top_dir")
+        parent=$(basename "$top")
+        
+        for item in "$top"*; do
+            local item_name
+            item_name=$(basename "$item")
+            
+            log_task "Syncing /$parent/$item_name"
 
-        # Iterate through actual config items (e.g., etc/snapper, etc/pacman.d)
-        for item in "$top_dir"/*; do
-            [[ -e "$item" ]] || continue
-            
-            local child
-            child=$(basename "$item")
-            
-            # This gives you the "/etc/snapper" style output
-            log_task "Syncing /$parent/$child"
-            
-            # Sync to the corresponding system path (e.g., /etc/)
-            if sudo rsync "${RSYNC_BASE_OPTS[@]}" --chmod="$root_perms" "$item" "/$parent/"; then
+            if sudo rsync "${RSYNC_OPTS[@]}" --chmod="$perms" "$item" "/$parent/"; then
                 ok
             else
                 fail
             fi
         done
     done
+    
+    shopt -u nullglob
 }
 
 # Stow Packages
@@ -92,7 +66,10 @@ header "DOTFILE CONFIGURATION"
 
 if [[ -d "$DOTFILES_DIR" ]]; then
     log "Stowing dotfiles..."
-    cd "$DOTFILES_DIR" || { error "Cannot enter $DOTFILES_DIR"; exit 1; }
+    cd "$DOTFILES_DIR" || {
+        error "Cannot enter $DOTFILES_DIR"
+        exit 1
+    }
 
     if [[ -d "scripts/user-scripts" ]]; then
         log_task "Stowing user scripts"
@@ -108,12 +85,8 @@ if [[ -d "$DOTFILES_DIR" ]]; then
         fi
     done
 
-    # Sync System Binaries (Executables) and Libraries (Data/Dependencies)
-    header "SYNCING SYSTEM BINARIES & LIBRARIES"
-    sync_assets "$DOTFILES_DIR/scripts/system-scripts/usr/local/bin" "/usr/local/bin" "755"
-    sync_assets "$DOTFILES_DIR/scripts/system-scripts/usr/local/lib" "/usr/local/lib" "755"
-
-    # Sync Configuration Files (system-files tree)
-    header "SYNCING CONFIGURATION FILES"
+    # Sync system files
+    header "SYNCING FILES"
     sync_root_tree "$DOTFILES_DIR/root"
+    sync_root_tree "$DOTFILES_DIR/scripts/system-scripts" "755"
 fi
