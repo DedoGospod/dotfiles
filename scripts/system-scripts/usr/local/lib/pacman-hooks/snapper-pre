@@ -18,6 +18,10 @@ CRITICAL_PKGS=(
     "mesa"
     "grub"
     "mkinitcpio"
+    "glibc"
+    "pacman"
+    "amd-ucode"
+    "intel-ucode"
 )
 
 CMD=$(ps -p "$PPID" -o args= || echo "unknown process")
