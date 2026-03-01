@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+SCRIPT_DIR="$HOME/dotfiles/scripts/external-scripts/setup-script/.setup"
+
+# Elevate permissions
+sudo -v
+
+# Check if script directory exists
+if [[ -d "$SCRIPT_DIR" ]]; then
+    
+    # Define dotfile script
+    SETUP_FILE="$SCRIPT_DIR/setup-dotfiles"
+
+    # Executes script
+    if [[ -f "$SETUP_FILE" ]]; then
+        chmod u+x "$SETUP_FILE"
+        bash "$SETUP_FILE"
+    else
+        echo "Error: $SETUP_FILE not found!"
+        exit 1
+    fi
+fi
