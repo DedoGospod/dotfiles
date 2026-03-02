@@ -46,6 +46,8 @@ done
 (( $+commands[starship] )) && eval "$(starship init zsh)"
 (( $+commands[zoxide] )) && eval "$(zoxide init zsh)"
 
+source "$HOME/.local/lib/logs"
+
 # Source functions
 functions_dir="${XDG_CONFIG_HOME:-$HOME/.config}/zsh/functions.d"
 if [[ -d "$functions_dir" ]]; then
