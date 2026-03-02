@@ -1,55 +1,51 @@
 #!/usr/bin/env bash
+set -euo pipefail
 
-# Secure Environment Setup
+#Configuration
 SECURE_DIR="/run/snapper-hooks"
-if [[ ! -d "$SECURE_DIR" ]]; then
-    mkdir -p "$SECURE_DIR"
-    chmod 700 "$SECURE_DIR"
-fi
-
-# Create a unique state file for this specific process
-STATE_FILE=$(mktemp -p "$SECURE_DIR" "snapper-pre-${PPID}.XXXXX")
-
-# Configuration & Detection
 CRITICAL_PKGS=(
-    "linux"
-    "systemd"
-    "nvidia"
-    "mesa"
-    "grub"
-    "mkinitcpio"
-    "glibc"
-    "pacman"
-    "amd-ucode"
-    "intel-ucode"
+    "linux*"
+    "systemd*"
+    "*nvidia*"
+    "mesa*"
+    "grub*"
+    "mkinitcpio*"
+    "glibc*"
+    "pacman*"
+    "*ucode"
 )
 
-CMD=$(ps -p "$PPID" -o args= || echo "unknown process")
+# Setup
+[[ ! -d "$SECURE_DIR" ]] && mkdir -p "$SECURE_DIR" && chmod 700 "$SECURE_DIR"
+STATE_FILE=$(mktemp -p "$SECURE_DIR" "snapper-pre-${PPID}.XXXXX")
 TYPE="routine"
+PKGS=()
 
-for pkg in "${CRITICAL_PKGS[@]}"; do
-    if [[ "$CMD" == *"$pkg"* ]]; then
-        TYPE="important"
-        break
-    fi
+# Detection with Pattern Matching
+while read -r pkg_line; do
+    pkg_name=$(echo "$pkg_line" | awk '{print $1}')
+    [[ -z "$pkg_name" ]] && continue
+    PKGS+=("$pkg_name")
+
+    # Check against critical patterns
+    for pattern in "${CRITICAL_PKGS[@]}"; do
+        # shellcheck disable=SC2254
+        case "$pkg_name" in
+            $pattern)
+                TYPE="important"
+                ;;
+        esac
+    done
 done
 
 # Metadata Construction
 if [[ "$TYPE" == "important" ]]; then
-    DESC="[CRITICAL] $CMD"
-    USERDATA="important=yes"
+    DESC="[CRITICAL] Important Update"
+    EXTRA_ARGS=(--userdata "important=yes")
 else
-    DESC="Routine: $CMD"
-    USERDATA=""
+    DESC="Routine"
+    EXTRA_ARGS=()
 fi
 
-# Execution 
-SNAPPER_ARGS=(create -t pre -c number -d "$DESC" -p)
-
-# Only add the userdata flag if marked important
-if [[ -n "$USERDATA" ]]; then
-    SNAPPER_ARGS+=(--userdata "$USERDATA")
-fi
-
-# Execute snapper and save the ID to our secure temp file
-snapper "${SNAPPER_ARGS[@]}" > "$STATE_FILE"
+# Execution
+snapper create -t pre -c number -d "$DESC" "${EXTRA_ARGS[@]}" -p >"$STATE_FILE"
