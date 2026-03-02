@@ -20,19 +20,6 @@ gm() {
 }
 
 git-reset-hard() {
-  local current_branch=$(git rev-parse --abbrev-ref HEAD)
-  local upstream=$(git rev-parse --abbrev-ref --symbolic-full-name @{u} 2>/dev/null)
-  local target=${upstream:-"origin/main"}
-
-  warn "This will destroy all local changes on '$current_branch'."
-  log "Resetting to $target..."
-  
-  # Ask for confirmation
-  read -q "choice?Are you sure? (y/n) "
-  echo ""
-  if [[ "$choice" == "y" ]]; then
-      git reset --hard "$target"
-  else
-      log "Reset aborted."
-  fi
+    local branch="${1:-$(git remote show origin | awk '/HEAD branch/ {print $NF}' || echo "main")}"
+    git reset --hard "origin/$branch"
 }

@@ -105,12 +105,6 @@ alias rm='trash -v'         # Safe delete using trash-cli
 alias mkdir='mkdir -p'      # Create parent directories automatically
 alias h='fc -nil 1 | grep --color=auto' # Search history for a specific terminal command
 alias hist="fc -nil 1"      # Always show history with readable dates
-alias du='du -h'            #
-alias df='df -h'            #
-
-# Github
-alias git-reset-hard='git reset --hard origin/main'
-alias gd='git diff HEAD'
 
 # Configs
 alias zshrc='nvim ~/.config/zsh/.zshrc && source ~/.config/zsh/.zshrc'  # Edit zsh config
