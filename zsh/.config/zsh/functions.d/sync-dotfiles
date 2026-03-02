@@ -1,0 +1,18 @@
+#!/usr/bin/env zsh
+
+sync-dotfiles() {
+    local DOT_DIR="$HOME/dotfiles/scripts/external-scripts/setup-script/.setup"
+    local SETUP_DOT="$DOT_DIR/setup-dotfiles"
+
+    # Elevate privledges
+    sudo -v || return 1
+
+    # Run dotfile script if it exists
+    if [[ -d "$DOT_DIR" ]] && [[ -f "$SETUP_DOT" ]]; then
+        chmod u+x "$SETUP_DOT"
+        bash "$SETUP_DOT"
+    else
+        error "$SETUP_DOT not found"
+        exit 1
+    fi
+}
