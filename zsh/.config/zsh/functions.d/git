@@ -7,49 +7,41 @@ ga() {
 }
 
 gm() {
+    local target_branch="${1:-main}"
+    local source_branch="${2:-testing}"
+    local original_branch
+    original_branch=$(git symbolic-ref --short HEAD 2>/dev/null)
+
     (
-        set -e
-
         if ! git diff-index --quiet HEAD --; then
-            error "You have uncommitted changes. Stash or commit them first."
-            return 1
+            error "You have uncommitted changes. Stash or commit them first." >&2
+            exit 1
         fi
 
-        log_task "Switching to main and syncing..."
-        git checkout main
-        git pull --rebase origin main
-        ok
+        log_task "Switching to ${target_branch} and syncing..."
+        git switch "$target_branch"
+        git pull --rebase origin "$target_branch"
 
-        log_task "Merging 'testing' into 'main'..."
-        if ! GIT_MERGE_AUTOEDIT=no git merge testing --no-edit; then
-            echo "Merge conflict detected! Stopping."
-            return 1
-        fi
-        ok
+        log "Merging '${source_branch}' into '${target_branch}'..."
+        git merge "$source_branch"
 
-        log_task "Pushing updates..."
-        git push origin main
-        ok
+        log "Pushing updates..."
+        git push origin "$target_branch"
 
-        log_task "Returning to testing branch..."
-        git checkout testing
-        ok
+        log "Returning to ${original_branch}..."
+        git switch "$original_branch"
     )
 }
 
 git-reset-hard() {
-  # Get the name of the current branch
   local current_branch=$(git rev-parse --abbrev-ref HEAD)
-  # Get the remote tracking branch (e.g., origin/feature-x)
   local upstream=$(git rev-parse --abbrev-ref --symbolic-full-name @{u} 2>/dev/null)
-
-  # Fallback to origin/main if no upstream is set
   local target=${upstream:-"origin/main"}
 
-  echo "Warning: This will destroy all local changes on '$current_branch'."
-  echo "Resetting to $target..."
+  warn "This will destroy all local changes on '$current_branch'."
+  log "Resetting to $target..."
   
-  # Optional: Ask for confirmation
+  # Ask for confirmation
   read -q "choice?Are you sure? (y/n) "
   echo ""
   if [[ "$choice" == "y" ]]; then
