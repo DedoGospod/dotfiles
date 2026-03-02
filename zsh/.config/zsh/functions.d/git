@@ -15,7 +15,7 @@ gm() {
 
     # Switch to target branch and pull
     git switch "$target_branch"
-    git pull --rebasee origin "$target_branch"
+    git pull --rebase origin "$target_branch"
 
     # Merge and push changes
     git merge "$source_branch"
