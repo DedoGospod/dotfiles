@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+# Custom Snapper manual snapshot function
+snapper-create() {
+    if [[ -z "$1" ]]; then
+        error "Please provide a description."
+        usage "snapper-create <description>"
+        return 1
+    fi
+
+    sudo snapper -c root create --description "$1" --cleanup-algorithm number
+    success "Snapshot created: $1"
+}

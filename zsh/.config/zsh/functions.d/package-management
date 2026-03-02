@@ -1,6 +1,5 @@
 #!/usr/bin/env zsh
 
-
 if grep -qE "ID=arch|ID_LIKE=arch" /etc/os-release; then
     s() {
             paru -Slq | fzf \

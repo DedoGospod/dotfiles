@@ -1,4 +1,5 @@
 #!/usr/bin/env zsh
+
 nv() {
     if [[ -z "$1" ]]; then
         command nvim
