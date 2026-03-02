@@ -13,9 +13,15 @@ gm() {
     local original_branch
     original_branch=$(git symbolic-ref --short HEAD 2>/dev/null)
 
+    # Switch to target branch and pull
+    git switch "$target_branch"
     git pull --rebasee origin "$target_branch"
+
+    # Merge and push changes
     git merge "$source_branch"
     git push "$target_branch"
+
+    # Switch back to original branch
     git switch "$original_branch"
 }
 
