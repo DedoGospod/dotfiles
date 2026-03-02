@@ -23,3 +23,11 @@ git-reset-hard() {
     local branch="${1:-$(git remote show origin | awk '/HEAD branch/ {print $NF}' || echo "main")}"
     git reset --hard "origin/$branch"
 }
+
+gd() {
+  if [[ -z "$1" ]]; then
+    git diff HEAD
+  else
+    git diff "$@"
+  fi
+}
