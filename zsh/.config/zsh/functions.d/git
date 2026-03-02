@@ -7,30 +7,16 @@ ga() {
 }
 
 gm() {
-    local target_branch="${1:-main}"
-    local source_branch="${2:-testing}"
+    local source_branch="${1:-testing}"
+    local target_branch="${2:-main}"
+
     local original_branch
     original_branch=$(git symbolic-ref --short HEAD 2>/dev/null)
 
-    (
-        if ! git diff-index --quiet HEAD --; then
-            error "You have uncommitted changes. Stash or commit them first." >&2
-            exit 1
-        fi
-
-        log_task "Switching to ${target_branch} and syncing..."
-        git switch "$target_branch"
-        git pull --rebase origin "$target_branch"
-
-        log "Merging '${source_branch}' into '${target_branch}'..."
-        git merge "$source_branch"
-
-        log "Pushing updates..."
-        git push origin "$target_branch"
-
-        log "Returning to ${original_branch}..."
-        git switch "$original_branch"
-    )
+    git pull --rebasee origin "$target_branch"
+    git merge "$source_branch"
+    git push "$target_branch"
+    git switch "$original_branch"
 }
 
 git-reset-hard() {
