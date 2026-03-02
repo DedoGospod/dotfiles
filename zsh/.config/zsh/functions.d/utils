@@ -3,8 +3,8 @@
 # Extract any common compressed file types
 extract() {
   if [[ $# -eq 0 ]]; then
-    error "Please provide at least one file"
-    usage "extract <file1> <file2> ..." >&2
+    error "Please provide at least one file" >&2
+    usage "extract <file1> <file2> ..."
     return 1
   fi
 
@@ -34,7 +34,7 @@ tldr() {
     if [[ -n "$1" ]]; then
         command tldr "$@" | nvim -R -c "set ft=help" -
     else
-        error "Please provide a command"
+        error "Please provide a command" >&2
         usage "tldr <package>"
         return 1
     fi

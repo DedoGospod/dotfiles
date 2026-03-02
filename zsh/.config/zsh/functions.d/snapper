@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env zsh
 
 # Custom Snapper manual snapshot function
 snapper-create() {

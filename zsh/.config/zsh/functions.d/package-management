@@ -2,7 +2,7 @@
 
 if grep -qE "ID=arch|ID_LIKE=arch" /etc/os-release; then
     s() {
-            paru -Slq | fzf \
+        paru -Slq | fzf \
         --query "$1" \
         --multi \
         --ansi \

@@ -12,7 +12,7 @@ sync-dotfiles() {
         chmod u+x "$SETUP_DOT"
         bash "$SETUP_DOT"
     else
-        error "$SETUP_DOT not found"
-        exit 1
+        error "$SETUP_DOT not found" >&2
+        return 1
     fi
 }
