@@ -4,7 +4,7 @@
 snapper-create() {
     if [[ -z "$1" ]]; then
         error "Please provide a description."
-        usage "snapper-create <description>"
+        usage 'snapper-create "description"'
         return 1
     fi
 
