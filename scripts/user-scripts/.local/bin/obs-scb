@@ -1,9 +1,13 @@
 #!/usr/bin/env bash
 
-# Start obs if it isnt running
+# Remember whether we started OBS
+OBS_STARTED_BY_SCRIPT=0
+
+# Start OBS if it isn't running
 if ! pgrep -x "obs" > /dev/null; then
     systemctl --user start obs.service
     sleep 2
+    OBS_STARTED_BY_SCRIPT=1
 fi
 
 # Start Replay Buffer
@@ -17,7 +21,9 @@ if command -v scb; then
 fi
 
 # Cleanup after game exits
-if command -v obs-cmd; then
+if command -v obs-cmd >/dev/null; then
     obs-cmd replay stop
-    systemctl --user stop obs.service
+    if [[ "$OBS_STARTED_BY_SCRIPT" -eq 1 ]]; then
+        systemctl --user stop obs.service
+    fi
 fi
