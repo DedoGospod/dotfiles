@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-#Configuration
+# Configuration
 SECURE_DIR="/run/snapper-hooks"
 CRITICAL_PKGS=(
     "linux*"
@@ -16,34 +16,46 @@ CRITICAL_PKGS=(
 )
 
 # Setup
-[[ ! -d "$SECURE_DIR" ]] && mkdir -p "$SECURE_DIR" && chmod 700 "$SECURE_DIR"
+mkdir -p "$SECURE_DIR"
+chmod 700 "$SECURE_DIR"
 STATE_FILE=$(mktemp -p "$SECURE_DIR" "snapper-pre-${PPID}.XXXXX")
 TYPE="routine"
-PKGS=()
 
-# Detection with Pattern Matching
-while read -r pkg_line; do
-    pkg_name=$(echo "$pkg_line" | awk '{print $1}')
-    [[ -z "$pkg_name" ]] && continue
-    PKGS+=("$pkg_name")
+# Cleanup trap: Remove STATE_FILE if the script fails before snapper completes
+trap '[[ $? -ne 0 ]] && rm -f "$STATE_FILE"' EXIT
+
+# Capture the exact command that triggered this hook (pacman, yay, paru, etc.)
+if [[ -r "/proc/$PPID/cmdline" ]]; then
+    PARENT_CMD=$(tr '\0' ' ' < "/proc/$PPID/cmdline" | sed 's/[[:space:]]*$//')
+else
+    PARENT_CMD="Unknown Command"
+fi
+
+# Truncate PARENT_CMD if it is long to preserve 'snapper list' formatting
+if (( ${#PARENT_CMD} > 80 )); then
+    PARENT_CMD="${PARENT_CMD:0:77}..."
+fi
+
+# Detection with Pattern Matching (Optimized: No awk forks)
+while read -r pkg_name _; do
+    [[ -n "$pkg_name" ]] || continue
 
     # Check against critical patterns
     for pattern in "${CRITICAL_PKGS[@]}"; do
-        # shellcheck disable=SC2254
-        case "$pkg_name" in
-            $pattern)
-                TYPE="important"
-                ;;
-        esac
+        # shellcheck disable=SC2053
+        if [[ "$pkg_name" == $pattern ]]; then
+            TYPE="important"
+            break 2
+        fi
     done
 done
 
 # Metadata Construction
 if [[ "$TYPE" == "important" ]]; then
-    DESC="[CRITICAL] Important Update"
+    DESC="[CRITICAL] $PARENT_CMD"
     EXTRA_ARGS=(--userdata "important=yes")
 else
-    DESC="Routine"
+    DESC="[Routine] $PARENT_CMD"
     EXTRA_ARGS=()
 fi
 
