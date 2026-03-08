@@ -25,7 +25,7 @@ PACMAN_PACKAGES=(
     man-db tealdeer wikiman arch-wiki-docs
 
     # Security
-    gnome-keyring seahorse keepassxc arch-audit
+    gnome-keyring seahorse keepassxc
 
     # Network and Bluetooth
     networkmanager bluez bluez-utils
