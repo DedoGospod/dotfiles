@@ -10,9 +10,12 @@ if ! pgrep -x "obs" > /dev/null; then
     OBS_STARTED_BY_SCRIPT=1
 fi
 
-# Set brightness to 100% for duration of game
+# Set max brightness and stop hyprsunset service
 if command -v hyprsunset; then
     hyprctl hyprsunset gamma 100
+    if pgrep -x "hyprsunset" > /dev/null; then
+        systemctl --user stop hyprsunset.service
+    fi
 fi
 
 # Start Replay Buffer
@@ -33,7 +36,10 @@ if command -v obs-cmd >/dev/null; then
     fi
 fi
 
-# Reset brightness
+# Re-enable hyprsunset and restore brightness
 if command -v hyprsunset; then
     hyprctl hyprsunset gamma 75
+    if ! pgrep -x "hyprsunset" > /dev/null; then
+        systemctl --user start hyprsunset.service
+    fi
 fi
