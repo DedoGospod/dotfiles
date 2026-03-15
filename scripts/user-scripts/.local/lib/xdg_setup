@@ -24,13 +24,18 @@ xdg_setup() {
     export DOTNET_CLI_HOME="$XDG_DATA_HOME/dotnet"
     export NUGET_PACKAGES="$XDG_DATA_HOME/nuget/packages"
     export PARALLEL_HOME="$XDG_CONFIG_HOME/parallel"
+
+    # NPM
     export NPM_CONFIG_USERCONFIG="$XDG_CONFIG_HOME/npm/npmrc"
+    export NPM_CONFIG_INIT_MODULE="$XDG_CONFIG_HOME"/npm/config/npm-init.js
+    export NPM_CONFIG_CACHE="$XDG_CACHE_HOME"/npm
+    export NPM_CONFIG_TMP="$XDG_RUNTIME_DIR"/npm
 
     # Theming
     export GTK2_RC_FILES="$XDG_CONFIG_HOME/gtk-2.0/gtkrc"
 
     # Cache
-    export CUDA_CACHE_PATH="$XDG_CACHE_HOME/nv"
+    export CUDA_CACHE_PATH="$XDG_CACHE_HOME"/nv
 
     # Create directories if missing
     target_dirs=(
