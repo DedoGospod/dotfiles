@@ -91,7 +91,6 @@ alias top='btop'                                       # Modern system monitor
 alias cat='bat'                                        # Cat alternative
 alias cls='clear'                                      # Clear screen
 alias kssh='kitty +kitten ssh'                         # SSH with kitty terminal features
-alias hdr-mpv="ENABLE_HDR_WSI=1 mpv"                   # MPV with hdr support
 
 # Files
 alias ls='eza -1 --icons --git --group-directories-first --time-style=long-iso'
