@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+ask() {
+    read -rp "$(echo -e "  ${YELLOW}??${NC} $1 (y/N): ")" response
+    [[ "$response" =~ ^[Yy]$ ]]
+}

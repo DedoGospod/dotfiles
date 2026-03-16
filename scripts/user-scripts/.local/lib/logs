@@ -7,6 +7,7 @@ CYAN='\033[0;36m'
 NC='\033[0m'
 
 warn()    { echo -e "${YELLOW}[WARN]${NC} $1"; }
+log()     { echo -e "${GREEN}[INFO]${NC} $1"; }
 error()   { echo -e "${RED}[ERROR]${NC} $1"; }
 usage()   { echo -e "${CYAN}[Usage]${NC} $1"; } 
 success() { echo -e "${GREEN}[SUCCESS]${NC} $1"; }
