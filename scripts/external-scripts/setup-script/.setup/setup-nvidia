@@ -1,9 +1,5 @@
 #!/usr/bin/env bash
 
-# Exit immediately if a command exits with a non-zero status
-set -e
-set -o pipefail
-
 # Colors for logging
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'

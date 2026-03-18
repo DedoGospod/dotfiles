@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+
+# Resolution
+GAMESCOPE_OPTS=(
+    # Display
+    --fullscreen
+    --immediate-flips
+    --nested-refresh 240
+    --nested-width 2560 --nested-height 1440 # Internal render resolution (Resolution the game runs at)
+    --output-width 2560 --output-width 1440  # Virtual output resolution  (Resolution your monitor displays) 
+
+    # Upscaling
+    --scaler auto
+    --filter fsr
+    --fsr-sharpness 2
+
+    # Input
+    --hide-cursor-delay 3000
+    --force-grab-cursor
+    --grab
+
+    # Integration
+    --steam
+    --rt
+    --mangoapp
+    --backend=drm
+
+    # HDR Pipeline
+    --hdr-enabled
+    --hdr-itm-enabled
+    --hdr-sdr-content-nits 100
+    --hdr-itm-target-nits 400
+    --sdr-gamut-wideness 1
+)
+
+exec gamescope "${GAMESCOPE_OPTS[@]}" -- steam -gamepadui -tenfoot -steamos3 >/dev/null 2>&1
