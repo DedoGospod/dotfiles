@@ -92,21 +92,22 @@ if [ ${#FLATPAK_APPS[@]} -gt 0 ]; then
 fi
 
 # Gamescope Cap
-if command -v gamescope >/dev/null 2>&1; then
-    GAMESCOPE_PATH=$(realpath "$(command -v gamescope)")
-
-    # Check silently if the capability is missing
-    if ! getcap "$GAMESCOPE_PATH" | grep -q "cap_sys_nice+ep"; then
-        if sudo setcap 'cap_sys_nice=ep' "$GAMESCOPE_PATH"; then
-            log_task "CAP_SYS_NICE is already set"
+if GAMESCOPE_BIN=$(command -v gamescope 2>/dev/null); then
+    if getcap "$GAMESCOPE_BIN" | grep -q "cap_sys_nice.*ep"; then
+        log_task "CAP_SYS_NICE is already set on $GAMESCOPE_BIN"
+        ok
+    else
+        log_task "Setting CAP_SYS_NICE on $GAMESCOPE_BIN"
+        if sudo setcap 'cap_sys_nice=eip' "$GAMESCOPE_BIN"; then
             ok
         else
             fail
         fi
     fi
 else
-    warn "Gamescope not found. Skipping capability setup."
+    warn "Gamescope command not found"
 fi
+
 
 # Gamemode setup
 if command -v gamemoded >/dev/null 2>&1; then

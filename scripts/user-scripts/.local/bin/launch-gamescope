@@ -1,21 +1,18 @@
 #!/usr/bin/env bash
 
-# Monitor resolution
+# Monitor settings (Physical Output)
 WIDTH=2560
 HEIGHT=1440
+REFRESH=240
 
 GAMESCOPE_OPTS=(
     # Display
     --fullscreen
     --immediate-flips
-    --nested-refresh 240
+    --adaptive-sync
     -W "$WIDTH"
     -H "$HEIGHT"
-
-    # Upscaling
-    --scaler auto
-    --filter fsr
-    --fsr-sharpness 2
+    -r "$REFRESH"
 
     # Input
     --hide-cursor-delay 3000
@@ -42,11 +39,17 @@ STEAM_OPTS=(
 )
 
 # Embedded mode options
-if ! [[ -z "$WAYLAND_DISPLAY" ]]; then
+if ! [[ -z "$WAYLAND_DISPLAY" ]] && [[ -z "$DISPLAY" ]]; then
     GAMESCOPE_OPTS+=(
         --backend=drm
         --rt
     )
 fi
 
-exec gamescope "${GAMESCOPE_OPTS[@]}" -- steam "${STEAM_OPTS[@]}"
+# Start gamescope instance
+if command -v gamescope >/dev/null 2>&1; then
+    exec gamescope "${GAMESCOPE_OPTS[@]}" -- steam "${STEAM_OPTS[@]}"
+else
+    echo "Error: gamescope binary not found. Please install it." >&2
+    exit 1
+fi
