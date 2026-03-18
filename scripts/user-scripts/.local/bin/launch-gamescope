@@ -24,9 +24,7 @@ GAMESCOPE_OPTS=(
 
     # Integration
     --steam
-    --rt
     --mangoapp
-    --backend=drm
 
     # HDR Pipeline
     --hdr-enabled
@@ -36,4 +34,19 @@ GAMESCOPE_OPTS=(
     --sdr-gamut-wideness 1
 )
 
-exec gamescope "${GAMESCOPE_OPTS[@]}" -- steam -gamepadui -tenfoot -steamos3
+# Steam options
+STEAM_OPTS=(
+    -gamepadui
+    -steamdeck
+    -steamos3
+)
+
+# Embedded mode options
+if ! [[ -z "$WAYLAND_DISPLAY" ]]; then
+    GAMESCOPE_OPTS+=(
+        --backend=drm
+        --rt
+    )
+fi
+
+exec gamescope "${GAMESCOPE_OPTS[@]}" -- steam "${STEAM_OPTS[@]}"
