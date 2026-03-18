@@ -1,13 +1,16 @@
 #!/usr/bin/env bash
 
-# Resolution
+# Monitor resolution
+WIDTH=2560
+HEIGHT=1440
+
 GAMESCOPE_OPTS=(
     # Display
     --fullscreen
     --immediate-flips
     --nested-refresh 240
-    --nested-width 2560 --nested-height 1440 # Internal render resolution (Resolution the game runs at)
-    --output-width 2560 --output-width 1440  # Virtual output resolution  (Resolution your monitor displays) 
+    -W "$WIDTH"
+    -H "$HEIGHT"
 
     # Upscaling
     --scaler auto
@@ -33,4 +36,4 @@ GAMESCOPE_OPTS=(
     --sdr-gamut-wideness 1
 )
 
-exec gamescope "${GAMESCOPE_OPTS[@]}" -- steam -gamepadui -tenfoot -steamos3 >/dev/null 2>&1
+exec gamescope "${GAMESCOPE_OPTS[@]}" -- steam -gamepadui -tenfoot -steamos3
