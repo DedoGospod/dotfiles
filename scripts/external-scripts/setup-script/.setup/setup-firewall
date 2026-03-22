@@ -26,7 +26,7 @@ fail() { echo -e "${RED}Failed.${NC}"; }
 header "Firewall Configuration"
 
 # Install UFW if necessary
-if ! command -v ufw &> /dev/null; then
+if ! command -v ufw &>/dev/null; then
     sudo pacman -S --noconfirm ufw
     ok
 else
@@ -45,7 +45,7 @@ if command -v ufw &>/dev/null; then
         echo "$UFW_STATUS" | grep -qE "22/tcp\s+LIMIT\s+IN" &&
         echo "$UFW_STATUS" | grep -qE "80/tcp\s+ALLOW\s+IN" &&
         echo "$UFW_STATUS" | grep -qE "443/tcp\s+ALLOW\s+IN"; then
-        log_task "UFW already configured"
+        log_task "UFW baseline configuration is already set"
         ok
     else
         # Re-apply configuration if any of the above fails
@@ -67,18 +67,6 @@ if command -v ufw &>/dev/null; then
             fail
         fi
 
-        # --- KDE Connect Prompt ---
-        echo -ne "${YELLOW}[PROMPT]${NC} Do you want to allow KDE Connect ports (1714-1764)? (y/N): "
-        read -r response
-        if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
-            log_task "Configuring KDE Connect ports"
-            if sudo ufw allow 1714:1764/udp &>/dev/null &&
-               sudo ufw allow 1714:1764/tcp &>/dev/null; then
-                ok
-            else
-                fail
-            fi
-        fi
         # -------------------------------
 
         log_task "Enabling UFW"
@@ -98,4 +86,27 @@ if command -v ufw &>/dev/null; then
 else
     warn "UFW is not installed on this system."
     error "Firewall configuration skipped."
+fi
+
+# KDE Connect
+if command -v kdeconnectd >/dev/null; then
+    log_task "Configuring KDE Connect ports"
+    if sudo ufw allow 1714:1764/udp &>/dev/null &&
+        sudo ufw allow 1714:1764/tcp &>/dev/null; then
+        ok
+    else
+        fail
+    fi
+fi
+
+# Sunshine
+if command -v sunshine >/dev/null; then
+    log_task "Configuring Sunshine ports"
+    if sudo ufw allow 47984,47989,47990,48010/tcp &>/dev/null &&
+        sudo ufw allow 47998:48000/udp &>/dev/null &&
+        sudo ufw allow 48002,48010/udp &>/dev/null; then
+        ok
+    else
+        fail
+    fi
 fi

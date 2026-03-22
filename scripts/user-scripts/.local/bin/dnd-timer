@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+DURATION="${1:-1h}" # Default to 1 hour if no argument is provided
+
+# Turn DND On
+swaync-client -dn
+
+# Send a confirmation notification that bypasses DND
+notify-send "DND Enabled" "Notifications paused for $DURATION" \
+    -h boolean:SWAYNC_BYPASS_DND:true \
+    -u low
+
+# Run the timer and cleanup in the background
+(
+    sleep "$DURATION"
+    swaync-client -df
+    notify-send "DND Disabled" "Notifications resumed" \
+        -h boolean:SWAYNC_BYPASS_DND:true
+) &

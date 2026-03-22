@@ -1,12 +1,5 @@
 #!/usr/bin/env bash
 
-# Kill steam if running
-STEAM_RUNNING=$(pgrep "steam")
-if [[ -n "$STEAM_RUNNING" ]]; then
-    pkill steam
-    sleep 5
-fi
-
 # Monitor settings (Physical Output)
 WIDTH=2560
 HEIGHT=1440
@@ -30,7 +23,7 @@ GAMESCOPE_OPTS=(
     --steam
     --mangoapp
 
-    # HDR Pipeline
+    # HDR
     --hdr-enabled
     --hdr-itm-enabled
     --hdr-sdr-content-nits 100
@@ -41,8 +34,8 @@ GAMESCOPE_OPTS=(
 # Steam options
 STEAM_OPTS=(
     -gamepadui
-    -steamdeck
     -steamos3
+    # -steamdeck
 )
 
 # Embedded mode options
@@ -54,7 +47,7 @@ if ! [[ -z "$WAYLAND_DISPLAY" ]] && [[ -z "$DISPLAY" ]]; then
 fi
 
 # Start gamescope instance
-if command -v gamescope >/dev/null 2>&1; then
+if command -v gamescope &>/dev/null; then
     exec gamescope "${GAMESCOPE_OPTS[@]}" -- steam "${STEAM_OPTS[@]}"
 else
     echo "Error: gamescope binary not found. Please install it." >&2

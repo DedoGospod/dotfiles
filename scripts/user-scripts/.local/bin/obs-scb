@@ -38,7 +38,7 @@ fi
 
 # Re-enable hyprsunset and restore brightness
 if command -v hyprsunset; then
-    hyprctl hyprsunset gamma 75
+    hyprctl hyprsunset gamma 70
     if ! pgrep -x "hyprsunset" > /dev/null; then
         systemctl --user start hyprsunset.service
     fi
