@@ -1,0 +1,15 @@
+[Unit]
+Description=EasyEffects Audio
+Requires=pipewire.service
+After=pipewire.service graphical-session.target
+PartOf=graphical-session.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/flatpak run com.github.wwmm.easyeffects --gapplication-service
+Restart=on-failure
+RestartSec=5
+Slice=background.slice
+
+[Install]
+WantedBy=graphical-session.target
