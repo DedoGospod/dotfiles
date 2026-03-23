@@ -38,6 +38,7 @@ header "User services"
 
 run_user_service "Configuring dark theme" theme.service
 run_user_service "Starting idle inhibitor" wayland-pipewire-idle-inhibit.service 
+run_user_service "Starting easyeffects" easyeffects.service
 run_user_service "Starting systemd failed unit checker" failed-units-check.timer
 
 # Environment specific services

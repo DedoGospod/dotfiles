@@ -3,24 +3,24 @@
 # Remember whether we started OBS
 OBS_STARTED_BY_SCRIPT=0
 
-# Start OBS if it isn't running
-if ! pgrep -x "obs" > /dev/null; then
-    systemctl --user start obs.service
-    sleep 2
-    OBS_STARTED_BY_SCRIPT=1
-fi
+if [[ -n "$HYPRLAND_INSTANCE_SIGNATURE" ]]; then
 
-# Set max brightness and stop hyprsunset service
-if command -v hyprsunset; then
-    hyprctl hyprsunset gamma 100
-    if pgrep -x "hyprsunset" > /dev/null; then
-        systemctl --user stop hyprsunset.service
+    if ! pgrep -x "obs" &>/dev/null; then
+        systemctl --user start obs.service
+        timeout 5s bash -c 'until pgrep -x "obs" &>/dev/null; do sleep 0.2; done'
+        OBS_STARTED_BY_SCRIPT=1
     fi
-fi
 
-# Start Replay Buffer
-if command -v obs-cmd; then
-    obs-cmd replay start
+    if command -v hyprsunset; then
+        hyprctl hyprsunset gamma 100
+        if pgrep -x "hyprsunset" >/dev/null; then
+            systemctl --user stop hyprsunset.service
+        fi
+    fi
+
+    if command -v obs-cmd; then
+        obs-cmd replay start
+    fi
 fi
 
 # Run the game via scopebuddy
@@ -28,18 +28,17 @@ if command -v scb; then
     scopebuddy -- "$@"
 fi
 
-# Cleanup after game exits
-if command -v obs-cmd >/dev/null; then
+if [[ -n "$HYPRLAND_INSTANCE_SIGNATURE" ]]; then
+
     obs-cmd replay stop
     if [[ "$OBS_STARTED_BY_SCRIPT" -eq 1 ]]; then
         systemctl --user stop obs.service
     fi
-fi
 
-# Re-enable hyprsunset and restore brightness
-if command -v hyprsunset; then
-    hyprctl hyprsunset gamma 70
-    if ! pgrep -x "hyprsunset" > /dev/null; then
-        systemctl --user start hyprsunset.service
+    if command -v hyprsunset; then
+        hyprctl hyprsunset gamma 70
+        if ! pgrep -x "hyprsunset" >/dev/null; then
+            systemctl --user start hyprsunset.service
+        fi
     fi
 fi

@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+# Grant sudo privledges upfront
+sudo -v
+
+# Change to tty2
+if command -v chvt; then
+    sudo chvt 2
+fi
+
+# Start sunshine
+if command -v systemctl; then
+    systemctl --user start sunshine.service
+fi

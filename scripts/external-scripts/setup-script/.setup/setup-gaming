@@ -128,6 +128,13 @@ else
     warn "'gamemoded' command not found. Skipping user group modification."
 fi
 
+# Sunshine setup
+if command -v sunshine >/dev/null 2>&1; then
+    SUNSHINE_PATH=$(type -p sunshine)
+    REAL_PATH=$(readlink -f "$SUNSHINE_PATH")
+    sudo setcap cap_sys_admin+p "$REAL_PATH"
+fi
+
 # NTSYNC (Kernel Module)
 if grep -q "ntsync" /etc/modules-load.d/ntsync.conf 2>/dev/null; then
     log_task "NTSYNC already enabled"
