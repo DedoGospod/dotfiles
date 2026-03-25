@@ -3,14 +3,17 @@
 # Remember whether we started OBS
 OBS_STARTED_BY_SCRIPT=0
 
+# Check if we are in hyprland
 if [[ -n "$HYPRLAND_INSTANCE_SIGNATURE" ]]; then
 
+    # Start OBS if its not already running
     if ! pgrep -x "obs" &>/dev/null; then
         systemctl --user start obs.service
         timeout 5s bash -c 'until pgrep -x "obs" &>/dev/null; do sleep 0.2; done'
         OBS_STARTED_BY_SCRIPT=1
     fi
 
+    # Set brightness to 100%
     if command -v hyprsunset; then
         hyprctl hyprsunset gamma 100
         if pgrep -x "hyprsunset" >/dev/null; then
@@ -18,6 +21,7 @@ if [[ -n "$HYPRLAND_INSTANCE_SIGNATURE" ]]; then
         fi
     fi
 
+    # Start replay buffer
     if command -v obs-cmd; then
         obs-cmd replay start
     fi
@@ -28,13 +32,16 @@ if command -v scb; then
     scopebuddy -- "$@"
 fi
 
+# Check if we are in hyprland
 if [[ -n "$HYPRLAND_INSTANCE_SIGNATURE" ]]; then
 
+    # Stop the replay buffer/OBS
     obs-cmd replay stop
     if [[ "$OBS_STARTED_BY_SCRIPT" -eq 1 ]]; then
         systemctl --user stop obs.service
     fi
 
+    # Reset brightness level
     if command -v hyprsunset; then
         hyprctl hyprsunset gamma 70
         if ! pgrep -x "hyprsunset" >/dev/null; then

@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+
+RECORDER_STARTED_BY_SCRIPT=0
+
+if [[ -n "$HYPRLAND_INSTANCE_SIGNATURE" ]]; then
+
+    # Start gpu screen recorder if it isnt already running
+    if ! pgrep -x "gsr-ui"; then
+        if command -v gsr-ui; then
+            systemctl --user start gpu-screen-recorder.service
+            RECORDER_STARTED_BY_SCRIPT=1
+        fi
+    fi
+
+    # Configure hyprsunset
+    if command -v hyprsunset; then
+        hyprctl hyprsunset gamma 100
+        if pgrep -x "hyprsunset" >/dev/null; then
+            systemctl --user stop hyprsunset.service
+        fi
+    fi
+fi
+
+# Run the game via scopebuddy
+if command -v scb; then
+    scopebuddy -- "$@"
+fi
+
+# Cleanup
+if [[ -n "$HYPRLAND_INSTANCE_SIGNATURE" ]]; then
+
+    # Stop gpu screen recorder
+    if command -v gsr-ui; then
+        if [[ "$RECORDER_STARTED_BY_SCRIPT" == "1" ]]; then
+            systemctl --user stop gpu-screen-recorder.service
+        fi
+    fi
+
+    if command -v hyprsunset; then
+        hyprctl hyprsunset gamma 70
+        if ! pgrep -x "hyprsunset" >/dev/null; then
+            systemctl --user start hyprsunset.service
+        fi
+    fi
+fi

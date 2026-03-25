@@ -23,6 +23,9 @@ GAMESCOPE_OPTS=(
     --steam
     --mangoapp
 
+    # Real time scheduling
+    --rt
+
     # HDR
     --hdr-enabled
     --hdr-itm-enabled
@@ -35,14 +38,12 @@ GAMESCOPE_OPTS=(
 STEAM_OPTS=(
     -gamepadui
     -steamos3
-    # -steamdeck
 )
 
 # Embedded mode options
 if ! [[ -z "$WAYLAND_DISPLAY" ]] && [[ -z "$DISPLAY" ]]; then
     GAMESCOPE_OPTS+=(
         --backend=drm
-        --rt
     )
 fi
 
