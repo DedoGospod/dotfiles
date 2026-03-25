@@ -9,7 +9,7 @@ gd() {
   if [[ -z "$1" ]]; then
     git diff HEAD
   else
-    git diff "$@"
+    git diff HEAD "$@"
   fi
 }
 
