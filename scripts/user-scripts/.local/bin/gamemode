@@ -12,3 +12,8 @@ fi
 if command -v systemctl; then
     systemctl --user start sunshine.service
 fi
+
+# Turn screen off
+if command -v ddcutil; then
+    ddcutil setvcp d6 04
+fi
