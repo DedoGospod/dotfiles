@@ -20,6 +20,11 @@ if [[ -n "$HYPRLAND_INSTANCE_SIGNATURE" ]]; then
             keyword decoration:rounding 0"
     fi
 
+    # Pause brave browser
+    if command -v brave; then
+        pkill -STOP brave
+    fi
+
     # Start OBS if its not already running
     if ! pgrep -x "obs" &>/dev/null; then
         systemctl --user start obs.service
@@ -52,6 +57,11 @@ if [[ -n "$HYPRLAND_INSTANCE_SIGNATURE" ]]; then
     # Reset hyprland
     if command -v hyprctl; then
         hyprctl reload
+    fi
+
+    # Unpause brave
+    if command -v brave; then
+        pkill -CONT brave
     fi
 
     # Stop the replay buffer/OBS
