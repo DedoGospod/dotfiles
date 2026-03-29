@@ -1,27 +1,30 @@
 #!/usr/bin/env zsh
 
-if grep -qE "ID=arch|ID_LIKE=arch" /etc/os-release; then
-    s() {
-        paru -Slq | fzf \
-        --query "$1" \
-        --multi \
-        --ansi \
-        --layout=reverse \
-        --border=rounded \
-        --info=inline \
-        --header "─── [Enter]: Install | [TAB]: Select | [CTRL-A]: Select All ───" \
-        --header-first \
-        --prompt="󰈺 Search: " \
-        --pointer="▶" \
-        --marker="✓" \
-        --color="header:italic:cyan,border:blue" \
-        --preview 'paru -Si {1}' \
-        --preview-window='right:60%:wrap' \
-        --bind 'enter:become(paru -S {+})' \
-        --bind 'ctrl-a:select-all'
-    }
-
-    S() {
-        paru -S "$@"
-    }
+if [[ -f /etc/os-release ]] && grep -qi "arch" /etc/os-release; then
+    
+    if (( $+commands[paru] )) && (( $+commands[fzf] )); then
+        
+        s() {
+            paru -Slq 2>/dev/null | grep -E '^[a-z0-9@._+-]+$' | fzf \
+                --query "$1" \
+                --multi \
+                --ansi \
+                --layout=reverse \
+                --border=rounded \
+                --info=inline \
+                --tiebreak=begin,length \
+                --header "─── [Enter]: Install | [TAB]: Select | [CTRL-A]: Select All ───" \
+                --header-first \
+                --prompt="󰈺 Search: " \
+                --pointer="▶" \
+                --marker="✓" \
+                --color="header:italic:cyan,border:blue" \
+                --preview '[[ -n {} ]] && paru -Si {} --color=always 2>/dev/null' \
+                --preview-window='right:60%:wrap:border-left' \
+                --bind 'enter:become(paru -S {+})' \
+                --bind 'ctrl-a:select-all'
+        }
+        alias S='paru -S'
+        
+    fi
 fi
