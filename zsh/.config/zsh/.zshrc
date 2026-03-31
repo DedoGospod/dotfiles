@@ -105,6 +105,8 @@ alias mkdir='mkdir -p'      # Create parent directories automatically
 alias h='fc -nil 1 | grep --color=auto' # Search history for a specific terminal command
 alias hist="fc -nil 1"      # Always show history with readable dates
 
+alias nvidia-settings='nvidia-settings --config="$XDG_CONFIG_HOME"/nvidia/settings'
+
 # Configs
 alias zshrc='nvim ~/.config/zsh/.zshrc && source ~/.config/zsh/.zshrc'  # Edit zsh config
 alias zshenv='nvim ~/.zshenv'                                           # Edit zsh env file
