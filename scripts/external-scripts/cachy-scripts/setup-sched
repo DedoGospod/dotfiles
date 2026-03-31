@@ -1,19 +1,5 @@
 #!/usr/bin/env bash
 
-# Source functions
-FUNCTIONS_DIR="$HOME/.local/lib"
-if [[ -d "$FUNCTIONS_DIR" ]]; then
-    # shellcheck source=/dev/null
-    for file in "$FUNCTIONS_DIR"/*; do
-        if [[ -f $file ]]; then
-            source "$file"
-        fi
-    done
-else
-    echo "Could not import functions from $FUNCTIONS_DIR"
-    exit 1
-fi
-
 # Ask for sudo privledges upfront
 sudo -v
 
@@ -30,29 +16,11 @@ done
 
 # Install any missing packages
 if ! [[ ${#MISSING_PACKAGES[@]} -eq 0 ]]; then
-    log_task "Installing missing packages: ${MISSING_PACKAGES[*]}"
+    echo "Installing missing packages: ${MISSING_PACKAGES[*]}"
     sudo pacman -S --needed --noconfirm "${MISSING_PACKAGES[@]}"
-    ok
 fi
 
 # Service management
 if ! pgrep -x "scx_loader" >/dev/null; then
     systemctl enable --now sxc_loader
 fi
-
-ask "Enable bpfland scheduler" && enable_bfland="y"
-if [[ "$enable_bfland" =~ ^[Yy]$ ]]; then
-    scxctl start --sched bpfland --mode gaming
-fi
-
-ask "Enable cake scheduler" && enable_cake="y"
-if [[ "$enable_cake" =~ ^[Yy]$ ]]; then
-    scxctl start --sched cake --mode gaming
-fi
-
-ask "Enable lavd scheduler" && enable_lavd="y"
-if [[ "$enable_lavd" =~ ^[Yy]$ ]]; then
-    scxctl start --sched lavd --mode gaming
-fi
-
-log "Current scheduler status: $(scxctl get)"
