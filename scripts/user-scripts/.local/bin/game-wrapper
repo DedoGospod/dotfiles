@@ -1,90 +1,85 @@
 #!/usr/bin/env bash
 
-# Remember whether we started OBS
+# Track state for cleanup
 OBS_STARTED_BY_SCRIPT=0
 
-# Check if we are in hyprland
-if [[ -n "$HYPRLAND_INSTANCE_SIGNATURE" ]]; then
+# Helper to run commands only if they exist
+run_if_exists() {
+    if command -v "$1" >/dev/null; then
+        "$@"
+    fi
+}
 
-    # Enable performance mode
-    if command -v hyprctl; then
-        hyprctl --batch "\
+# Cleanup function
+cleanup() {
+    if [[ -n "${HYPRLAND_INSTANCE_SIGNATURE:-}" ]]; then
+        # Reset hyprland, brave, and notifications
+        run_if_exists hyprctl reload
+        run_if_exists swaync-client -df
+        run_if_exists pkill -CONT brave
+        run_if_exists obs-cmd replay stop
+
+        # Stop the OBS service only if this script started it
+        if [[ "$OBS_STARTED_BY_SCRIPT" -eq 1 ]]; then
+            systemctl --user stop obs.service
+        fi
+
+        # Reset blue light filter and brightness
+        if ! pgrep -x "hyprsunset" >/dev/null; then
+            systemctl --user start hyprsunset.service
+        fi
+        run_if_exists hyprctl hyprsunset gamma 50
+    fi
+}
+
+# Cleanup trap
+trap cleanup EXIT INT TERM HUP QUIT
+
+main() {
+    # Check if we are in hyprland
+    if [[ -n "${HYPRLAND_INSTANCE_SIGNATURE:-}" ]]; then
+
+        # Enable performance mode
+        run_if_exists hyprctl --batch "\
             keyword animations:enabled 0;\
             keyword animation borderangle,0; \
             keyword decoration:shadow:enabled 0;\
             keyword decoration:blur:enabled 0;\
-	          keyword decoration:fullscreen_opacity 1;\
+            keyword decoration:fullscreen_opacity 1;\
             keyword general:gaps_in 0;\
             keyword general:gaps_out 0;\
             keyword general:border_size 1;\
             keyword decoration:rounding 0"
-    fi
 
-    # Disable notifications
-    if command -v swaync-client; then
-        swaync-client -dn
-    fi
+        # Stop notifications and brave
+        run_if_exists swaync-client -dn
+        run_if_exists pkill -STOP brave
 
-    # Pause brave browser
-    if command -v brave; then
-        pkill -STOP brave
-    fi
+        # Start OBS if it's not already running
+        if ! pgrep -x "obs" >/dev/null; then
+            systemctl --user start obs.service
+            local attempts=0
+            until pgrep -x "obs" >/dev/null || (( attempts++ >= 25 )); do
+                sleep 0.2
+            done
+            OBS_STARTED_BY_SCRIPT=1
+        fi
+        run_if_exists obs-cmd replay start
 
-    # Start OBS if its not already running
-    if ! pgrep -x "obs" &>/dev/null; then
-        systemctl --user start obs.service
-        timeout 5s bash -c 'until pgrep -x "obs" &>/dev/null; do sleep 0.2; done'
-        OBS_STARTED_BY_SCRIPT=1
-    fi
-
-    # Set brightness to 100%
-    if command -v hyprsunset; then
-        hyprctl hyprsunset gamma 100
+        # Disable blue light filter and maximize brightness
         if pgrep -x "hyprsunset" >/dev/null; then
             systemctl --user stop hyprsunset.service
         fi
+        run_if_exists hyprctl hyprsunset gamma 100
     fi
 
-    # Start replay buffer
-    if command -v obs-cmd; then
-        obs-cmd replay start
+    # Run the game via scopebuddy
+    if command -v scopebuddy >/dev/null; then
+        scopebuddy -- "$@"
+    else
+        "$@"
     fi
-fi
+}
 
-# Run the game via scopebuddy
-if command -v scb; then
-    scopebuddy -- "$@"
-fi
-
-# Check if we are in hyprland
-if [[ -n "$HYPRLAND_INSTANCE_SIGNATURE" ]]; then
-
-    # Reset hyprland
-    if command -v hyprctl; then
-        hyprctl reload
-    fi
-
-    # Enable notifications
-    if command -v swaync-client; then
-        swaync-client -df
-    fi
-
-    # Unpause brave
-    if command -v brave; then
-        pkill -CONT brave
-    fi
-
-    # Stop the replay buffer/OBS
-    obs-cmd replay stop
-    if [[ "$OBS_STARTED_BY_SCRIPT" -eq 1 ]]; then
-        systemctl --user stop obs.service
-    fi
-
-    # Reset brightness level
-    if command -v hyprsunset; then
-        hyprctl hyprsunset gamma 50
-        if ! pgrep -x "hyprsunset" >/dev/null; then
-            systemctl --user start hyprsunset.service
-        fi
-    fi
-fi
+# Pass all script arguments into main
+main "$@"
