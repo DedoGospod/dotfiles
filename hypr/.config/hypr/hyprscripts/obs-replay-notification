@@ -6,7 +6,8 @@ OBS_PROC=$(pgrep -x "obs" || pgrep -x ".obs-wrapped")
 if [[ -n "$OBS_PROC" ]]; then
     # Send Replay saved notification
     ICON="/usr/share/icons/hicolor/256x256/apps/com.obsproject.Studio.png"
-    notify-send -i "$ICON" -t 1000 "Replay Saved" "OBS Buffer Captured"
+    # notify-send -i "$ICON" -t 1000 "Replay Saved" "OBS Buffer Captured"                                   # Does NOT bypass DND
+    notify-send -h boolean:SWAYNC_BYPASS_DND:true -i "$ICON" -t 1000 "Replay Saved" "OBS Buffer Captured"   # Bypasses DND
 else
     # Notify if OBS isn't open
     notify-send -t 1500 "⚠️  OBS Error" "OBS is not running"
