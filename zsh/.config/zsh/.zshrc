@@ -47,7 +47,7 @@ done
 (( $+commands[zoxide] )) && eval "$(zoxide init zsh)"
 
 # Source functions
-source "$HOME/.local/lib/logs"
+source "$HOME/.local/lib/functions/logs"
 functions_dir="${XDG_CONFIG_HOME:-$HOME/.config}/zsh/functions.d"
 if [[ -d "$functions_dir" ]]; then
     for file in "$functions_dir"/*(N.); do
