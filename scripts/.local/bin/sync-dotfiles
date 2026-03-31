@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+# Elevate permissions
+sudo -v
+
+SETUP_FILE="$HOME/dotfiles/scripts/.local/lib/setup-script/.setup/setup-dotfiles"
+
+if [[ -f "$SETUP_FILE" ]]; then
+    chmod u+x "$SETUP_FILE"
+    bash "$SETUP_FILE"
+else
+    echo "Error: $SETUP_FILE not found!"
+    exit 1
+fi

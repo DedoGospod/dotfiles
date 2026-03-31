@@ -20,7 +20,7 @@ ok()       { echo -e "${GREEN}Done.${NC}"; }
 fail()     { echo -e "${RED}Failed.${NC}"; }
 
 # Find the script directory
-SCRIPT_DIR="$HOME/dotfiles/scripts/external-scripts/setup-script/.setup"
+SCRIPT_DIR="$HOME/dotfiles/scripts/.local/lib/setup-script/.setup"
 
 check_if_root() {
     if [[ "$EUID" -eq 0 ]]; then

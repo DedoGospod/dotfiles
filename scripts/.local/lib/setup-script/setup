@@ -1,18 +1,12 @@
 #!/usr/bin/env bash
 
 # Source functions
-FUNCTIONS_DIR="$HOME/dotfiles/scripts/external-scripts/setup-script/.setup/functions"
-LIBS=("setup-functions" "xdg_setup")
-
-# Source functions
-if [[ -d "$FUNCTIONS_DIR" ]]; then
+LIB_DIR="$HOME/dotfiles/scripts/.local/lib"
+if [[ -d "$LIB_DIR" ]]; then
     # shellcheck source=/dev/null
-    for lib in "${LIBS[@]}"; do
-        source "$FUNCTIONS_DIR/$lib"
-    done
-else
-    echo "Could not import functions from $FUNCTIONS_DIR"
-    exit 1
+    source "$LIB_DIR/xdg_setup"
+    # shellcheck source=/dev/null
+    source "$LIB_DIR/setup-script/.setup/functions/setup-functions"
 fi
 
 # Import functions
