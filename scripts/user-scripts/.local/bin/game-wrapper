@@ -58,10 +58,6 @@ main() {
         # Start OBS if it's not already running
         if ! pgrep -x "obs" >/dev/null; then
             systemctl --user start obs.service
-            local attempts=0
-            until pgrep -x "obs" >/dev/null || (( attempts++ >= 25 )); do
-                sleep 0.2
-            done
             OBS_STARTED_BY_SCRIPT=1
         fi
         run_if_exists obs-cmd replay start
