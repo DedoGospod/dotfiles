@@ -88,5 +88,4 @@ if [[ -d "$DOTFILES_DIR" ]]; then
     # Sync system files
     header "SYNCING FILES"
     sync_root_tree "$DOTFILES_DIR/root"
-    sync_root_tree "$DOTFILES_DIR/scripts/system-scripts" "755"
 fi
