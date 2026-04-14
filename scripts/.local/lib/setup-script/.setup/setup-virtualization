@@ -57,7 +57,8 @@ else
 fi
 
 # Enable services 
-services=("libvirtd.service" "libvirtd.socket")
+services=("virtqemud.socket" "virtqemud-ro.socket" "virtqemud-admin.socket" "virtnetworkd.socket" "virtstoraged.socket")
+#services=("libvirtd.service" "libvirtd.socket")
 for svc in "${services[@]}"; do
     if systemctl is-active --quiet "$svc"; then
         log_task "$svc is already running"
