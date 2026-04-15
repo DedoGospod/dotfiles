@@ -69,7 +69,7 @@ main() {
         run_if_exists hyprctl hyprsunset gamma 100
     fi
 
-    # Run the game via scopebuddy
+    # Run the game
     if command -v scopebuddy >/dev/null; then
         scopebuddy -- "$@"
     else
