@@ -13,10 +13,10 @@ run_if_exists() {
 # Cleanup function
 cleanup() {
     if [[ -n "${HYPRLAND_INSTANCE_SIGNATURE:-}" ]]; then
-        # Reset hyprland, brave, and notifications
+
+        # Reset hyprland, notifications and stop the replay buffer
         run_if_exists hyprctl reload
         run_if_exists swaync-client -df
-        run_if_exists pkill -CONT brave
         run_if_exists obs-cmd replay stop
 
         # Stop the OBS service only if this script started it
@@ -51,9 +51,8 @@ main() {
             keyword general:border_size 1;\
             keyword decoration:rounding 0"
 
-        # Stop notifications and brave
+        # Stop notifications
         run_if_exists swaync-client -dn
-        run_if_exists pkill -STOP brave
 
         # Start OBS if it's not already running
         if ! pgrep -x "obs" >/dev/null; then
