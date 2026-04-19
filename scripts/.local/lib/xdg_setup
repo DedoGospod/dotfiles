@@ -3,16 +3,18 @@
 xdg_setup() {
     header "XDG DIRECTORY SETUP"
 
-    # Base XDG Setup
+    # ---------------------------------------------------------
+    # Base XDG Directories
+    # ---------------------------------------------------------
     export XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
     export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
     export XDG_STATE_HOME="${XDG_STATE_HOME:-$HOME/.local/state}"
     export XDG_CACHE_HOME="${XDG_CACHE_HOME:-$HOME/.cache}"
+    export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/run/user/$UID}"
 
-    # Secure runtime
-    export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
-
-    # Application Redirects
+    # ---------------------------------------------------------
+    # Application Variables
+    # ---------------------------------------------------------
     export CARGO_HOME="${CARGO_HOME:-$XDG_DATA_HOME/cargo}"
     export RUSTUP_HOME="${RUSTUP_HOME:-$XDG_DATA_HOME/rustup}"
     export GNUPGHOME="${GNUPGHOME:-$XDG_DATA_HOME/gnupg}"
@@ -26,26 +28,40 @@ xdg_setup() {
     export NPM_CONFIG_CACHE="$XDG_CACHE_HOME/npm"
     export NPM_CONFIG_TMP="$XDG_RUNTIME_DIR/npm"
     export GTK2_RC_FILES="$XDG_CONFIG_HOME/gtk-2.0/gtkrc"
-
-    # Nvidia
     export CUDA_CACHE_PATH="$XDG_CACHE_HOME/nv"
     export __GL_SHADER_DISK_CACHE_PATH="$XDG_CACHE_HOME/nv"
-
-    # Android
     export ANDROID_USER_HOME="$XDG_DATA_HOME/android"
 
-    # Create secure directories
+    # ---------------------------------------------------------
+    # Secure Directories (Strict Permissions)
+    # ---------------------------------------------------------
     log_task "Initializing Secure Directories"
-    [[ ! -d "$XDG_RUNTIME_DIR" ]] && install -d -m 700 "$XDG_RUNTIME_DIR"
-    [[ ! -d "$GNUPGHOME" ]] && install -d -m 700 "$GNUPGHOME"
+    mkdir -p "$GNUPGHOME"
+    chmod 700 "$GNUPGHOME"
 
-    # Create standard directories
+    # ---------------------------------------------------------
+    # Standard Directories
+    # ---------------------------------------------------------
     log_task "Creating Directory Structure"
     local target_dirs=(
-        "$XDG_DATA_HOME"/{cargo,rustup,go,dotnet,nuget/packages,tmux/plugins,pki}
-        "$XDG_CONFIG_HOME"/{zsh,parallel,npm/config,gtk-2.0,nvidia}
-        "$XDG_CACHE_HOME"/{zsh,npm,nv}
-        "$XDG_STATE_HOME"/{zsh,python}
+        "$CARGO_HOME"
+        "$RUSTUP_HOME"
+        "$GOPATH"
+        "$DOTNET_CLI_HOME"
+        "$NUGET_PACKAGES"
+        "$ANDROID_USER_HOME"
+        "$PARALLEL_HOME"
+        "$NPM_CONFIG_CACHE"
+        "$CUDA_CACHE_PATH"
+        "$XDG_DATA_HOME/tmux/plugins"
+        "$XDG_DATA_HOME/pki"
+        "$XDG_CONFIG_HOME/zsh"
+        "$XDG_CONFIG_HOME/npm/config"
+        "$XDG_CONFIG_HOME/gtk-2.0"
+        "$XDG_CONFIG_HOME/nvidia"
+        "$XDG_CACHE_HOME/zsh"
+        "$XDG_STATE_HOME/zsh"
+        "$XDG_STATE_HOME/python"
     )
 
     if mkdir -p "${target_dirs[@]}"; then
@@ -54,7 +70,9 @@ xdg_setup() {
         fail
     fi
 
-    # Sync with Systemd/D-Bus
+    # ---------------------------------------------------------
+    # Systemd / D-Bus Sync
+    # ---------------------------------------------------------
     if command -v dbus-update-activation-environment >/dev/null; then
         dbus-update-activation-environment --systemd \
             XDG_DATA_HOME XDG_CONFIG_HOME XDG_CACHE_HOME XDG_STATE_HOME XDG_RUNTIME_DIR
