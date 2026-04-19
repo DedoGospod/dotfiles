@@ -1,0 +1,7 @@
+#!/usr/bin/env zsh
+
+fix-zsh-hist() {
+    mv ~/.local/state/zsh/history ~/.local/state/zsh/history.bak
+    fc -R history 
+    rm history.bak
+}
