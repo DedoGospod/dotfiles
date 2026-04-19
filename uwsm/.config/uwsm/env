@@ -1,21 +1,16 @@
 #!/usr/bin/env bash
 
-if [[ -f "$HOME/.local/lib/functions/logs" ]]; then
-    if [[ -f "$HOME/.local/lib/xdg_setup" ]]; then
-        #shellcheck source=/dev/null
-        source "$HOME/.local/lib/functions/logs"
-        #shellcheck source=/dev/null
-        source "$HOME/.local/lib/xdg_setup"
-        bash xdg_setup
-    fi
-fi
+readonly lib_dir="$HOME/.local/lib"
+readonly log_func="$lib_dir/functions/logs"
+readonly xdg_init="$lib_dir/xdg_setup"
 
-if [[ -f "$HOME/.local/lib/xdg_setup" ]]; then
+if [[ -r "$log_func" && -r "$xdg_init" ]]; then
     #shellcheck source=/dev/null
-    source "$HOME/.local/lib/functions/logs"
-    #shellcheck source=/dev/null
-    source "$HOME/.local/lib/xdg_setup"
-    bash xdg_setup
+    source "$log_func"
+    # shellcheck source=/dev/null
+    source "$xdg_init"
+    
+    xdg_setup
 fi
 
 # Nvidia specific
