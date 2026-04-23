@@ -13,7 +13,8 @@ run_if_exists() {
 # Cleanup function
 cleanup() {
     if [[ -n "${HYPRLAND_INSTANCE_SIGNATURE:-}" ]]; then
-        # Reset hyprland, brave, and notifications
+
+        # Reset hyprland, notifications and stop the replay buffer
         run_if_exists hyprctl reload
         run_if_exists swaync-client -df
         run_if_exists obs-cmd replay stop

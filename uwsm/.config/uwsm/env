@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 
-readonly lib_dir="$HOME/.local/lib"
-readonly log_func="$lib_dir/functions/logs"
-readonly xdg_init="$lib_dir/xdg_setup"
+readonly LIB_DIR="$HOME/.local/lib"
+readonly LOG_FUNC="${LIB_DIR}/functions/logs"
+readonly XDG_SETUP="${LIB_DIR}/xdg_setup"
 
-if [[ -r "$log_func" && -r "$xdg_init" ]]; then
+if [[ -f "$LOG_FUNC" ]] && [[ -f "$XDG_SETUP" ]]; then
     #shellcheck source=/dev/null
-    source "$log_func"
-    # shellcheck source=/dev/null
-    source "$xdg_init"
+    source "$LOG_FUNC"
+    #shellcheck source=/dev/null
+    source "$XDG_SETUP"
     
     xdg_setup
 fi
