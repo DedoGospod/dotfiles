@@ -22,5 +22,5 @@ fi
 
 # Service management
 if ! pgrep -x "scx_loader" >/dev/null; then
-    systemctl enable --now sxc_loader
+    systemctl enable --now scx_loader
 fi
