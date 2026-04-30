@@ -1,15 +1,9 @@
 #!/usr/bin/env bash
 
-# Create a self-cleaning temporary workspace
-WORKDIR=$(mktemp -d)
-cleanup() {
-    rm -rf "$WORKDIR"
-}
-trap cleanup EXIT
-
 echo "--- Initializing CachyOS Repository Setup ---"
-curl -sSL https://mirror.cachyos.org/cachyos-repo.tar.xz | tar -xJ -C "$WORKDIR"
-sudo "$WORKDIR/cachyos-repo/cachyos-repo.sh"
+curl https://mirror.cachyos.org/cachyos-repo.tar.xz -o cachyos-repo.tar.xz
+tar xvf cachyos-repo.tar.xz && cd cachyos-repo
+sudo ./cachyos-repo.sh
 
 # Kernel Management Logic
 echo "--- Kernel Management ---"
