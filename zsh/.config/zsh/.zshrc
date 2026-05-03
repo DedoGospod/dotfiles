@@ -104,6 +104,7 @@ alias rm='trash -v'         # Safe delete using trash-cli
 alias mkdir='mkdir -p'      # Create parent directories automatically
 alias h='fc -nil 1 | grep --color=auto' # Search history for a specific terminal command
 alias hist="fc -nil 1"      # Always show history with readable dates
+alias df='df -h'            # Shows output in GB
 
 alias nvidia-settings='nvidia-settings --config="$XDG_CONFIG_HOME"/nvidia/settings'
 
