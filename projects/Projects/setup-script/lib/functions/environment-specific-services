@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+# Note: This file relies on variables and functions defined in the main script.
+
+configure_arch_services() { 
+    header "Arch linux specific"
+    grep -qE "ID=arch|ID_LIKE=arch" /etc/os-release || return 0
+
+    local services=(
+        # USER
+        aur-trim.timer
+        arch-audit.timer
+
+        # SYSTEM
+        paccache.timer
+    )
+
+    for srv in "${services[@]}"; do
+        if systemctl --user list-unit-files "$srv" &>/dev/null; then
+            run "Starting $srv" systemctl --user enable --now "$srv"
+        elif systemctl list-unit-files "$srv" &>/dev/null; then
+            run "Starting $srv" sudo systemctl enable --now "$srv"
+        fi
+    done
+}
+
+configure_hyprland_services() {
+    [[ -z "$HYPRLAND_INSTANCE_SIGNATURE" ]] && return 0
+
+    header "Hyprland Specific"
+    local services=(
+        hypridle.service
+        hyprpaper.service
+        pyprland.service
+        hyprpolkitagent.service
+        waybar.service
+        hyprsunset.service
+    )
+
+    for srv in "${services[@]}"; do
+        run "Starting $srv" systemctl --user enable --now "$srv"
+    done
+}

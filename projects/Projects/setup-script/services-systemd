@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+
+# Source functions
+FUNCTIONS_DIR="$HOME/dotfiles/scripts/.local/lib/setup-script/.setup/functions"
+LIBS=("services-systemd-functions" "environment-specific-services")
+
+if [[ -d "$FUNCTIONS_DIR" ]]; then
+    # shellcheck source=/dev/null
+    for lib in "${LIBS[@]}"; do
+        source "$FUNCTIONS_DIR/$lib"
+    done
+else
+    echo "Could not import functions from $FUNCTIONS_DIR"
+    exit 1
+fi
+
+#  Initialization
+log "Verifying sudo access..."
+sudo -v
+
+log_task "Reloading systemd daemons"
+sudo systemctl daemon-reload
+systemctl --user daemon-reload
+ok
+
+# System Services
+header "System Services"
+
+run_system_service "Starting fstrim timer" fstrim.timer
+
+manage "NetworkManager.service"         ""  "Network Management"
+manage "bluetooth.service"              ""  "Bluetooth"
+manage "power-profiles-daemon.service"  ""  "Power Management"
+manage "sshd.service"                   ""  "SSH Daemon"
+
+# User Services
+header "User services"
+
+run_user_service "Configuring dark theme" theme.service
+run_user_service "Starting idle inhibitor" wayland-pipewire-idle-inhibit.service 
+run_user_service "Starting easyeffects" easyeffects.service
+run_user_service "Starting systemd failed unit checker" failed-units-check.timer
+
+# Environment specific services
+configure_arch_services
+configure_hyprland_services
