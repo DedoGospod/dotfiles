@@ -5,6 +5,29 @@ WIDTH=2560
 HEIGHT=1440
 REFRESH=240
 
+# Graceful steam shutdown
+if pgrep -u "$USER" -x steam >/dev/null; then
+    echo "Steam is running. Requesting graceful shutdown..."
+    pkill -15 -u "$USER" -x steam
+
+    # Wait up to 15 seconds for cloud syncs and graceful exit
+    for _ in {1..30}; do
+        pgrep -u "$USER" -x steam >/dev/null || break
+        sleep 0.5
+    done
+
+    # Force kill if it hung, to ensure TTY2 can boot
+    if pgrep -u "$USER" -x steam >/dev/null; then
+        pkill -9 -u "$USER" -x steam
+    fi
+fi
+
+for lockfile in "/tmp/steam.pid" "/tmp/dumps/steam_message_log.txt"; do
+    if [[ -f "$lockfile" && -O "$lockfile" && ! -L "$lockfile" ]]; then
+        rm "$lockfile"
+    fi
+done
+
 GAMESCOPE_OPTS=(
     # Display
     --fullscreen
@@ -38,6 +61,9 @@ GAMESCOPE_OPTS=(
 STEAM_OPTS=(
     -gamepadui
     -steamos3
+
+    -steampal
+    -steamdeck
 )
 
 # Embedded mode options
@@ -48,10 +74,9 @@ if ! [[ -z "$WAYLAND_DISPLAY" ]] && [[ -z "$DISPLAY" ]]; then
 fi
 
 # Start gamescope instance
-if command -v gamescope &>/dev/null; then
+if command -v gamescope >/dev/null; then
     exec gamescope "${GAMESCOPE_OPTS[@]}" -- steam "${STEAM_OPTS[@]}"
 else
     echo "Error: gamescope binary not found. Please install it." >&2
     exit 1
 fi
-
