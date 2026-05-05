@@ -75,3 +75,22 @@ if command -v dracut >/dev/null; then
         ok
     fi
 fi
+
+# Enable NVIDIA KMS if chwd doesnt exist
+if ! command -v chwd >/dev/null; then
+    CONF_FILE="/etc/modprobe.d/nvidia.conf"
+    SETTING="options nvidia-drm modeset=1"
+
+    if [[ ! -f "$CONF_FILE" ]] || ! grep -Fxq "$SETTING" "$CONF_FILE"; then
+        log_task "Enabling NVIDIA Kernel Mode Setting (KMS)..."
+        if echo "$SETTING" | sudo tee "$CONF_FILE" >/dev/null; then
+            touch /tmp/reboot_required
+            ok
+        else
+            fail
+        fi
+    else
+        log_task "NVIDIA KMS already configured."
+        ok
+    fi
+fi
