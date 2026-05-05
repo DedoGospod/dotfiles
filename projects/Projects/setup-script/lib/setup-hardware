@@ -13,58 +13,57 @@ log() { echo -e "${GREEN}[INFO]${NC} $1"; }
 warn() { echo -e "${YELLOW}[WARN]${NC} $1"; }
 error() { echo -e "${RED}[ERROR]${NC} $1"; }
 success() { echo -e "${GREEN}[SUCCESS]${NC} $1"; }
-
 log_task() { echo -ne "${GREEN}[INFO]${NC} $1... "; }
 ok() { echo -e "${GREEN}Done.${NC}"; }
 fail() { echo -e "${RED}Failed.${NC}"; }
 
-# NVIDIA Configuration Block
 header "HARDWARE CONFIGURATION"
 
-# Ensure chwd is installed first
-if ! command -v chwd &>/dev/null; then
-    log_task "chwd not found. Installing"
-    if sudo pacman -S --needed --noconfirm chwd; then
+# Hardware Detection via chwd
+if command -v chwd >/dev/null; then
+    log_task "Auto-detecting and installing drivers via chwd"
+    if sudo chwd -a >/dev/null; then
         ok
     else
         fail
-        error "Failed to install chwd"
+        error "chwd encountered an issue. Check your connection or keyrings."
         exit 1
     fi
-fi
-
-log_task "Syncing drivers with chwd"
-if command -v chwd >/dev/null; then
-    chwd -a >/dev/null
-    ok
 else
-    fail
+    error "chwd not found"
+    exit 1
 fi
 
-# Nvidia utilities
+# NVIDIA Utilities & Configuration
 if lspci | grep -iq "nvidia"; then
-    log_task "Installing NVIDIA utilities"
     NVIDIA_PACKAGES=(nvidia-settings egl-wayland libva-nvidia-driver)
-    MISSING_PACKAGES=()
+    mapfile -t MISSING_PACKAGES < <(pacman -T "${NVIDIA_PACKAGES[@]}")
 
-    # Check if packages exist on system
-    for pkg in "${NVIDIA_PACKAGES[@]}"; do
-        if ! pacman -Qq "$pkg" &>/dev/null; then
-            MISSING_PACKAGES+=("$pkg")
-        fi
-    done
-    ok
+    if [[ ${#MISSING_PACKAGES[@]} -gt 0 ]]; then
+        log_task "Installing NVIDIA Utilities..."
+        sudo pacman -S --noconfirm "${MISSING_PACKAGES[@]}"
+        ok
+    fi
 
     GRUB_FILE="/etc/default/grub"
     PARAM="nvidia-drm.modeset=1 nvidia-drm.fbdev=1"
 
     if [[ -f "$GRUB_FILE" ]] && ! grep -q "nvidia-drm.modeset=1" "$GRUB_FILE"; then
         log_task "Adding KMS parameters to GRUB"
-        sudo sed -i "/GRUB_CMDLINE_LINUX_DEFAULT/ s/\"$/ $PARAM\"/" "$GRUB_FILE"
+        sudo sed -i "s/\(GRUB_CMDLINE_LINUX_DEFAULT=\"[^\"]*\)\"/\1 $PARAM\"/" "$GRUB_FILE"
         sudo grub-mkconfig -o /boot/grub/grub.cfg
         touch /tmp/reboot_required
         ok
     fi
 fi
 
-success "Hardware is synced and optimized."
+# Cleanup mkinitcpio
+if command -v dracut >/dev/null; then
+    if pacman -Qq mkinitcpio &>/dev/null; then
+        log_task "Removing mkinitcpio"
+        sudo pacman -Rns --noconfirm mkinitcpio
+        sudo grub-mkconfig -o /boot/grub/grub.cfg
+        touch /tmp/reboot_required
+        ok
+    fi
+fi
