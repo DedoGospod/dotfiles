@@ -31,7 +31,7 @@ PACMAN_PACKAGES=(
     networkmanager bluez bluez-utils
 
     # Maintenance
-    reflector pacman-contrib ncdu rsync rsnapshot
+    reflector pacman-contrib ncdu rsync rsnapshot chwd dracut
 
     # Power management
     power-profiles-daemon
