@@ -31,7 +31,7 @@ PACMAN_PACKAGES=(
     networkmanager bluez bluez-utils
 
     # Maintenance
-    reflector pacman-contrib ncdu rsync rsnapshot dracut rebuild-initramfs-dracut-hook
+    reflector pacman-contrib ncdu rsync rsnapshot dracut
 
     # Power management
     power-profiles-daemon
@@ -58,5 +58,5 @@ FLATPAK_APPS=(
 
 # AUR Packages
 AUR_PACKAGES=(
-    wayland-pipewire-idle-inhibit brave-bin pyprland downgrade
+    wayland-pipewire-idle-inhibit brave-bin pyprland rebuild-initramfs-dracut-hook downgrade
 )

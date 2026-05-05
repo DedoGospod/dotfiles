@@ -6,7 +6,7 @@ if [[ -d "$LIB_DIR" ]]; then
     # shellcheck source=/dev/null
     source "$LIB_DIR/xdg_setup"
     # shellcheck source=/dev/null
-    source "$HOME/Projects/setup-script/lib/functions/setup-functions"
+    source "$HOME/dotfiles/projects/Projects/setup-script/lib/functions/setup-functions"
 fi
 
 # Import functions
