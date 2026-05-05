@@ -19,24 +19,32 @@ fail() { echo -e "${RED}Failed.${NC}"; }
 
 header "HARDWARE CONFIGURATION"
 
-# Hardware Detection via chwd
-if command -v chwd >/dev/null; then
-    log_task "Auto-detecting and installing drivers via chwd"
-    if sudo chwd -a >/dev/null; then
+# Install chwd if avaliable
+if ! command -v chwd >/dev/null; then
+    if pacman -Sl | grep -q "chwd"; then
+        log_task "Hardware detection available, installing chwd"
+        sudo pacman -S --needed --noconfirm chwd
         ok
     else
-        fail
-        error "chwd encountered an issue. Check your connection or keyrings."
-        exit 1
+        warn "chwd not found in repos. Skipping auto-detection."
     fi
-else
-    error "chwd not found"
-    exit 1
+fi
+
+# Hardware Detection via chwd
+if command -v chwd >/dev/null; then
+    if sudo chwd -a >/dev/null; then
+        log_task "Auto-detecting and installing drivers via chwd"
+        ok
+    else
+        if lspci | grep -iq "nvidia"; then
+            NVIDIA_PACKAGES=(nvidia-open-dkms)
+        fi
+    fi
 fi
 
 # NVIDIA Utilities & Configuration
 if lspci | grep -iq "nvidia"; then
-    NVIDIA_PACKAGES=(nvidia-settings egl-wayland libva-nvidia-driver)
+    NVIDIA_PACKAGES+=(nvidia-settings egl-wayland lib32-nvidia-utils libva-nvidia-driver)
     mapfile -t MISSING_PACKAGES < <(pacman -T "${NVIDIA_PACKAGES[@]}")
 
     if [[ ${#MISSING_PACKAGES[@]} -gt 0 ]]; then
