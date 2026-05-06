@@ -3,7 +3,7 @@
 # Elevate permissions
 sudo -v
 
-SETUP_FILE="$HOME/dotfiles/scripts/.local/lib/setup-script/.setup/setup-dotfiles"
+SETUP_FILE="$HOME/dotfiles/projects/Projects/setup-script/lib/setup-dotfiles"
 
 if [[ -f "$SETUP_FILE" ]]; then
     chmod u+x "$SETUP_FILE"
