@@ -20,6 +20,8 @@ if [[ "$install_cachy" =~ ^[Yy]$ ]]; then
     if [[ "$remove_generic" =~ ^[Yy]$ ]]; then
         sudo pacman -Rns --noconfirm linux linux-headers
     fi
+    echo "Updating grub"
+    sudo grub-mkconfig -o /boot/grub/grub.cfg
 fi
 
 echo "--- Setup Complete ---"
