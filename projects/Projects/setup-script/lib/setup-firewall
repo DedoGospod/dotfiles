@@ -55,6 +55,7 @@ if command -v ufw &>/dev/null; then
             ok
         else
             fail
+            exit 1
         fi
 
         # Baseline configuration
@@ -65,27 +66,34 @@ if command -v ufw &>/dev/null; then
             ok
         else
             fail
+            exit 1
         fi
 
         # -------------------------------
 
         log_task "Enabling UFW"
 
-        # Enable systemd service
-        sudo systemctl enable ufw.service &>/dev/null
+        # Ensure the systemd service is ready
+        if ! systemctl is-enabled --quiet ufw.service; then
+            log_task "Enabling UFW service..."
+            if sudo systemctl enable --now ufw.service &>/dev/null; then
+                ok
+            else
+                error "Failed to enable ufw.service"
+                exit 1
+            fi
+        fi
 
-        # Enable firewall rules
-        if echo "y" | sudo ufw enable &>/dev/null; then
-            ok
-            success "Firewall is active and configured."
+        # Ensure the internal UFW rules are active
+        if sudo ufw --force enable >/dev/null; then
+            success "Firewall enabled and rules active"
         else
-            fail
-            error "Could not enable UFW."
+            error "UFW rules failed to load"
+            exit 1
         fi
     fi
 else
-    warn "UFW is not installed on this system."
-    error "Firewall configuration skipped."
+    error "Firewall configuration failed."
 fi
 
 # KDE Connect
