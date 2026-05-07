@@ -12,6 +12,7 @@ Restart=on-failure
 RestartSec=5s
 StartLimitIntervalSec=60s
 StartLimitBurst=5
+KillSignal=SIGKILL
 
 [Install]
 WantedBy=graphical-session.target
