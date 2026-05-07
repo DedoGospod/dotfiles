@@ -23,6 +23,11 @@ sudo -v
 CONF_FILE="/etc/modules-load.d/i2c.conf"
 SETTING="i2c-dev"
 
+# Install if needed
+if ! command -v ddcutil >/dev/null; then
+    sudo pacman -S --needed --noconfirm ddcutil
+fi
+
 if echo "$SETTING" | sudo tee "$CONF_FILE" >/dev/null; then
     log_task "Configuring i2c"
     sudo modprobe i2c-dev
