@@ -15,9 +15,9 @@ cleanup() {
     if [[ -n "${HYPRLAND_INSTANCE_SIGNATURE:-}" ]]; then
 
         # Reset hyprland, notifications and stop the replay buffer
+        run_if_exists obs-cmd replay stop
         run_if_exists hyprctl reload
         run_if_exists swaync-client -df
-        run_if_exists obs-cmd replay stop
 
         # Stop the OBS service only if this script started it
         if [[ "$OBS_STARTED_BY_SCRIPT" -eq 1 ]]; then
@@ -28,7 +28,7 @@ cleanup() {
         if ! pgrep -x "hyprsunset" >/dev/null; then
             systemctl --user start hyprsunset.service
         fi
-        run_if_exists hyprctl hyprsunset gamma 50
+        run_if_exists ddcutil setvcp 10 50 --async
     fi
 }
 
@@ -65,7 +65,7 @@ main() {
         if pgrep -x "hyprsunset" >/dev/null; then
             systemctl --user stop hyprsunset.service
         fi
-        run_if_exists hyprctl hyprsunset gamma 100
+        run_if_exists ddcutil setvcp 10 100 --async
     fi
 
     # Run the game
