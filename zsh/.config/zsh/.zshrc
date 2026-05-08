@@ -82,6 +82,7 @@ fi
 alias sudo='sudo '                # Always use sudo explicitly
 alias rb='reboot'                 # Reboot system
 alias update-grub="grub-mkconfig -o /boot/grub/grub.cfg" # Update grub
+alias fixpac='sudo DIFFPROG=meld pacdiff' # Fix pacnew files
 
 # Package Management
 alias yay='paru'             # Use paru as yay alternative
@@ -106,6 +107,7 @@ alias h='fc -nil 1 | grep --color=auto' # Search history for a specific terminal
 alias hist="fc -nil 1"      # Always show history with readable dates
 alias df='df -h'            # Shows output in GB
 
+# Open nvidia settings and force the config file in the XDG Directory path
 alias nvidia-settings='nvidia-settings --config="$XDG_CONFIG_HOME"/nvidia/settings'
 
 # Configs
