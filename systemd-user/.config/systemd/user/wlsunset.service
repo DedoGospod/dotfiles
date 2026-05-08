@@ -6,7 +6,7 @@ StartLimitIntervalSec=60
 StartLimitBurst=5
 
 [Service]
-ExecStart=/usr/bin/wlsunset -t 3500 -T 5500 -S 06:30 -s 18:45 -g 1.0
+ExecStart=/usr/bin/wlsunset -t 3500 -T 6500 -S 06:30 -s 20:30 -g 1.0
 Restart=on-failure
 RestartSec=5s
 ProtectSystem=full
