@@ -7,11 +7,10 @@ configure_arch_services() {
 
     local services=(
         # USER
-        #aur-trim.timer
-        #arch-audit.timer
+        aur-clean.timer
 
         # SYSTEM
-        #paccache.timer
+        paccache.timer
     )
 
     for srv in "${services[@]}"; do
