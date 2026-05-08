@@ -2,6 +2,7 @@
 
 # Track state for cleanup
 OBS_STARTED_BY_SCRIPT=0
+OLLAMA_STOPPED_BY_SCRIPT=0
 
 # Helper to run commands only if they exist
 run_if_exists() {
@@ -28,8 +29,9 @@ cleanup() {
         if ! pgrep -x "hyprsunset" >/dev/null; then
             systemctl --user start hyprsunset.service
         fi
-        run_if_exists ddcutil setvcp 10 50 --async
     fi
+    run_if_exists ddcutil setvcp 10 50 --async
+
 }
 
 # Cleanup trap
@@ -65,8 +67,8 @@ main() {
         if pgrep -x "hyprsunset" >/dev/null; then
             systemctl --user stop hyprsunset.service
         fi
-        run_if_exists ddcutil setvcp 10 100 --async
     fi
+    run_if_exists ddcutil setvcp 10 100 --async
 
     # Run the game
     if command -v scopebuddy >/dev/null; then
