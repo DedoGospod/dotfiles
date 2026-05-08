@@ -1,9 +1,9 @@
 [Unit]
-Description=Weekly trim of paru build cache
+Description=Weekly clean of paru AUR cache
 
 [Timer]
+OnBootSec=15min
 OnCalendar=weekly
-RandomizedDelaySec=30s
 Persistent=true
 
 [Install]

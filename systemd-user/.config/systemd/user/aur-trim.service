@@ -1,9 +1,0 @@
-[Unit]
-Description=Trim AUR build cache (Keep 3 versions)
-ConditionPathExists=%h/.cache/paru/clone
-ConditionDirectoryNotEmpty=%h/.cache/paru/clone
-
-[Service]
-Type=oneshot
-IOSchedulingClass=idle
-ExecStart=/usr/local/lib/systemd-scripts/paru-aur-trim

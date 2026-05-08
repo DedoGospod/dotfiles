@@ -3,7 +3,7 @@ Description=Check for failed systemd units
 
 [Service]
 Type=oneshot
-ExecStart=/usr/local/lib/systemd-scripts/check-units
+ExecStart=/usr/local/lib/systemd-scripts/failed-units-check
 
 [Install]
 WantedBy=multi-user.target
