@@ -23,9 +23,10 @@ ok() { echo -e "${GREEN}Done.${NC}"; }
 fail() { echo -e "${RED}Failed.${NC}"; }
 
 # Package list
-GAMING_PACKAGES=(gamemode gamescope mangohud steam scopebuddy-git)
-mapfile -t MISSING_PACKAGES < <(pacman -T "${GAMING_PACKAGES[@]}")
+GAMING_PACKAGES=(gamescope mangohud steam scopebuddy-git)
 FLATPAK_APPS+=("com.vysp3r.ProtonPlus")
+mapfile -t MISSING_PACKAGES < <(pacman -T "${GAMING_PACKAGES[@]}")
+mapfile -t MISSING_FLATPAKS < <(pacman -T "${FLATPAK_APPS[@]}")
 
 # Gaming settings
 header "GAMING CONFIGURATION"
@@ -48,6 +49,7 @@ if pacman -Ssq "^proton-cachyos$" >/dev/null && pacman -Ssq "^proton-cachyos-slr
     fi
 else
     warn "Proton-cachyos packages not found in repos; skipping optimized builds."
+    GAMING_PACKAGES+=(gamemode)
 fi
 
 # Install any missing packages
@@ -55,30 +57,8 @@ if [[ ${#MISSING_PACKAGES[@]} -gt 0 ]]; then
     log_task "Installing missing packages: ${MISSING_PACKAGES[*]}"
     sudo pacman -S --needed --noconfirm "${MISSING_PACKAGES[@]}" >/dev/null
     ok
-fi
-
-# Handle Flatpak Packages
-if [ ${#FLATPAK_APPS[@]} -gt 0 ]; then
-    MISSING_FLATPAKS=()
-
-    # Check which Flatpaks are NOT already installed
-    for app in "${FLATPAK_APPS[@]}"; do
-        if ! flatpak list --app --columns=application | grep -q "^$app$"; then
-            MISSING_FLATPAKS+=("$app")
-        fi
-    done
-
-    if [ ${#MISSING_FLATPAKS[@]} -eq 0 ]; then
-        log_task "All gaming Flatpaks are already installed"
-        ok
-    else
-        log_task "Installing missing Flatpaks: ${MISSING_FLATPAKS[*]}"
-        if flatpak install -y --noninteractive --or-update flathub "${MISSING_FLATPAKS[@]}" &>/dev/null; then
-            ok
-        else
-            fail
-        fi
-    fi
+    log_task "Installing missing flatpaks: ${MISSING_FLATPAKS[*]}"
+    flatpak install -y --noninteractivfe --or-update flathub "${MISSING_FLATPAKS[@]}" >/dev/null
 fi
 
 # Gamescope Cap
