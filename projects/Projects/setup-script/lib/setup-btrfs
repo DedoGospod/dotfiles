@@ -57,7 +57,7 @@ log "Detected bootloader: $BOOTLOADER"
 
 # Needed packages
 PACKAGES=(btrfsmaintenance snapper snap-pac snapper-rollback inotify-tools)
-MISSING_PACKAGES=()
+mapfile -t MISSING_PACKAGES < <(pacman -T "${PACKAGES[@]}")
 
 # Ensure /btrfsroot exists and is secure for snapper-rollback
 if [[ ! -d "/btrfsroot" ]]; then
@@ -101,20 +101,10 @@ elif [[ "$BOOTLOADER" == "limine" ]]; then
     btrfs_units+=("limine-snapper-watcher.service" "limine-snapper-sync.service")
 fi
 
-# Check if packages exist on system
-for pkg in "${PACKAGES[@]}"; do
-    if ! pacman -Qq "$pkg" &>/dev/null; then
-        MISSING_PACKAGES+=("$pkg")
-    fi
-done
-
 # Install any missing packages
-if [[ ${#MISSING_PACKAGES[@]} -eq 0 ]]; then
-    log_task "All BTRFS packages are already installed"
-    ok
-else
+if [[ ${#MISSING_PACKAGES[@]} -gt 0 ]]; then
     log_task "Installing missing packages: ${MISSING_PACKAGES[*]}"
-    paru -S --needed --noconfirm "${MISSING_PACKAGES[@]}"
+    sudo pacman -S --needed --noconfirm "${MISSING_PACKAGES[@]}" >/dev/null
     ok
 fi
 

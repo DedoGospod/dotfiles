@@ -24,8 +24,8 @@ fail() { echo -e "${RED}Failed.${NC}"; }
 
 # Package list
 GAMING_PACKAGES=(gamemode gamescope mangohud steam scopebuddy-git)
+mapfile -t MISSING_PACKAGES < <(pacman -T "${GAMING_PACKAGES[@]}")
 FLATPAK_APPS+=("com.vysp3r.ProtonPlus")
-MISSING_PACKAGES=()
 
 # Gaming settings
 header "GAMING CONFIGURATION"
@@ -50,20 +50,10 @@ else
     warn "Proton-cachyos packages not found in repos; skipping optimized builds."
 fi
 
-# Check if packages exist on system
-for pkg in "${GAMING_PACKAGES[@]}"; do
-    if ! paru -Qq "$pkg" &>/dev/null; then
-        MISSING_PACKAGES+=("$pkg")
-    fi
-done
-
 # Install any missing packages
-if [[ ${#MISSING_PACKAGES[@]} -eq 0 ]]; then
-    log_task "All gaming system packages are already installed."
-    ok
-else
-    log_task "Installing missing gaming system packages: ${MISSING_PACKAGES[*]}"
-    paru -S --needed --noconfirm "${MISSING_PACKAGES[@]}"
+if [[ ${#MISSING_PACKAGES[@]} -gt 0 ]]; then
+    log_task "Installing missing packages: ${MISSING_PACKAGES[*]}"
+    sudo pacman -S --needed --noconfirm "${MISSING_PACKAGES[@]}" >/dev/null
     ok
 fi
 

@@ -34,7 +34,7 @@ else
     ok
 fi
 
-if command -v ufw &>/dev/null; then
+if command -v ufw >/dev/null; then
 
     # Get the current status and policies to check against
     UFW_STATUS=$(sudo ufw status verbose)
@@ -76,7 +76,7 @@ if command -v ufw &>/dev/null; then
         # Ensure the systemd service is ready
         if ! systemctl is-enabled --quiet ufw.service; then
             log_task "Enabling UFW service..."
-            if sudo systemctl enable --now ufw.service &>/dev/null; then
+            if sudo systemctl enable --now ufw.service >/dev/null; then
                 ok
             else
                 error "Failed to enable ufw.service"

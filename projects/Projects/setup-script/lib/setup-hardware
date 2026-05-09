@@ -47,9 +47,10 @@ if lspci | grep -iq "nvidia"; then
     NVIDIA_PACKAGES+=(nvidia-settings egl-wayland lib32-nvidia-utils libva-nvidia-driver)
     mapfile -t MISSING_PACKAGES < <(pacman -T "${NVIDIA_PACKAGES[@]}")
 
+    # Install any missing packages
     if [[ ${#MISSING_PACKAGES[@]} -gt 0 ]]; then
-        log_task "Installing NVIDIA Utilities..."
-        sudo pacman -S --noconfirm "${MISSING_PACKAGES[@]}"
+        log_task "Installing missing packages: ${MISSING_PACKAGES[*]}"
+        sudo pacman -S --needed --noconfirm "${MISSING_PACKAGES[@]}" >/dev/null
         ok
     fi
 
