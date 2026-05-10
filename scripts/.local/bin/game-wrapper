@@ -2,7 +2,6 @@
 
 # Track state for cleanup
 OBS_STARTED_BY_SCRIPT=0
-OLLAMA_STOPPED_BY_SCRIPT=0
 
 # Helper to run commands only if they exist
 run_if_exists() {
