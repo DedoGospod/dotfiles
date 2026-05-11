@@ -61,8 +61,6 @@ GAMESCOPE_OPTS=(
 STEAM_OPTS=(
     -gamepadui
     -steamos3
-
-    -steampal
     -steamdeck
 )
 
