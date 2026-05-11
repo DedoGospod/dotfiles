@@ -7,6 +7,8 @@ if [[ -n "$OBS_PROC" ]]; then
     ICON="/usr/share/icons/hicolor/256x256/apps/com.obsproject.Studio.png"
     if obs-cmd replay save; then
         notify-send -h boolean:SWAYNC_BYPASS_DND:true -i "$ICON" -t 1000 "Replay Saved" "OBS Buffer Captured"
+    else
+        notify-send -t 1500 "⚠️ OBS Error" "Check if obs-cmd is installed and the websocket is configured"
     fi
 else
     notify-send -t 1500 "⚠️  OBS Error" "OBS is not running"
