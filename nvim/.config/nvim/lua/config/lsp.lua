@@ -44,7 +44,7 @@ if status then
             "json", "javascript", "typescript", "tsx", "yaml", "html",
             "css", "markdown", "markdown_inline", "bash", "lua", "vim",
             "dockerfile", "c", "c_sharp", "cpp", "rust", "go",
-            "hyprlang", "python", "zig",
+            "hyprlang", "python", "zig", "ron",
         },
     })
 else
