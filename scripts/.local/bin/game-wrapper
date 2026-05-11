@@ -29,6 +29,7 @@ cleanup() {
             systemctl --user start hyprsunset.service
         fi
     fi
+    # Reset brightness back down to 50%
     run_if_exists ddcutil setvcp 10 50 --async
 
 }
@@ -67,6 +68,7 @@ main() {
             systemctl --user stop hyprsunset.service
         fi
     fi
+    # Set brightness to 100%
     run_if_exists ddcutil setvcp 10 100 --async
 
     # Run the game
