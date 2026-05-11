@@ -48,7 +48,7 @@ PACMAN_PACKAGES=(
 )
 
 # Optional Groups
-NEOVIM_DEPS=(npm nodejs unzip clang go shellcheck zig luarocks dotnet-sdk cmake gcc imagemagick)
+NEOVIM_DEPS=(npm nodejs unzip clang go shellcheck zig luarocks dotnet-sdk cmake gcc tree-sitter-cli imagemagick)
 
 # Flatpaks
 FLATPAK_APPS=(
