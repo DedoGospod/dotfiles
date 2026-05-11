@@ -16,3 +16,10 @@ command = "/usr/bin/pavucontrol"
 class = "org.pulseaudio.pavucontrol"
 size = "90% 90%"
 lazy = false
+
+[scratchpads.rmpc]
+animation = "fromTop"
+command = "/usr/bin/kitty --class kitty-rmpc rmpc"
+class = "kitty-rmpc"
+size = "90% 90%"
+lazy = false
