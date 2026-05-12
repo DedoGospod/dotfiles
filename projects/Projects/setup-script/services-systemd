@@ -33,8 +33,6 @@ manage "bluetooth.service"              ""  "Bluetooth"
 manage "power-profiles-daemon.service"  ""  "Power Management"
 manage "sshd.service"                   ""  "SSH Daemon"
 
-manage "mpd.service"                    "--user"  "Music Player Daemon"
-
 # User Services
 header "User services"
 
