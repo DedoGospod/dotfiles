@@ -1,0 +1,16 @@
+#![enable(implicit_some)]
+(
+    album_art_placeholder: "",
+    active_pane_color: "#cba6f7", 
+    text_color: "#cdd6f4",        
+    header_color: "#89b4fa",      
+    highlight_color: "#f5c2e7",   
+    
+    symbols: (
+        song: "󰎆 ",
+        dir: "󱑒 ",
+        marker: "󰅂 ",
+        elapsed: "█",
+        remaining: "░",
+    ),
+)

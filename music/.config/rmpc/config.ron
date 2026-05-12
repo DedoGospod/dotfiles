@@ -9,9 +9,10 @@
     cache_dir: "~/.cache/rmpc",
     
     // UI & Behavior
-    theme: None,
+    theme: "catppuccin",
     volume_step: 5,
     max_fps: 30,
+    scroll_speed: 5,
     enable_mouse: true,
     enable_config_hot_reload: true,
     
@@ -40,8 +41,8 @@
             "j": Down,
             "h": Left,
             "l": Right,
-            "a": Add,
             "Enter": Confirm,
+            "a": Insert,
         },
     ),
 )
