@@ -22,7 +22,7 @@ fail() { echo -e "${RED}Failed.${NC}"; }
 sudo -v
 
 # Package list
-PACKAGES=(yt-dlp rmpc mpd python-mutagen)
+PACKAGES=(yt-dlp rmpc mpd mpc python-mutagen)
 mapfile -t MISSING_PACKAGES < <(pacman -T "${PACKAGES[@]}")
 
 # Install missing packages
