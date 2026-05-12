@@ -1,7 +1,13 @@
 return {
   "nvim-telescope/telescope.nvim",
   lazy = true,
-  cmd = "Telescope",
+  keys = {
+    { '<C-p>', function() require('telescope.builtin').find_files() end, desc = 'Telescope | Find files' },
+    { '<C-g>', function() require('telescope.builtin').live_grep() end, desc = 'Telescope | Live grep' },
+    { '<C-b>', function() require('telescope.builtin').buffers() end, desc = 'Telescope | Buffers' },
+    { '<leader>fh', function() require('telescope.builtin').help_tags() end, desc = 'Telescope | Help tags' },
+  },
+  -- cmd = "Telescope",
   dependencies = {
     "nvim-lua/plenary.nvim",
     { "nvim-telescope/telescope-fzf-native.nvim", build = "make" },

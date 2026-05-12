@@ -38,6 +38,7 @@ return {
 		"stevearc/conform.nvim",
 		lazy = true,
 		event = { "BufWritePre" },
+    keys = {}
 	},
 
 	-- Linting

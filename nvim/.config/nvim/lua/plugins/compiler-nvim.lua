@@ -1,23 +1,28 @@
 return {
-  { -- compiler.nvim
-    "Zeioth/compiler.nvim",
-    cmd = { "CompilerOpen", "CompilerToggleResults", "CompilerRedo" },
-    dependencies = { "stevearc/overseer.nvim", "nvim-telescope/telescope.nvim" },
-    opts = {},
-    lazy = true,
-  },
-  { -- overseer.nvim
-    "stevearc/overseer.nvim",
-    commit = "6271cab7ccc4ca840faa93f54440ffae3a3918bd",
-    cmd = { "OverseerOpen", "OverseerToggle", "OverseerRun" },
-    opts = {
-      task_list = {
-        direction = "bottom",
-        min_height = 25,
-        max_height = 25,
-        default_detail = 1,
-      },
-    },
-    lazy = true,
-  },
+	{ -- compiler.nvim
+		"Zeioth/compiler.nvim",
+		cmd = { "CompilerOpen", "CompilerToggleResults", "CompilerRedo" },
+		dependencies = { "stevearc/overseer.nvim", "nvim-telescope/telescope.nvim" },
+		opts = {},
+		lazy = true,
+		keys = {
+			{ "<F9>", "<cmd>CompilerOpen<cr>", desc = "Compiler | Open" },
+			{ "<F10>", "<cmd>CompilerToggleResults<cr>", desc = "Compiler | Toggle results" },
+			{ "<S-F9>", "<cmd>CompilerRedo<cr>", desc = "Compiler | Redo last action" },
+		},
+	},
+	{ -- overseer.nvim
+		"stevearc/overseer.nvim",
+		commit = "6271cab7ccc4ca840faa93f54440ffae3a3918bd",
+		cmd = { "OverseerOpen", "OverseerToggle", "OverseerRun" },
+		opts = {
+			task_list = {
+				direction = "bottom",
+				min_height = 25,
+				max_height = 25,
+				default_detail = 1,
+			},
+		},
+		lazy = true,
+	},
 }
