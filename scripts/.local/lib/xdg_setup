@@ -38,6 +38,7 @@ xdg_setup() {
     log_task "Initializing Secure Directories"
     mkdir -p "$GNUPGHOME"
     chmod 700 "$GNUPGHOME"
+    ok
 
     # ---------------------------------------------------------
     # Standard Directories
