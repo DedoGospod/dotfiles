@@ -85,7 +85,7 @@ alias update-grub="grub-mkconfig -o /boot/grub/grub.cfg" # Update grub
 alias fixpac='sudo DIFFPROG=meld pacdiff' # Fix pacnew files
 
 # Package Management
-alias yay='paru'             # Use paru as yay alternative
+alias yay='paru'                  # Use paru as yay alternative
 
 # Apps
 alias top='btop'                                       # Modern system monitor
@@ -114,5 +114,5 @@ alias nvidia-settings='nvidia-settings --config="$XDG_CONFIG_HOME"/nvidia/settin
 alias zshrc='nvim ~/.config/zsh/.zshrc && source ~/.config/zsh/.zshrc'  # Edit zsh config
 alias zshenv='nvim ~/.zshenv'                                           # Edit zsh env file
 alias zshfunc="cd $functions_dir && ls"                                 # Edit zsh functions
-alias hypr='nvim ~/.config/hypr/hyprland.conf'                          # Edit Hyprland config
+alias hypr='cd ~/.config/hypr/lua && yazi'                              # Edit hyprland config
 alias grub='sudoedit /etc/default/grub'                                 # Edit GRUB config

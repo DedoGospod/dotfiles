@@ -16,13 +16,9 @@ if (( $+commands[paru] )) && (( $+commands[fzf] )); then
             --pointer="▶" \
             --marker="✓" \
             --color="header:italic:cyan,border:blue" \
-            --preview '[[ -n {} ]] && paru -Si {} --color=always 2>/dev/null' \
+            --preview '[[ -n {} ]] && paru -Si {} --color=always' \
             --preview-window='right:60%:wrap:border-left' \
             --bind 'enter:become(paru -S {+})' \
             --bind 'ctrl-a:select-all'
         }
-fi
-
-if (( $+commands[paru] )); then
-    alias S='paru -S'
 fi
