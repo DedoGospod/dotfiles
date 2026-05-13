@@ -77,7 +77,7 @@ if command -v dracut >/dev/null; then
     fi
 fi
 
-# Enable NVIDIA KMS if chwd doesnt exist
+# Enable NVIDIA KMS via mkinitcpio if chwd doesnt exist
 if ! command -v chwd >/dev/null; then
     CONF_FILE="/etc/modprobe.d/nvidia.conf"
     SETTING="options nvidia-drm modeset=1"

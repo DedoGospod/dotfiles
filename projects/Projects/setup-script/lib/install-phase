@@ -5,9 +5,7 @@ header "INSTALLATION PHASE"
 
 # Update System
 log "Updating system"
-if sudo pacman -Syu --noconfirm 2>&1 | grep -v "is up to date"; then
-    :
-else
+if ! sudo pacman -Syu --noconfirm 2>&1 | grep -v "is up to date"; then
     fail
     error "System update failed. Check your internet connection or mirrors."
     exit 1

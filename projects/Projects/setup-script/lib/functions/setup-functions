@@ -9,15 +9,15 @@ BLUE='\033[0;34m'
 NC='\033[0m'
 
 # Helper Functions
-header()  { echo -e "\n${BLUE}==== $1 ====${NC}"; }
-log()     { echo -e "${GREEN}[INFO]${NC} $1"; }
-warn()    { echo -e "${YELLOW}[WARN]${NC} $1"; }
-error()   { echo -e "${RED}[ERROR]${NC} $1"; }
+header() { echo -e "\n${BLUE}==== $1 ====${NC}"; }
+log() { echo -e "${GREEN}[INFO]${NC} $1"; }
+warn() { echo -e "${YELLOW}[WARN]${NC} $1"; }
+error() { echo -e "${RED}[ERROR]${NC} $1"; }
 success() { echo -e "${GREEN}[SUCCESS]${NC} $1"; }
 
 log_task() { echo -ne "${GREEN}[INFO]${NC} $1... "; }
-ok()       { echo -e "${GREEN}Done.${NC}"; }
-fail()     { echo -e "${RED}Failed.${NC}"; }
+ok() { echo -e "${GREEN}Done.${NC}"; }
+fail() { echo -e "${RED}Failed.${NC}"; }
 
 # Find the script directory
 SCRIPT_DIR="$HOME/dotfiles/projects/Projects/setup-script/lib"
@@ -88,8 +88,6 @@ run_setup_script() {
         error "Could not find $script_name"
     fi
 }
-
-
 
 is_reboot_required() {
     if [[ -f /tmp/reboot_required ]]; then

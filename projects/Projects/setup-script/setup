@@ -9,8 +9,11 @@ if [[ -d "$LIB_DIR" ]]; then
     source "$HOME/dotfiles/projects/Projects/setup-script/lib/functions/setup-functions"
 fi
 
-# Import functions
+# Permission check
 check_if_root         # Ensure user doesnt run this as root
+sudo -v               # Elevate privledges to root
+
+# Import functions
 xdg_setup             # Setup xdg directory structure
 prepare_setup_scripts # Prepare setup scripts with chmod u+x
 import_package_list   # Import the package list

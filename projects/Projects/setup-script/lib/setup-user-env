@@ -60,7 +60,7 @@ if command -v imv >/dev/null 2>&1 || command -v imvr >/dev/null 2>&1; then
     done
     ok
 else
-    echo -e "\e[31m[ERROR]\e[0m imv not found. Install it first."
+    error "imv not found. Install it first."
 fi
 
 # Shell

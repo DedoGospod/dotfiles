@@ -23,7 +23,7 @@ ok() { echo -e "${GREEN}Done.${NC}"; }
 fail() { echo -e "${RED}Failed.${NC}"; }
 
 # --- FIREWALL CONFIGURATION ---
-header "Firewall Configuration"
+header "FIREWALL CONFIGURATION"
 
 # Install UFW if necessary
 if ! command -v ufw &>/dev/null; then
