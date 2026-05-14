@@ -111,8 +111,8 @@ alias df='df -h'            # Shows output in GB
 alias nvidia-settings='nvidia-settings --config="$XDG_CONFIG_HOME"/nvidia/settings'
 
 # Configs
-alias zshrc='nvim ~/.config/zsh/.zshrc && source ~/.config/zsh/.zshrc'  # Edit zsh config
-alias zshenv='nvim ~/.zshenv'                                           # Edit zsh env file
-alias zshfunc="cd $functions_dir && ls"                                 # Edit zsh functions
-alias hypr='cd ~/.config/hypr/lua && yazi'                              # Edit hyprland config
 alias grub='sudoedit /etc/default/grub'                                 # Edit GRUB config
+alias zshrc='nvim ~/.config/zsh/.zshrc'                                 # Edit zsh config
+alias zshenv='nvim ~/.zshenv'                                           # Edit zsh env file
+alias hypr='cd ~/.config/hypr/lua && nv'                                # Edit hyprland config
+alias zshfunc="cd $functions_dir && ls"                                 # Edit zsh functions
