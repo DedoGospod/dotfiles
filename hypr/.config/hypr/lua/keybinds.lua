@@ -1,85 +1,116 @@
----------------------
----- KEYBINDINGS ----
----------------------
+--------------------------------------------------------------------------------
+---- CONFIGURATION CONSTANTS ----
+--------------------------------------------------------------------------------
+local home       = os.getenv("HOME") or "/home/default"
+local scripts    = home .. "/dotfiles/hypr/.config/hypr/scripts"
+local pypr       = "pypr"
 
--- Set programs that you use
-local terminal    = "kitty"
-local fileManager = "nautilus --new-window"
-local menu        = "wofi --show drun"
-local browser     = "brave"
-local pypr        = "/usr/bin/pypr-client"
-local scripts     = "$HOME/dotfiles/hypr/.config/hypr/scripts"
+local mainMod    = "SUPER"
+local modPlus    = mainMod .. " + "
+local modShift   = mainMod .. " + SHIFT + "
 
-local mainMod = "SUPER"
+local VOL_STEP   = "5%"
+local BRIG_STEP  = "10%"
+local SPECIAL_WS = "magic"
 
--- Application Binds
-hl.bind(mainMod .. " + Q", hl.dsp.exec_cmd(terminal))
-hl.bind(mainMod .. " + SPACE", hl.dsp.exec_cmd(menu))
-hl.bind(mainMod .. " + E", hl.dsp.exec_cmd(fileManager))
-hl.bind(mainMod .. " + W", hl.dsp.exec_cmd(browser))
-hl.bind(mainMod .. " + N", hl.dsp.exec_cmd("swaync-client -t -sw"))
-hl.bind(mainMod .. " + M", hl.dsp.exec_cmd("flatpak run com.stremio.Stremio"))
-hl.bind(mainMod .. " + I", hl.dsp.exec_cmd(scripts .. "/idle-inhibitor"))
+local keybinds = {
+    {
+        mod = modPlus,
+        list = {
+            ["Q"]     = "kitty",
+            ["SPACE"] = "wofi --show drun",
+            ["E"]     = "nautilus --new-window",
+            ["W"]     = "brave",
+            ["N"]     = "swaync-client -t -sw",
+            ["M"]     = "flatpak run com.stremio.Stremio",
+            ["P"]     = "hyprshot -m window",
+            ["I"]     = scripts .. "/idle-inhibitor",
+        }
+    },
+    {
+        mod = modShift,
+        list = {
+            ["P"]     = "hyprshot -m region",
+        }
+    }
+}
 
--- Screenshot Utility
-hl.bind(mainMod .. " + P", hl.dsp.exec_cmd("hyprshot -m window"))
-hl.bind(mainMod .. " + SHIFT + P", hl.dsp.exec_cmd("hyprshot -m region"))
+local scratchpads = {
+    ["Q"]       = "obsidian",
+    ["Z"]       = "pavucontrol",
+    ["A"]       = "rmpc"
+}
 
--- Pyprland
-hl.bind(mainMod .. " + SHIFT + Q", hl.dsp.exec_cmd(pypr .. " toggle obsidian"))
-hl.bind(mainMod .. " + SHIFT + Z", hl.dsp.exec_cmd(pypr .. " toggle pavucontrol"))
-hl.bind(mainMod .. " + SHIFT + A", hl.dsp.exec_cmd(pypr .. " toggle rmpc"))
+-- Multimedia mappings
+local media = {
+    ["XF86AudioRaiseVolume"]  = "wpctl set-volume @DEFAULT_AUDIO_SINK@ " .. VOL_STEP .. "+",
+    ["XF86AudioLowerVolume"]  = "wpctl set-volume @DEFAULT_AUDIO_SINK@ " .. VOL_STEP .. "-",
+    ["XF86AudioMute"]         = "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle",
+    ["XF86MonBrightnessUp"]   = "brightnessctl s " .. BRIG_STEP .. "+",
+    ["XF86MonBrightnessDown"] = "brightnessctl s " .. BRIG_STEP .. "-",
+    ["XF86AudioNext"]         = "playerctl next",
+    ["XF86AudioPrev"]         = "playerctl previous",
+    ["XF86AudioPlay"]         = "playerctl play-pause",
+    ["XF86AudioPause"]        = "playerctl play-pause",
+}
 
--- Passthrough (Note the double backslash for Lua escaping)
-hl.bind("CTRL + backslash", hl.dsp.exec_cmd("hyprctl dispatch pass 'class:^(com\\.obsproject\\.Studio)$' && " .. scripts .. "/obs-replay-notification"))
+--------------------------------------------------------------------------------
+---- SPECIAL CASES ----
+--------------------------------------------------------------------------------
 
--- Window Management
-hl.bind(mainMod .. " + C", hl.dsp.window.close())
-hl.bind(mainMod .. " + SHIFT + M", hl.dsp.exit())
-hl.bind(mainMod .. " + SHIFT + V", hl.dsp.window.float({ action = "toggle" }))
-hl.bind(mainMod .. " + SHIFT + T", hl.dsp.layout("togglesplit"))
-hl.bind(mainMod .. " + SHIFT + F", hl.dsp.window.fullscreen({ state = 3 }))
-hl.bind(mainMod .. " + F", hl.dsp.window.fullscreen({ state = 1 }))
-
--- Navigation (Vim-style)
-local directions = { h = "left", l = "right", k = "up", j = "down" }
-for key, dir in pairs(directions) do
-    hl.bind(mainMod .. " + " .. key, hl.dsp.focus({ direction = dir }))
-end
-
--- Fixed Resize
-hl.bind(mainMod .. " + SHIFT + h", hl.dsp.window.resize({ x = -20, y = 0 }))
-hl.bind(mainMod .. " + SHIFT + l", hl.dsp.window.resize({ x = 20, y = 0 }))
-hl.bind(mainMod .. " + SHIFT + k", hl.dsp.window.resize({ x = 0, y = -20 }))
-hl.bind(mainMod .. " + SHIFT + j", hl.dsp.window.resize({ x = 0, y = 20 }))
-
--- Workspaces
-for i = 1, 10 do
-    local key = i % 10
-    hl.bind(mainMod .. " + " .. tostring(key), hl.dsp.focus({ workspace = i }))
-    hl.bind(mainMod .. " + SHIFT + " .. tostring(key), hl.dsp.window.move({ workspace = i, silent = true }))
-end
+-- Window State
+hl.bind(modPlus ..  "C",  hl.dsp.window.close())
+hl.bind(modShift .. "M",  hl.dsp.exit())
+hl.bind(modShift .. "V",  hl.dsp.window.float({ action = "toggle" }))
+hl.bind(modShift .. "T",  hl.dsp.layout("togglesplit"))
+hl.bind(modShift .. "F",  hl.dsp.window.fullscreen({ state = 3 }))
+hl.bind(modPlus ..  "F",  hl.dsp.window.fullscreen({ state = 1 }))
 
 -- Special Workspace
-hl.bind(mainMod .. " + S", hl.dsp.workspace.toggle_special("magic"))
-hl.bind(mainMod .. " + SHIFT + S", hl.dsp.window.move({ workspace = "special:magic", silent = true }))
+hl.bind(modPlus .. "S",  hl.dsp.workspace.toggle_special(SPECIAL_WS))
+hl.bind(modShift .. "S", hl.dsp.window.move({workspace = "special:" .. SPECIAL_WS, follow = false }))
 
--- Mouse Binds
-hl.bind(mainMod .. " + mouse_down", hl.dsp.focus({ workspace = "e+1" }))
-hl.bind(mainMod .. " + mouse_up", hl.dsp.focus({ workspace = "e-1" }))
-hl.bind(mainMod .. " + mouse:272", hl.dsp.window.drag(), { mouse = true })
+-- Mouse
+hl.bind(modPlus .. "mouse_down", hl.dsp.focus({ workspace = "e+1" }))
+hl.bind(modPlus .. "mouse_up",   hl.dsp.focus({ workspace = "e-1" }))
+hl.bind(modPlus .. "mouse:272",  hl.dsp.window.drag(), { mouse = true })
 
--- Multimedia
-local media_opts = { locked = true, repeating = true }
-hl.bind("XF86AudioRaiseVolume", hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+"), media_opts)
-hl.bind("XF86AudioLowerVolume", hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"), media_opts)
-hl.bind("XF86AudioMute", hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"), media_opts)
-hl.bind("XF86MonBrightnessUp", hl.dsp.exec_cmd("brightnessctl s 10%+"), media_opts)
-hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd("brightnessctl s 10%-"), media_opts)
+-- Keybinding passthrough
+local obs_match = "class:^(com\\.obsproject\\.Studio)$"
+hl.bind("CTRL + backslash", hl.dsp.exec_cmd(string.format("hyprctl dispatch pass '%s' && %s/obs-replay-notification", obs_match, scripts)))
 
--- Player Controls
-hl.bind("XF86AudioNext", hl.dsp.exec_cmd("playerctl next"), { locked = true })
-hl.bind("XF86AudioPause", hl.dsp.exec_cmd("playerctl play-pause"), { locked = true })
-hl.bind("XF86AudioPlay", hl.dsp.exec_cmd("playerctl play-pause"), { locked = true })
-hl.bind("XF86AudioPrev", hl.dsp.exec_cmd("playerctl previous"), { locked = true })
+--------------------------------------------------------------------------------
+---- BINDING ENGINE ----
+--------------------------------------------------------------------------------
 
+-- Application keybinds
+for _, group in ipairs(keybinds) do
+    for key, cmd in pairs(group.list) do
+        hl.bind(group.mod .. key, hl.dsp.exec_cmd(cmd))
+    end
+end
+
+-- Pyprland Toggle
+for key, name in pairs(scratchpads) do
+    hl.bind(modShift .. key, hl.dsp.exec_cmd(string.format("%s toggle %s", pypr, name)))
+end
+
+-- Multimedia & Player Controls
+for key, cmd in pairs(media) do
+    local is_player = key:find("AudioPlay") or key:find("Next") or key:find("Prev")
+    local opts = is_player and { locked = true } or { locked = true, repeating = true }
+    hl.bind(key, hl.dsp.exec_cmd(cmd), opts)
+end
+
+-- Navigation (Vim-style)
+local dirs = { h = "left", l = "right", k = "up", j = "down" }
+for key, dir in pairs(dirs) do
+    hl.bind(modPlus .. key, hl.dsp.focus({ direction = dir }))
+end
+
+-- Workspaces (1-10)
+for i = 1, 10 do
+    local key = tostring(i % 10)
+    hl.bind(modPlus .. key,  hl.dsp.focus({ workspace = i }))
+    hl.bind(modShift .. key, hl.dsp.window.move({ workspace = i, follow = false }))
+end
