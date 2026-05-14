@@ -1,14 +1,10 @@
 --------------------------------
 ---- WINDOWS AND WORKSPACES ----
 --------------------------------
-
-local suppressMaximizeRule = hl.window_rule({
-    name  = "suppress-maximize-events",
-    match = { class = ".*" },
-
+hl.window_rule({
+    name  = "suppress-maximize-events", match = { class = ".*" },
     suppress_event = "maximize",
 })
-suppressMaximizeRule:set_enabled(false)
 
 hl.window_rule({
     name  = "fix-xwayland-drags",
@@ -23,7 +19,7 @@ hl.window_rule({
     no_focus = true,
 })
 
--- Floating windowrules
+-- Keepassxc
 hl.window_rule({
     name  = "keepassxc_auth",
     match = {
@@ -45,6 +41,14 @@ hl.window_rule({
     content    = "game",
 })
 
+-- Hyprland-run windowrule
+hl.window_rule({
+    name  = "move-hyprland-run",
+    match = { class = "hyprland-run" },
+    move  = "20 monitor_h-120",
+    float = true,
+})
+
 -- Workspace Assignments
 local assignments = {
     { class = "^(com\\.stremio\\.stremio)$",          ws = 3 },
@@ -59,12 +63,3 @@ for _, rule in ipairs(assignments) do
         workspace = tostring(rule.ws) .. " silent"
     })
 end
-
--- Hyprland-run windowrule
-hl.window_rule({
-    name  = "move-hyprland-run",
-    match = { class = "hyprland-run" },
-
-    move  = "20 monitor_h-120",
-    float = true,
-})
