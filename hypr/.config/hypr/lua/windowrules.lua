@@ -2,7 +2,8 @@
 ---- WINDOWS AND WORKSPACES ----
 --------------------------------
 hl.window_rule({
-    name  = "suppress-maximize-events", match = { class = ".*" },
+    name  = "suppress-maximize-events",
+    match = { class = ".*" },
     suppress_event = "maximize",
 })
 
@@ -32,11 +33,9 @@ hl.window_rule({
 -- Gaming Rules
 hl.window_rule({
     name  = "gaming_rules",
-    match = {
-        class = "^(steam_app_\\d+|steam_proton.*|gamescope|tf_linux64|cs2)$"
-    },
+    match = { class = "^(steam_app_\\d+|steam_proton.*|gamescope|tf_linux64|cs2)$" },
     immediate  = true,
-    workspace  = 10,
+    workspace  = "10 silent",
     fullscreen = 1,
     content    = "game",
 })

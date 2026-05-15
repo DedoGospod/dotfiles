@@ -1,6 +1,12 @@
-require("lua.permissions")
-require("lua.monitors")
-require("lua.look-and-feel")
-require("lua.input")
-require("lua.windowrules")
-require("lua.keybinds")
+local core_modules = {
+    "lua.permissions",
+    "lua.monitors",
+    "lua.theme",
+    "lua.input",
+    "lua.windowrules",
+    "lua.keybinds",
+    "lua.misc",
+}
+for _, module in ipairs(core_modules) do
+    require(module)
+end

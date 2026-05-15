@@ -89,17 +89,3 @@ hl.config({
         fullscreen_on_one_column = true,
     },
 })
-
-----------------
-----  MISC  ----
-----------------
-
-hl.config({
-    misc = {
-        force_default_wallpaper = 0,
-        disable_hyprland_logo   = true,
-        disable_watchdog_warning = true,
-        vrr = 0,
-
-    },
-})
