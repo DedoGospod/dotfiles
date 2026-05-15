@@ -50,6 +50,7 @@ PACMAN_PACKAGES=(
 # Optional Groups
 NEOVIM_DEPS=(npm nodejs unzip clang go shellcheck zig luarocks dotnet-sdk cmake gcc tree-sitter-cli imagemagick)
 
+
 # Flatpaks
 FLATPAK_APPS=(
     it.mijorus.gearlever com.github.tchx84.Flatseal com.stremio.Stremio com.usebottles.bottles

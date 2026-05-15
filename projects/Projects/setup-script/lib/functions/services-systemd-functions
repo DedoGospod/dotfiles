@@ -19,7 +19,7 @@ log_task() { echo -ne "${GREEN}[INFO]${NC} $1... "; }
 ok()       { echo -e "${GREEN}Done.${NC}"; }
 fail()     { echo -e "${RED}Failed.${NC}"; }
 
-# HELPER FUNCTIONS
+# Usage example: run "enabling ufw" sudo ufw enable
 run() {
     log_task "$1"
     shift
@@ -36,14 +36,18 @@ run() {
     rm -f "$err_log"
 }
 
+# Usage example: run_user_service waybar.service
 run_user_service(){
     run "$1" systemctl --user enable --now "$2"
 }
 
+# Usage example: run_system_service NetworkManager.service
 run_system_service() {
     run "$1" sudo systemctl enable --now "$2"
 }
 
+# System service example: manage "NetworkManager.service" "" "Network Management"
+# User service example:   manage "waybar.service" "--user" "Status bar"
 manage() {
     local srv=$1 scope=$2 desc=$3
     read -p "$(echo -e "  ${YELLOW}??${NC} Enable $desc ($srv)? [y/N]: ")" -n 1 -r
