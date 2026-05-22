@@ -1,52 +1,49 @@
 --------------------------------
 ---- WINDOWS AND WORKSPACES ----
 --------------------------------
-hl.window_rule({
-    name  = "suppress-maximize-events",
-    match = { class = ".*" },
-    suppress_event = "maximize",
-})
-
-hl.window_rule({
-    name  = "fix-xwayland-drags",
-    match = {
-        class      = "^$",
-        title      = "^$",
-        xwayland   = true,
-        float      = true,
-        fullscreen = false,
-        pin        = false,
+local window_rules = {
+    {
+        name = "suppress-maximize-events",
+        match = { class = ".*" },
+        suppress_event = "maximize",
     },
-    no_focus = true,
-})
-
--- Keepassxc
-hl.window_rule({
-    name  = "keepassxc_auth",
-    match = {
-        class = "^(org\\.keepassxc\\.KeePassXC)$",
-        title = "^(Unlock Database - KeePassXC|KeePassXC - Browser Access Request)$"
+    {
+        name = "fix-xwayland-drags",
+        match = {
+            class      = "^$",
+            title      = "^$",
+            xwayland   = true,
+            float      = true,
+            fullscreen = false,
+            pin        = false,
+        },
+        no_focus = true,
     },
-    float = true,
-})
-
--- Gaming Rules
-hl.window_rule({
-    name  = "gaming_rules",
-    match = { class = "^(steam_app_\\d+|steam_proton.*|gamescope|tf_linux64|cs2)$" },
-    immediate  = true,
-    workspace  = "10 silent",
-    fullscreen = 1,
-    content    = "game",
-})
-
--- Hyprland-run windowrule
-hl.window_rule({
-    name  = "move-hyprland-run",
-    match = { class = "hyprland-run" },
-    move  = "20 monitor_h-120",
-    float = true,
-})
+    {
+        -- Keepass floating authentication window
+        name = "keepassxc_auth",
+        match = {
+            class = "^(org\\.keepassxc\\.KeePassXC)$",
+            title = "^(Unlock Database - KeePassXC|KeePassXC - Browser Access Request)$"
+        },
+        float = true,
+    },
+    {
+        -- Gaming rules
+        name = "gaming_rules",
+        match = { class = "^(steam_app_\\d+|steam_proton.*|gamescope|tf_linux64|cs2)$" },
+        immediate  = true,
+        workspace  = tostring(10) .. " silent",
+        fullscreen = 1,
+        content    = "game",
+    },
+    {
+        name = "move-hyprland-run",
+        match = { class = "hyprland-run" },
+        move  = "20 monitor_h-120",
+        float = true,
+    },
+}
 
 -- Workspace Assignments
 local assignments = {
@@ -56,6 +53,12 @@ local assignments = {
     { class = "^(com\\.obsproject\\.Studio)$",        ws = "special:magic" },
 }
 
+-- Apply all rules automatically
+for _, rule in ipairs(window_rules) do
+    hl.window_rule(rule)
+end
+
+-- Apply the workspace assignments
 for _, rule in ipairs(assignments) do
     hl.window_rule({
         match = { class = rule.class },

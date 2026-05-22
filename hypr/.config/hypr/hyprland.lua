@@ -1,7 +1,7 @@
 local core_modules = {
     "lua.permissions",
     "lua.monitors",
-    "lua.theme",
+    "lua.ui",
     "lua.input",
     "lua.windowrules",
     "lua.keybinds",
