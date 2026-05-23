@@ -37,7 +37,7 @@ IMAGE_MIMETYPES=(
 )
 
 # Set MPV Defaults
-if command -v mpv >/dev/null 2>&1; then
+if command -v mpv >/dev/null; then
     log_task "Setting MPV as default for media..."
     for mime in "${MEDIA_MIMETYPES[@]}"; do
         xdg-mime default mpv.desktop "$mime"
@@ -47,7 +47,7 @@ fi
 
 # Set IMV Defaults
 IMAGE_APP="imv.desktop"
-if command -v imv >/dev/null 2>&1 || command -v imvr >/dev/null 2>&1; then
+if command -v imv >/dev/null || command -v imvr >/dev/null; then
     
     # Detect if we should use imv.desktop or imvr.desktop
     if [[ ! -f "/usr/share/applications/$IMAGE_APP" ]]; then
@@ -64,7 +64,7 @@ else
 fi
 
 # Shell
-if command -v zsh >/dev/null 2>&1; then
+if command -v zsh >/dev/null; then
     if [[ "$SHELL" != "$(command -v zsh)" ]]; then
         log_task "Changing shell to zsh"
         if chsh -s "$(command -v zsh)" "$USER"; then ok; else fail; fi
@@ -76,16 +76,38 @@ fi
 
 # Tmux Plugin Manager
 TPM_PATH="$HOME/.local/share/tmux/plugins/tpm"
-if command -v tmux >/dev/null 2>&1; then
+if command -v tmux >/dev/null; then
     mkdir -p "$HOME/.local/share/tmux/plugins"
 
     if [[ ! -d "$TPM_PATH" ]]; then
         log_task "Installing TPM to XDG path"
-        if git clone --depth 1 https://github.com/tmux-plugins/tpm "$TPM_PATH"; then ok; else fail; fi
+        if git clone --depth 1 https://github.com/tmux-plugins/tpm "$TPM_PATH"; then
+            ok
+        else 
+            fail
+        fi
     else
         log_task "TPM already installed."
         ok
     fi
 else
     warn "Tmux is not installed. Skipping TPM setup."
+fi
+
+# Nautilus 'open in neovim' fix
+APP_DIR="$HOME/.local/share/applications"
+if command -v nautilus >/dev/null && command -v nvim >/dev/null; then
+
+    # Check if the .desktop file exists
+    if [[ -f /usr/share/applications/nvim.desktop ]]; then
+        log_task "configuring nautilus 'open in neovim' fix"
+        cp /usr/share/applications/nvim.desktop "$APP_DIR/"
+
+        # Apply edits
+        sed -i -E 's/^Exec=.*/Exec=kitty nvim %F/' "$APP_DIR/nvim.desktop"
+        sed -i -E 's/^Terminal=.*/Terminal=false/' "$APP_DIR/nvim.desktop"
+        
+        # Update the database
+        update-desktop-database "$APP_DIR"
+    fi
 fi
