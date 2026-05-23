@@ -46,11 +46,11 @@ fi
 
 # Install Official Packages
 log "Installing Official Packages..."
-sudo pacman -S --needed --noconfirm "${PACMAN_PACKAGES[@]}" 2>&1 | grep -v "is up to date"
+sudo pacman -S --needed --noconfirm "${PACMAN_PACKAGES[@]}" | grep -v "is up to date"
 
 # Install AUR Packages
 log "Installing AUR Packages..."
-paru -S --needed --noconfirm "${AUR_PACKAGES[@]}" 2>&1 | grep -v "is up to date"
+paru -S --needed --noconfirm "${AUR_PACKAGES[@]}" | grep -v "is up to date"
 
 # Install Flatpaks
 log "Installing Flatpak Apps..."
