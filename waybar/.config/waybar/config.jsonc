@@ -12,10 +12,11 @@
         "hyprland/window"
     ],
     "modules-right": [
+        "custom/weather",
         "network",
         "pulseaudio",
         "clock",
-	      "battery"
+	    "battery"
     ],
     //Modules configuration
     "include": [

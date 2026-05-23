@@ -6,7 +6,7 @@
   },
   "hyprland/workspaces": {
     "disable-scroll": true,
-    "all-outputs": true,
+    "all-outputs": false,
     "warp-on-scroll": false,
     "format": "{name}",
     "format-icons": {
@@ -15,21 +15,21 @@
       "default": ""
     }
   },
-   "mpris": {
-    "player": "playerctld", 
+  "mpris": {
+    "player": "playerctld",
     "format": "{player_icon} {dynamic}",
     "format-paused": "{player_icon} <i>{dynamic}</i>",
     "dynamic-order": ["title", "artist"],
-    "max-length": 40, 
+    "max-length": 40,
     "player-icons": {
-        "spotify": "",
-        "firefox": "",
-        "default": "♪"
+      "spotify": "",
+      "firefox": "",
+      "default": "♪"
     },
-    "on-click": "playerctl play-pause", 
+    "on-click": "playerctl play-pause",
     "on-scroll-up": "playerctl next",
     "on-scroll-down": "playerctl previous"
-},
+  },
   "pulseaudio": {
     "format": "{icon} {volume}%",
     "format-muted": "",
@@ -46,7 +46,7 @@
     "tooltip-format-wifi": "Signal Strength: {signalStrength}%",
     "tooltip-format-ethernet": "Interface: {ifname}\nIP: {ipaddr}",
     "on-click": "nm-applet"
-},
+  },
   "cpu": {
     "format": " {usage}%",
     "tooltip": true
@@ -85,5 +85,11 @@
   "clock": {
     "format": "<span foreground='#f5c2e7' font_size='smaller'></span> {:%a %d %H:%M}",
     "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>"
+  },
+  "custom/weather": {
+    "exec": "~/.config/waybar/scripts/weather",
+    "return-type": "json",
+    "interval": 1800,
+    "format": "{}"
   }
 }
