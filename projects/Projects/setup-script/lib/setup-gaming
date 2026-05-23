@@ -23,7 +23,7 @@ ok() { echo -e "${GREEN}Done.${NC}"; }
 fail() { echo -e "${RED}Failed.${NC}"; }
 
 # Package list
-GAMING_PACKAGES=(gamescope mangohud steam scopebuddy-git)
+GAMING_PACKAGES=(gamescope mangohud steam scopebuddy-git scx-scheds scx-tools)
 FLATPAK_APPS+=("com.vysp3r.ProtonPlus")
 mapfile -t MISSING_PACKAGES < <(pacman -T "${GAMING_PACKAGES[@]}")
 mapfile -t MISSING_FLATPAKS < <(pacman -T "${FLATPAK_APPS[@]}")
@@ -117,4 +117,14 @@ else
     else
         warn "NTSYNC skipped. Windows games (Wine/Proton) may lack kernel-level sync support."
     fi
+fi
+
+# Enable scx loader service
+if ! systemctl is-enabled "scx_loader" >/dev/null; then
+    log_task "Enabling scx_loader service"
+    systemctl enable --now scx_loader >/dev/null
+    ok
+else
+    log_task "scx_loader is already enabled"
+    ok
 fi
