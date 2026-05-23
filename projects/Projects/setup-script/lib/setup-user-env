@@ -38,7 +38,7 @@ IMAGE_MIMETYPES=(
 
 # Set MPV Defaults
 if command -v mpv >/dev/null; then
-    log_task "Setting MPV as default for media..."
+    log_task "Setting MPV as default for media"
     for mime in "${MEDIA_MIMETYPES[@]}"; do
         xdg-mime default mpv.desktop "$mime"
     done
@@ -54,7 +54,7 @@ if command -v imv >/dev/null || command -v imvr >/dev/null; then
         IMAGE_APP="imvr.desktop"
     fi
 
-    log_task "Setting IMV as default for images..."
+    log_task "Setting IMV as default for images"
     for mime in "${IMAGE_MIMETYPES[@]}"; do
         xdg-mime default "$IMAGE_APP" "$mime"
     done
@@ -100,7 +100,7 @@ if command -v nautilus >/dev/null && command -v nvim >/dev/null; then
 
     # Check if the .desktop file exists
     if [[ -f /usr/share/applications/nvim.desktop ]]; then
-        log_task "configuring nautilus 'open in neovim' fix"
+        log_task "Configuring nautilus 'open in neovim' fix"
         cp /usr/share/applications/nvim.desktop "$APP_DIR/"
 
         # Apply edits
@@ -111,3 +111,5 @@ if command -v nautilus >/dev/null && command -v nvim >/dev/null; then
         update-desktop-database "$APP_DIR"
     fi
 fi
+
+echo ""

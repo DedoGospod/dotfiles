@@ -35,8 +35,6 @@ if ask "Install gaming packages?"; then
     fi
 fi
 
-echo ""
-
 # Import install phase
 import_install_phase
 

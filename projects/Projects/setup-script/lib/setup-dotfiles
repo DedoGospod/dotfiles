@@ -74,7 +74,11 @@ if [[ -d "$DOTFILES_DIR" ]]; then
     for folder in "${STOW_FOLDERS[@]}"; do
         if [[ -d "$folder" ]]; then
             log_task "Stowing $folder"
-            if stow -t "$HOME" --restow "$folder"; then ok; else fail; fi
+            if stow -t "$HOME" --restow "$folder"; then 
+                ok
+            else 
+                fail
+            fi
         else
             warn "Skipping $folder (not found)."
         fi

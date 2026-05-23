@@ -26,7 +26,7 @@ fail() { echo -e "${RED}Failed.${NC}"; }
 header "FIREWALL CONFIGURATION"
 
 # Install UFW if necessary
-if ! command -v ufw &>/dev/null; then
+if ! command -v ufw >/dev/null; then
     sudo pacman -S --noconfirm ufw
     ok
 else

@@ -4,15 +4,17 @@
 header "INSTALLATION PHASE"
 
 # Update System
-log "Updating system"
-if ! sudo pacman -Syu --noconfirm 2>&1 | grep -v "is up to date"; then
+log_task "Updating system"
+if sudo pacman -Syu --noconfirm >/dev/null; then
+    ok
+else
     fail
     error "System update failed. Check your internet connection or mirrors."
     exit 1
 fi
 
 # Install Rustup
-if ! command -v rustup &>/dev/null; then
+if ! command -v rustup >/dev/null; then
     log_task "Installing rustup"
     if sudo pacman -S --noconfirm rustup && 
        rustup default stable; then
@@ -27,7 +29,7 @@ else
 fi
 
 # Install Paru
-if ! command -v paru &>/dev/null; then
+if ! command -v paru >/dev/null; then
     log_task "Installing Paru"
     if sudo pacman -S --needed --noconfirm base-devel git &&
        git clone https://aur.archlinux.org/paru.git /tmp/paru &&
@@ -44,15 +46,31 @@ else
     ok
 fi
 
-# Install Official Packages
-log "Installing Official Packages..."
-sudo pacman -S --needed --noconfirm "${PACMAN_PACKAGES[@]}" | grep -v "is up to date"
+# Map missing packages
+mapfile -t MISSING_PACKAGES < <(pacman -T "${PACMAN_PACKAGES[@]}")
+mapfile -t MISSING_AUR < <(pacman -T "${AUR_PACKAGES[@]}")
 
-# Install AUR Packages
-log "Installing AUR Packages..."
-paru -S --needed --noconfirm "${AUR_PACKAGES[@]}" | grep -v "is up to date"
+mapfile -t MISSING_FLATPAKS < <(
+    printf "%s\n" "${FLATPAK_APPS[@]}" | grep -vFxf <(flatpak list --app --columns=application)
+)
 
-# Install Flatpaks
-log "Installing Flatpak Apps..."
-flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-flatpak install -y --noninteractive --or-update flathub "${FLATPAK_APPS[@]}"
+# Install missing official pkgs
+if [[ ${#MISSING_PACKAGES[@]} -gt 0 ]]; then
+    log_task "Installing missing official packages"
+    sudo pacman -S --needed --noconfirm "${MISSING_PACKAGES[@]}" >/dev/null
+    ok
+fi
+
+# Install missing AUR pkgs
+if [[ ${#MISSING_AUR[@]} -gt 0 ]]; then
+    log_task "Installing missing AUR packages"
+    sudo pacman -S --needed --noconfirm "${MISSING_AUR[@]}" >/dev/null
+    ok
+fi
+
+# Install missing flatpaks
+if [[ ${#MISSING_FLATPAKS[@]} -gt 0 ]]; then
+    log_task "Installing or updating flatpaks"
+    flatpak install -y --noninteractive --or-update flathub "${FLATPAK_APPS[@]}" >/dev/null
+    ok
+fi

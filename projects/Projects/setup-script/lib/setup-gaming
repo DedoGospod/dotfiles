@@ -26,7 +26,9 @@ fail() { echo -e "${RED}Failed.${NC}"; }
 GAMING_PACKAGES=(gamescope mangohud steam scopebuddy-git scx-scheds scx-tools)
 FLATPAK_APPS+=("com.vysp3r.ProtonPlus")
 mapfile -t MISSING_PACKAGES < <(pacman -T "${GAMING_PACKAGES[@]}")
-mapfile -t MISSING_FLATPAKS < <(pacman -T "${FLATPAK_APPS[@]}")
+mapfile -t MISSING_FLATPAKS < <(
+    printf "%s\n" "${FLATPAK_APPS[@]}" | grep -vFxf <(flatpak list --app --columns=application)
+)
 
 # Gaming settings
 header "GAMING CONFIGURATION"
@@ -57,10 +59,15 @@ if [[ ${#MISSING_PACKAGES[@]} -gt 0 ]]; then
     log_task "Installing missing packages: ${MISSING_PACKAGES[*]}"
     sudo pacman -S --needed --noconfirm "${MISSING_PACKAGES[@]}" >/dev/null
     ok
-    log_task "Installing missing flatpaks: ${MISSING_FLATPAKS[*]}"
-    flatpak install -y --noninteractivfe --or-update flathub "${MISSING_FLATPAKS[@]}" >/dev/null
 fi
 
+# Install any missing flatpaks
+if [[ ${#MISSING_FLATPAKS[@]} -gt 0 ]]; then
+    log_task "Installing or updating flatpaks"
+    flatpak install -y --noninteractive --or-update flathub "${FLATPAK_APPS[@]}" >/dev/null
+    ok
+fi
+    
 # Gamescope Cap
 if GAMESCOPE_BIN=$(command -v gamescope 2>/dev/null); then
     if getcap "$GAMESCOPE_BIN" | grep -q "cap_sys_nice.*ep"; then
@@ -77,7 +84,6 @@ if GAMESCOPE_BIN=$(command -v gamescope 2>/dev/null); then
 else
     warn "Gamescope command not found"
 fi
-
 
 # Gamemode setup
 if command -v gamemoded >/dev/null 2>&1; then

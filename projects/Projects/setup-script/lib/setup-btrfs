@@ -50,7 +50,7 @@ detect_bootloader() {
     fi
 }
 
-header "Btrfs setup"
+header "BTRFS SETUP"
 
 BOOTLOADER=$(detect_bootloader)
 log "Detected bootloader: $BOOTLOADER"

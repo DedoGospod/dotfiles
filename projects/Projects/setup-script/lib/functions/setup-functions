@@ -99,6 +99,6 @@ is_reboot_required() {
             warn "Please reboot manually to apply changes."
         fi
     else
-        log "No system changes required a reboot. Enjoy!"
+        log "No system changes require a reboot. Enjoy!"
     fi
 }
