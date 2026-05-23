@@ -114,5 +114,4 @@ alias nvidia-settings='nvidia-settings --config="$XDG_CONFIG_HOME"/nvidia/settin
 alias grub='sudoedit /etc/default/grub'                                 # Edit GRUB config
 alias zshrc='nvim ~/.config/zsh/.zshrc'                                 # Edit zsh config
 alias zshenv='nvim ~/.zshenv'                                           # Edit zsh env file
-alias hypr='cd ~/.config/hypr/lua && nv'                                # Edit hyprland config
 alias zshfunc="cd $functions_dir && ls"                                 # Edit zsh functions
