@@ -37,8 +37,7 @@ local keybinds = {
 
 local scratchpads = {
     ["Q"]       = "obsidian",
-    ["Z"]       = "pavucontrol",
-    ["A"]       = "rmpc"
+    ["A"]       = "pavucontrol",
 }
 
 -- Multimedia mappings
