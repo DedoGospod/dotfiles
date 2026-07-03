@@ -28,12 +28,14 @@ if ! command -v ddcutil >/dev/null; then
     sudo pacman -S --needed --noconfirm ddcutil
 fi
 
+# Edit config file
 if echo "$SETTING" | sudo tee "$CONF_FILE" >/dev/null; then
     log_task "Configuring i2c"
     sudo modprobe i2c-dev
     ok
 fi
 
+# Set permissions
 if command -v usermod >/dev/null; then
     log_task "Setting permissions"
     sudo usermod -aG i2c "$USER"

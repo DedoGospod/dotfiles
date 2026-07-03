@@ -2,7 +2,7 @@
 
 echo "--- Initializing CachyOS Repository Setup ---"
 curl https://mirror.cachyos.org/cachyos-repo.tar.xz -o cachyos-repo.tar.xz
-tar xvf cachyos-repo.tar.xz && cd cachyos-repo
+tar xvf cachyos-repo.tar.xz && cd cachyos-repo || exit 1
 sudo ./cachyos-repo.sh
 
 # Kernel Management Logic
@@ -21,7 +21,7 @@ if [[ "$install_cachy" =~ ^[Yy]$ ]]; then
         sudo pacman -Rns --noconfirm linux linux-headers
     fi
     echo "Updating grub"
-    sudo grub-mkconfig -o /boot/grub/grub.cfg
 fi
+sudo grub-mkconfig -o /boot/grub/grub.cfg
 
 echo "--- Setup Complete ---"
