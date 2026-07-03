@@ -3,7 +3,9 @@ Description=Clean paru AUR cache (keep last 3)
 
 [Service]
 Type=oneshot
-ExecStart=/usr/bin/env bash -c '/usr/bin/find %h/.cache/paru/clone -maxdepth 1 -type d -exec /usr/bin/paccache -rk3 -q -c {} +'
+#ExecStart=/usr/bin/env bash -c '/usr/bin/find %h/.cache/paru/clone -maxdepth 1 -type d -exec /usr/bin/paccache -rk3 -q -c {} +'
+#ExecStart=/usr/bin/find %h/.cache/paru/clone -maxdepth 1 -type d -exec /usr/bin/paccache -rk3 -q -c {} +
+ExecStart=-/usr/bin/find %h/.cache/paru/clone -maxdepth 1 -type d -exec /usr/bin/paccache -rk3 -q -c {} +
 
 [Install]
 WantedBy=default.target
