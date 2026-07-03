@@ -32,7 +32,7 @@ MEDIA_MIMETYPES=(
 )
 
 IMAGE_MIMETYPES=(
-    "image/jpeg" "image/png" "image/gif" "image/webp" 
+    "image/jpeg" "image/png" "image/gif" "image/webp"
     "image/bmp" "image/tiff" "image/svg+xml" "image/avif"
 )
 
@@ -48,7 +48,7 @@ fi
 # Set IMV Defaults
 IMAGE_APP="imv.desktop"
 if command -v imv >/dev/null || command -v imvr >/dev/null; then
-    
+
     # Detect if we should use imv.desktop or imvr.desktop
     if [[ ! -f "/usr/share/applications/$IMAGE_APP" ]]; then
         IMAGE_APP="imvr.desktop"
@@ -83,7 +83,7 @@ if command -v tmux >/dev/null; then
         log_task "Installing TPM to XDG path"
         if git clone --depth 1 https://github.com/tmux-plugins/tpm "$TPM_PATH"; then
             ok
-        else 
+        else
             fail
         fi
     else
@@ -100,16 +100,16 @@ if command -v nautilus >/dev/null && command -v nvim >/dev/null; then
 
     # Check if the .desktop file exists
     if [[ -f /usr/share/applications/nvim.desktop ]]; then
-        log_task "Configuring nautilus 'open in neovim' fix"
+        log_task "Configuring 'Open With Neovim' fix for nautilus"
         cp /usr/share/applications/nvim.desktop "$APP_DIR/"
 
         # Apply edits
         sed -i -E 's/^Exec=.*/Exec=kitty nvim %F/' "$APP_DIR/nvim.desktop"
         sed -i -E 's/^Terminal=.*/Terminal=false/' "$APP_DIR/nvim.desktop"
-        
+
         # Update the database
-        update-desktop-database "$APP_DIR"
+        update-desktop-database "$APP_DIR" >/dev/null
+        ok
     fi
 fi
-
 echo ""
