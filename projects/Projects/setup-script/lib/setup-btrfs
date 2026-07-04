@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 
 # Exit immediately if a command exits with a non-zero status
-set -e
-set -o pipefail
+set -euo pipefail
 
 # Colors for logging
 GREEN='\033[0;32m'
@@ -76,75 +75,45 @@ fi
 # Evaluate missing packages now that the array is complete
 mapfile -t MISSING_PACKAGES < <(pacman -T "${PACKAGES[@]}")
 
-# Identify the root Btrfs device
-ROOT_DEV=$(findmnt -v -n -o SOURCE /)
-ROOT_UUID=$(lsblk -dno UUID "$ROOT_DEV")
-log "Detected Root Device: $ROOT_DEV (UUID: $ROOT_UUID)"
-
-# Securely provision the rollback directory atomically
-log_task "Provisioning /btrfsroot"
-sudo install -d -m 0700 /btrfsroot
-ok
-
-# Mount top-level Btrfs volume to manipulate subvolumes
-log_task "Mounting top-level Btrfs volume"
-sudo mount -t btrfs -o subvolid=5 "$ROOT_DEV" /btrfsroot
-ok
-
-# Create the flat @snapshots subvolume if it does not exist
-if [[ ! -d "/btrfsroot/@snapshots" ]]; then
-    log_task "Creating @snapshots flat subvolume"
-    sudo btrfs subvolume create /btrfsroot/@snapshots >/dev/null
+# Install missing system packages
+if [[ ${#MISSING_PACKAGES[@]} -gt 0 ]]; then
+    log_task "Installing missing packages: ${MISSING_PACKAGES[*]}"
+    sudo pacman -Sy --needed --noconfirm "${MISSING_PACKAGES[@]}" >/dev/null
     ok
-else
-    log "@snapshots subvolume already exists."
 fi
 
-# Unmount top-level volume immediately after structural subvolume task
-sudo umount /btrfsroot
-
-# Establish and mount the flat layout path
-if findmnt /.snapshots >/dev/null; then
-    log "/.snapshots is already mounted properly."
-else
-    # Safety check: If an accidental nested subvolume was initialized, clear it
-    if [[ -d "/.snapshots" ]] && btrfs subvolume show /.snapshots &>/dev/null; then
-        log_task "Purging accidental nested subvolume at /.snapshots"
-        sudo btrfs subvolume delete /.snapshots >/dev/null
-        ok
-    fi
+# Check if snapshots already exist in /etc/fstab
+if ! grep -q "/.snapshots" /etc/fstab; then
     
-    log_task "Mounting flat @snapshots subvolume to /.snapshots"
-    sudo mkdir -p /.snapshots
-    sudo mount -t btrfs -o subvol=@snapshots "$ROOT_DEV" /.snapshots
-    sudo chmod 750 /.snapshots
-    ok
+    # Get UUID directly for the mount point. 
+    UUID=$(findmnt -n -o UUID -T /)
+    
+    # Append to fstab
+    echo "UUID=$UUID /.snapshots btrfs subvol=@snapshots,rw,noatime,compress=zstd 0 0" | sudo tee -a /etc/fstab
+    
+    # Mount everything
+    sudo mount -a
 fi
 
-# Configure snapper-rollback
+# Automated snapper-rollback.conf setup
 log_task "Configuring /etc/snapper-rollback.conf"
+UUID=$(findmnt -n -o UUID -T /)
 cat <<EOF | sudo tee /etc/snapper-rollback.conf >/dev/null
 [root]
 subvol_main = @
 subvol_snapshots = @snapshots
-mountpoint = /btrfsroot
-dev = /dev/disk/by-uuid/$ROOT_UUID
+mountpoint = /
+dev = /dev/disk/by-uuid/$UUID
 EOF
 ok
 
-# Persist the flat snapshot layout inside fstab
-if ! grep -q "/.snapshots" /etc/fstab; then
-    log_task "Persisting /.snapshots mount in /etc/fstab"
-    echo "UUID=$ROOT_UUID /.snapshots btrfs subvol=@snapshots,rw,noatime,compress=zstd 0 0" | sudo tee -a /etc/fstab >/dev/null
-    ok
-fi
-
-# Install missing system packages
-if [[ ${#MISSING_PACKAGES[@]} -gt 0 ]]; then
-    log_task "Installing missing packages: ${MISSING_PACKAGES[*]}"
-    sudo pacman -S --needed --noconfirm "${MISSING_PACKAGES[@]}" >/dev/null
-    ok
-fi
-
 # Enable all systemd units
 run_task "Enabling Btrfs and Snapper systemd units" sudo systemctl enable --now "${btrfs_units[@]}"
+
+# Final verification
+if mountpoint -q /.snapshots; then
+    log "Successfully mounted @snapshots to /.snapshots"
+else
+    error "Failed to mount @snapshots"
+    exit 1
+fi
