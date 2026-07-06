@@ -76,41 +76,49 @@ setup_virt() {
 }
 
 uninstall_virt() {
-    log "Stopping and disabling libvirt services"
-    for svc in "${services[@]}"; do
-        log_task "Stopping/disabling $svc..."
-        sudo systemctl stop "$svc"
-        sudo systemctl disable "$svc"
-        ok
-    done
-
+    # Clean up libvirt objects
     if sudo virsh net-list --all | grep -q "$net"; then
         log_task "Disabling autostart for network: $net..."
         sudo virsh net-autostart "$net" --disable >/dev/null 2>&1 || true
         ok
 
-        # Check if network is active before trying to stop it
-        if sudo virsh net-list --0 | grep -q "$net"; then
+        # Check if network is active before trying to destroy it
+        if sudo virsh net-list --state-active | grep -q "$net"; then
             log_task "Stopping active network: $net..."
-            sudo virsh net-destroy "$net" >/dev/null
+            sudo virsh net-destroy "$net" >/dev/null 2>&1 || true
             ok
         fi
 
+        # Remove network
         log_task "Removing network definition: $net..."
-        sudo virsh net-undefine "$net" >/dev/null
+        sudo virsh net-undefine "$net" >/dev/null 2>&1 || true
         ok
     else
         warn "Network $net does not exist. Nothing to revert."
     fi
 
+    # Stop and disable services
+    log "Stopping and disabling libvirt services"
+    for svc in "${services[@]}"; do
+        if systemctl is-active --quiet "$svc"; then
+            log_task "Stopping/disabling $svc..."
+            sudo systemctl stop "$svc"
+            sudo systemctl disable "$svc"
+            ok
+        fi
+    done
+
+    # Clean up system groups
     if getent group "$group" >/dev/null 2>&1; then
         log_task "Removing user groups"
         sudo groupdel "$group"
         ok
     fi
 
+    # Remove packages
     log_task "Removing virtualization packages: ${PACMAN_PACKAGES[*]}"
     sudo pacman -Rns --noconfirm "${PACMAN_PACKAGES[@]}" >/dev/null
+    ok
 }
 
 # Check for arguments
