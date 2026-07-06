@@ -47,7 +47,7 @@ local window_rules = {
 
 -- Workspace Assignments
 local assignments = {
-    { class = "^(com\\.stremio\\.stremio)$",          ws = 3 },
+    { class = "^(com\\.stremio\\.Stremio)$",          ws = 3 },
     { class = "^(com\\.discordapp\\.Discord|steam)$", ws = 4 },
     { class = "^(virt-manager)$",                     ws = 9 },
     { class = "^(com\\.obsproject\\.Studio)$",        ws = "special:magic" },
