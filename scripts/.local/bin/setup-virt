@@ -22,7 +22,7 @@ fail() { echo -e "${RED}Failed.${NC}"; }
 PACMAN_PACKAGES=(qemu-full virt-manager dnsmasq swtpm)
 mapfile -t MISSING_PACKAGES < <(pacman -T "${PACMAN_PACKAGES[@]}")
 
-services=("virtqemud.socket" "virtqemud-ro.socket" "virtqemud-admin.socket" "virtnetworkd.socket" "virtstoraged.socket")
+services=("virtqemud.socket" "virtqemud-ro.socket" "virtqemud-admin.socket" "virtnetworkd.socket" "virtstoraged.socket" "virtlogd.socket" "virtlockd.socket")
 group="libvirt"
 net="default"
 
@@ -73,6 +73,19 @@ setup_virt() {
 
     # Set default network to autostart
     sudo virsh net-autostart "$net" >/dev/null
+
+    # Check if reboot is required
+    if [[ -f /tmp/reboot_required ]]; then
+        rm /tmp/reboot_required
+        if ask "System changes detected. Reboot now?"; then
+            log "Rebooting..."
+            sudo reboot
+        else
+            warn "Please reboot manually to apply changes."
+        fi
+    else
+        log "No system changes require a reboot. Enjoy!"
+    fi
 }
 
 uninstall_virt() {
