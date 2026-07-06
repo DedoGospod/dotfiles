@@ -50,8 +50,8 @@ if command -v ufw >/dev/null; then
     else
         # Re-apply configuration if any of the above fails
         log_task "Applying UFW default policies"
-        if sudo ufw default deny incoming &>/dev/null &&
-            sudo ufw default allow outgoing &>/dev/null; then
+        if sudo ufw default deny incoming >/dev/null &&
+            sudo ufw default allow outgoing >/dev/null; then
             ok
         else
             fail
@@ -60,7 +60,7 @@ if command -v ufw >/dev/null; then
 
         # Baseline configuration
         log_task "Configuring UFW port rules"
-        if sudo ufw limit 22/tcp &>/dev/null &&
+        if sudo ufw limit 22/tcp &>/dev/null #&&
             sudo ufw allow 80/tcp &>/dev/null &&
             sudo ufw allow 443/tcp &>/dev/null; then
             ok
@@ -74,7 +74,7 @@ if command -v ufw >/dev/null; then
         log_task "Enabling UFW"
 
         # Ensure the systemd service is ready
-        if ! systemctl is-enabled --quiet ufw.service; then
+        if ! systemctl is-enabled ufw.service >/dev/null; then
             log_task "Enabling UFW service..."
             if sudo systemctl enable --now ufw.service >/dev/null; then
                 ok
@@ -96,25 +96,51 @@ else
     error "Firewall configuration failed."
 fi
 
-# KDE Connect
-if command -v kdeconnectd >/dev/null; then
-    log_task "Configuring KDE Connect ports"
-    if sudo ufw allow 1714:1764/udp &>/dev/null &&
-        sudo ufw allow 1714:1764/tcp &>/dev/null; then
-        ok
-    else
-        fail
-    fi
-fi
+manage_app_firewall() {
+    local app_name="$1"
+    local binary="$2"
+    shift 2
+    local rules=("$@")
 
-# Sunshine
-if command -v sunshine >/dev/null; then
-    log_task "Configuring Sunshine ports"
-    if sudo ufw allow 47984,47989,47990,48010/tcp &>/dev/null &&
-        sudo ufw allow 47998:48000/udp &>/dev/null &&
-        sudo ufw allow 48002,48010/udp &>/dev/null; then
-        ok
+    # Check if the application is installed
+    if command -v "$binary" >/dev/null 2>&1; then
+        log_task "Configuring $app_name ports"
+        local success=true
+        
+        for rule in "${rules[@]}"; do
+            if ! sudo ufw allow "$rule" >/dev/null 2>&1; then
+                success=false
+            fi
+        done
+        
+        if $success; then ok; else fail; fi
     else
-        fail
+        # Application is absent: Check and remove rules silently unless a change occurs
+        for rule in "${rules[@]}"; do
+            local ufw_out
+            ufw_out=$(sudo ufw delete allow "$rule" 2>&1 || true)
+            
+            # UFW outputs "Rule deleted" or "Rule deleted (v6)" when it actively closes an open port
+            if [[ "$ufw_out" == *"Rule deleted"* ]]; then
+                log_task "Closed unused port ($rule) for uninstalled app: $app_name"
+                ok
+            fi
+        done
     fi
-fi
+}
+
+# --- Configuration Profiles ---
+kdeconnect_rules=(
+    "1714:1764/udp"
+    "1714:1764/tcp"
+)
+
+sunshine_rules=(
+    "47984,47989,47990,48010/tcp"
+    "47998:48000/udp"
+    "48002,48010/udp"
+)
+
+# --- Execution --- 
+manage_app_firewall "KDE Connect" "kdeconnectd" "${kdeconnect_rules[@]}"
+manage_app_firewall "Sunshine" "sunshine" "${sunshine_rules[@]}"
