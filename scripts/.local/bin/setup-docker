@@ -1,0 +1,67 @@
+#!/usr/bin/env bash
+
+# Ensure we have sudo permissions upfront
+sudo -v
+
+uninstall_docker() {
+    echo "Stopping and disabling Docker service..."
+    sudo systemctl stop docker.service || true
+    sudo systemctl disable docker.service || true
+
+    echo "Removing Docker package..."
+    sudo pacman -Rns --noconfirm docker
+
+    echo "Removing docker user group..."
+    if getent group docker >/dev/null 2>&1; then
+        sudo groupdel docker
+    fi
+
+    echo "Cleaning up residual Docker files and directories..."
+    # Warning: This deletes all local images, containers, and volumes
+    sudo rm -rf /var/lib/docker
+    sudo rm -rf /etc/docker
+
+    echo "Docker has been completely removed and config reset."
+    echo "Note: You may need to log out and back in to refresh your user groups."
+}
+
+install_docker() {
+    echo "Installing Docker..."
+    sudo pacman -S --needed --noconfirm docker
+
+    echo "Enabling Docker service..."
+    sudo systemctl enable docker.service
+
+    # Try to start the service. If it fails, trigger the failsafe.
+    if ! sudo systemctl start docker.service; then
+        echo "Warning: Docker service failed to start. Running failsafe..."
+
+        # Clear the systemd failed state
+        sudo systemctl reset-failed docker.service
+
+        # Clear lingering docker sockets if they exist
+        sudo rm -f /var/run/docker.sock
+
+        echo "Retrying Docker service startup..."
+        if ! sudo systemctl start docker.service; then
+            echo "Error: Docker failed to start even after resetting the service state."
+            echo "Please run 'journalctl -xeu docker.service' to diagnose."
+            exit 1
+        fi
+    fi
+
+    echo "Adding $USER to the docker group..."
+    sudo usermod -aG docker "$USER"
+
+    echo "Setup complete! Please log out and back in (or run 'newgrp docker') to apply group changes."
+}
+
+# Check for arguments
+case "$1" in
+--uninstall)
+    uninstall_docker
+    ;;
+*)
+    install_docker
+    ;;
+esac
