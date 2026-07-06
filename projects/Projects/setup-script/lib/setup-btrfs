@@ -49,7 +49,7 @@ detect_bootloader() {
     fi
 }
 
-header "BTRFS SETUP"
+header "BTRFS/SNAPPER SETUP"
 
 BOOTLOADER=$(detect_bootloader)
 log "Detected bootloader: $BOOTLOADER"
