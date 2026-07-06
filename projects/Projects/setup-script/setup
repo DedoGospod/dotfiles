@@ -55,7 +55,7 @@ fi
 [[ "$setup_virt" =~ ^[Yy]$ ]] && run_setup_script "setup-virtualization"
 [[ "$setup_wol" =~ ^[Yy]$ ]] && run_setup_script "setup-wol"
 
-# --- FINISH ---
+# Finish
 echo ""
 echo "------------------------------------------------------"
 success "Installation Complete!"
