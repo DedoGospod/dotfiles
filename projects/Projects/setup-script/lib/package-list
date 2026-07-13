@@ -50,9 +50,8 @@ PACMAN_PACKAGES=(
 # Optional Groups
 NEOVIM_DEPS=(npm nodejs unzip clang go shellcheck zig luarocks dotnet-sdk cmake gcc tree-sitter-cli imagemagick)
 
-
 # Flatpaks
-FLATPAK_APPS=(com.github.tchx84.Flatseal com.stremio.Stremio com.usebottles.bottles io.github.ebonjaeger.bluejay com.github.wwmm.easyeffects)
+FLATPAK_APPS=(com.github.tchx84.Flatseal io.github.ebonjaeger.bluejay com.github.wwmm.easyeffects)
 
 # AUR Packages
-AUR_PACKAGES=(wayland-pipewire-idle-inhibit brave-bin pyprland rebuild-initramfs-dracut-hook downgrade)
+AUR_PACKAGES=(wayland-pipewire-idle-inhibit brave-bin pyprland rebuild-initramfs-dracut-hook downgrade stremio-linux-shell)
