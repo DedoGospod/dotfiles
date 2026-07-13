@@ -34,6 +34,9 @@
     pavucontrol
     ffmpeg
     ffmpegthumbnailer
+
+    brave
+    stremio-linux-shell
     
     # Security
     gnome-keyring
@@ -53,9 +56,5 @@
     # Containerization
     flatpak
 
-    # Organize later
-    brave
-    wayland-pipewire-idle-inhibit
-    pyprland
-    stremio-linux-shell
   ];
+}
