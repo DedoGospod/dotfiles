@@ -22,7 +22,7 @@ local keybinds = {
             ["E"]     = "nautilus --new-window",
             ["W"]     = "brave",
             ["N"]     = "swaync-client -t -sw",
-            ["M"]     = "flatpak run com.stremio.Stremio",
+            ["M"]     = "stremio",
             ["P"]     = "hyprshot -m window",
             ["I"]     = scripts .. "/idle-inhibitor",
         }
