@@ -2,10 +2,10 @@
 
 {
   imports = [
-    ./home/packages.nix
-    ./home/shell.nix
-    ./home/services.nix
-    ./home/files.nix
+    ./modules/user-packages.nix
+    ./modules/shell.nix
+    ./modules/user-services.nix
+    ./modules/files.nix
 
     # --- CUSTOM MODULES ---
     ./modules/neovim.nix
