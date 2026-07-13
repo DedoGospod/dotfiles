@@ -30,6 +30,23 @@
 
   ];
 
+  services = {
+    openssh.enable = true;
+    fstrim.enable = true;
+  };
+
+  networking = {
+    networkmanager.enable = true;
+  };
+
+  security = {
+    apparmor.enable = true;
+  };
+
+  hardware = {
+    bluetooth.enable = true;
+  };
+
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
   system.stateVersion = "25.05";
 
