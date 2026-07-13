@@ -18,6 +18,11 @@ log_task() { echo -ne "${GREEN}[INFO]${NC} $1... "; }
 ok() { echo -e "${GREEN}Done.${NC}"; }
 fail() { echo -e "${RED}Failed.${NC}"; }
 
+ask() {
+    read -rp "$(echo -e "  ${YELLOW}??${NC} $1 (y/N): ")" response
+    [[ "$response" =~ ^[Yy]$ ]]
+}
+
 # Package list
 PACMAN_PACKAGES=(qemu-full virt-manager dnsmasq swtpm)
 mapfile -t MISSING_PACKAGES < <(pacman -T "${PACMAN_PACKAGES[@]}")
@@ -92,19 +97,19 @@ uninstall_virt() {
     # Clean up libvirt objects
     if sudo virsh net-list --all | grep -q "$net"; then
         log_task "Disabling autostart for network: $net..."
-        sudo virsh net-autostart "$net" --disable >/dev/null 2>&1 || true
+        sudo virsh net-autostart "$net" --disable >/dev/null || true
         ok
 
         # Check if network is active before trying to destroy it
         if sudo virsh net-list --state-active | grep -q "$net"; then
             log_task "Stopping active network: $net..."
-            sudo virsh net-destroy "$net" >/dev/null 2>&1 || true
+            sudo virsh net-destroy "$net" >/dev/null || true
             ok
         fi
 
         # Remove network
         log_task "Removing network definition: $net..."
-        sudo virsh net-undefine "$net" >/dev/null 2>&1 || true
+        sudo virsh net-undefine "$net" >/dev/null || true
         ok
     else
         warn "Network $net does not exist. Nothing to revert."
@@ -122,7 +127,7 @@ uninstall_virt() {
     done
 
     # Clean up system groups
-    if getent group "$group" >/dev/null 2>&1; then
+    if getent group "$group" >/dev/null; then
         log_task "Removing user groups"
         sudo groupdel "$group"
         ok
