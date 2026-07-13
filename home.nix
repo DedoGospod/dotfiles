@@ -3,7 +3,7 @@
 {
   imports = [
     ./home/packages.nix
-    #./home/shell.nix
+    ./home/shell.nix
     ./home/services.nix
     ./home/files.nix
 
@@ -17,7 +17,4 @@
     stateVersion = "25.05";
   };
 
-  programs.bash = {
-    enable = true;
-  };
 }
