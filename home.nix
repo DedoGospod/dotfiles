@@ -37,6 +37,58 @@ in {
     eza
     ripgrep
     trash-cli
+
+    # Theme
+    qt6ct
+    gnome-themes-extra
+
+    # Apps & Utils
+    nautilus
+    yazi
+    mpv
+    imv
+    fastfetch
+    btop
+    gnome-disk-utility
+    obsidian
+    pavucontrol
+    ffmpeg
+    ffmpegthumbnailer
+    
+    # Security
+    gnome-keyring
+    seahorse
+    keepassxc
+
+    # Bluetooth
+    bluez
+    bluez-tools
+
+    # Maintnence
+    ncdu
+    rsync
+    rsnapshot
+    dracut
+    topgrade
+
+    # Power management
+    power-profiles-daemon
+    ananicy-cpp
+
+    # Containerization
+    flatpak
+  ];
+
+  fonts.packages = with pkgs; [
+    nerd-fonts.caskaydia-cove
+    ubuntu-classic
+    font-awesome
+    dejavu_fonts
+    liberation_ttf
+    croscore-fonts
+    noto-fonts
+    noto-fonts-cjk-sans
+    noto-fonts-color-emoji
   ];
 
   programs.git.enable = true;
