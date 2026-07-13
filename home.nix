@@ -7,8 +7,7 @@ let
 in {
 
   imports = [
-    #./modules/neovim.nix
-    #./modules/hyprland.nix
+    ./modules/neovim.nix
   ];
 
   home.packages = with pkgs; [
@@ -77,18 +76,6 @@ in {
 
     # Containerization
     flatpak
-  ];
-
-  fonts.packages = with pkgs; [
-    nerd-fonts.caskaydia-cove
-    ubuntu-classic
-    font-awesome
-    dejavu_fonts
-    liberation_ttf
-    croscore-fonts
-    noto-fonts
-    noto-fonts-cjk-sans
-    noto-fonts-color-emoji
   ];
 
   programs.git.enable = true;
