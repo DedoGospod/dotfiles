@@ -12,8 +12,6 @@
   boot.loader.efi.canTouchEfiVariables = true;
 
   networking.hostName = "nixos";
-  #networking.networkmanager.enable = true;
-
   time.timeZone = "Australia/Perth";
 
   programs.hyprland = {
@@ -33,10 +31,10 @@
 
   ];
 
-  services = {
-    openssh.enable = true;
-    fstrim.enable = true;
-  };
+services = {
+  openssh.enable = true;
+  fstrim.enable = true;
+};
 
   networking = {
     networkmanager.enable = true;
@@ -48,6 +46,18 @@
 
   hardware = {
     bluetooth.enable = true;
+  };
+
+  services.scx = {
+    enable = true;
+    scheduler = "scx_lavd";
+    extraArgs = [ "--autopower" ];
+};
+
+  services.ananicy = {
+    enable = true;
+    package = pkgs.ananicy-cpp;
+    rulesProvider = pkgs.ananicy-rules; 
   };
 
   fonts.packages = with pkgs; [
@@ -64,5 +74,4 @@
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
   system.stateVersion = "25.05";
-
 }
