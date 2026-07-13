@@ -50,9 +50,6 @@
     rsnapshot
     topgrade
 
-    # Power management
-    power-profiles-daemon
-
     # Containerization
     flatpak
 
