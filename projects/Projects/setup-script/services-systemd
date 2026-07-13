@@ -27,12 +27,12 @@ ok
 header "System Services"
 
 run_system_service "Starting fstrim timer" fstrim.timer
+run_system_service "Starting AppArmor" apparmor.service
 
 manage "NetworkManager.service"         ""  "Network Management"
 manage "bluetooth.service"              ""  "Bluetooth"
 manage "power-profiles-daemon.service"  ""  "Power Management"
 manage "sshd.service"                   ""  "SSH Daemon"
-manage "opensnitchd.service"            ""  "OpenSnitch"
 
 # User Services
 header "User services"
