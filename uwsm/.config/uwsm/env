@@ -32,3 +32,6 @@ export ADW_DISABLE_PORTAL=1
 export QT_QPA_PLATFORM="wayland;xcb"
 export XCURSOR_THEME="Adwaita"
 export XCURSOR_SIZE=24
+
+# Enable HDR support
+export ENABLE_HDR_WSI=1
