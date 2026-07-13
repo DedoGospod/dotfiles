@@ -67,22 +67,29 @@ in {
     ncdu
     rsync
     rsnapshot
-    dracut
     topgrade
 
     # Power management
     power-profiles-daemon
-    #ananicy-cpp
 
     # Containerization
     flatpak
+
+    # Organize later
+    brave
+    wayland-pipewire-idle-inhibit
+    pyprland
+    stremio-linux-shell
   ];
+
+  services.easyeffects.enable = true;
 
   programs.git.enable = true;
   home.stateVersion = "25.05";
   programs.bash = {
     enable = true;
   };
+
 
   # Dotfiles
   home.file = {
