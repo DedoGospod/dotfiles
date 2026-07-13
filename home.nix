@@ -46,30 +46,30 @@
   # Dotfiles
 
   # Symlink Directories
-  home.file.".config/backgrounds".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nixos-dotfiles/backgrounds/.config/backgrounds";
-  home.file.".config/fastfetch".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nixos-dotfiles/fastfetch/.config/fastfetch";
-  home.file.".config/hypr".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nixos-dotfiles/hypr/.config/hypr";
-  home.file.".config/hypr".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nixos-dotfiles/hypr/.config/pypr";
-  home.file.".config/kitty".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nixos-dotfiles/kitty/.config/kitty";
-  home.file.".config/MangoHud".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nixos-dotfiles/mangohud/.config/MangoHud";
-  home.file.".config/mpv".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nixos-dotfiles/mpv/.config/mpv";
-  home.file.".config/nvim".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nixos-dotfiles/nvim/.config/nvim";
-  home.file.".config/projects".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nixos-dotfiles/projects/Projects";
-  home.file.".config/scopebuddy".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nixos-dotfiles/scopebuddy/.config/scopebuddy";
-  home.file.".config/swaync".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nixos-dotfiles/swaync/.config/swaync";
-  home.file.".config/tmux".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nixos-dotfiles/tmux/.config/tmux";
-  home.file.".config/autostart".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nixos-dotfiles/uwsm/.config/autostart";
-  home.file.".config/uwsm".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nixos-dotfiles/uwsm/.config/uwsm";
+  home.file.".config/backgrounds".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/backgrounds/.config/backgrounds";
+  home.file.".config/fastfetch".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/fastfetch/.config/fastfetch";
+  home.file.".config/hypr".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/hypr/.config/hypr";
+  home.file.".config/hypr".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/hypr/.config/pypr";
+  home.file.".config/kitty".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/kitty/.config/kitty";
+  home.file.".config/MangoHud".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/mangohud/.config/MangoHud";
+  home.file.".config/mpv".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/mpv/.config/mpv";
+  home.file.".config/nvim".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/nvim/.config/nvim";
+  home.file.".config/projects".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/projects/Projects";
+  home.file.".config/scopebuddy".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/scopebuddy/.config/scopebuddy";
+  home.file.".config/swaync".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/swaync/.config/swaync";
+  home.file.".config/tmux".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/tmux/.config/tmux";
+  home.file.".config/autostart".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/uwsm/.config/autostart";
+  home.file.".config/uwsm".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/uwsm/.config/uwsm";
 
-  home.file.".config/waybar".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nixos-dotfiles/waybar/.config/waybar";
-  home.file.".config/wayland-pipewire-idle-inhibit".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nixos-dotfiles/wayland-pipewire-idle-inhibit/.config/wayland-pipewire-idle-inhibit";
-  home.file.".config/wofi".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nixos-dotfiles/wofi/.config/wofi";
-  home.file.".config/yazi".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nixos-dotfiles/yazi/.config/yazi";
-  home.file.".config/zsh".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nixos-dotfiles/zsh/.config/zsh";
+  home.file.".config/waybar".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/waybar/.config/waybar";
+  home.file.".config/wayland-pipewire-idle-inhibit".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/wayland-pipewire-idle-inhibit/.config/wayland-pipewire-idle-inhibit";
+  home.file.".config/wofi".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/wofi/.config/wofi";
+  home.file.".config/yazi".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/yazi/.config/yazi";
+  home.file.".config/zsh".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/zsh/.config/zsh";
 
   # Symlink individual files
-  home.file.".zshenv".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nixos-dotfiles/zsh/.zshenv";
-  home.file.".config/starship.toml".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nixos-dotfiles/starship/.config/starship.toml";
-  home.file.".config/topgrade.toml".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nixos-dotfiles/topgrade/.config/topgrade.toml";
-  home.file.".config/kwalletrc".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nixos-dotfiles/kwalletrc/.config/kwalletrc";
+  home.file.".zshenv".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/zsh/.zshenv";
+  home.file.".config/starship.toml".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/starship/.config/starship.toml";
+  home.file.".config/topgrade.toml".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/topgrade/.config/topgrade.toml";
+  home.file.".config/kwalletrc".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/kwalletrc/.config/kwalletrc";
 }
