@@ -43,33 +43,39 @@
     enable = true;
   };
 
-  # Dotfiles
+# Dotfiles
+let
+  linkDot = repoPath: {
+    source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/${repoPath}";
+  };
+in {
+  home.file = {
+    # Directories
+    ".config/backgrounds" = linkDot "backgrounds/.config/backgrounds";
+    ".config/fastfetch"   = linkDot "fastfetch/.config/fastfetch";
+    ".config/hypr"        = linkDot "hypr/.config/hypr";
+    ".config/pypr"        = linkDot "hypr/.config/pypr"; # Fixed duplicate key
+    ".config/kitty"       = linkDot "kitty/.config/kitty";
+    ".config/MangoHud"    = linkDot "mangohud/.config/MangoHud";
+    ".config/mpv"         = linkDot "mpv/.config/mpv";
+    ".config/nvim"        = linkDot "nvim/.config/nvim";
+    ".config/projects"    = linkDot "projects/Projects";
+    ".config/scopebuddy"  = linkDot "scopebuddy/.config/scopebuddy";
+    ".config/swaync"      = linkDot "swaync/.config/swaync";
+    ".config/tmux"        = linkDot "tmux/.config/tmux";
+    ".config/autostart"   = linkDot "uwsm/.config/autostart";
+    ".config/uwsm"        = linkDot "uwsm/.config/uwsm";
+    ".config/waybar"      = linkDot "waybar/.config/waybar";
+    ".config/wofi"        = linkDot "wofi/.config/wofi";
+    ".config/yazi"        = linkDot "yazi/.config/yazi";
+    ".config/zsh"         = linkDot "zsh/.config/zsh";
+    ".config/wayland-pipewire-idle-inhibit" = linkDot "wayland-pipewire-idle-inhibit/.config/wayland-pipewire-idle-inhibit";
 
-  # Symlink Directories
-  home.file.".config/backgrounds".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/backgrounds/.config/backgrounds";
-  home.file.".config/fastfetch".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/fastfetch/.config/fastfetch";
-  home.file.".config/hypr".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/hypr/.config/hypr";
-  home.file.".config/hypr".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/hypr/.config/pypr";
-  home.file.".config/kitty".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/kitty/.config/kitty";
-  home.file.".config/MangoHud".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/mangohud/.config/MangoHud";
-  home.file.".config/mpv".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/mpv/.config/mpv";
-  home.file.".config/nvim".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/nvim/.config/nvim";
-  home.file.".config/projects".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/projects/Projects";
-  home.file.".config/scopebuddy".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/scopebuddy/.config/scopebuddy";
-  home.file.".config/swaync".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/swaync/.config/swaync";
-  home.file.".config/tmux".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/tmux/.config/tmux";
-  home.file.".config/autostart".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/uwsm/.config/autostart";
-  home.file.".config/uwsm".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/uwsm/.config/uwsm";
-
-  home.file.".config/waybar".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/waybar/.config/waybar";
-  home.file.".config/wayland-pipewire-idle-inhibit".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/wayland-pipewire-idle-inhibit/.config/wayland-pipewire-idle-inhibit";
-  home.file.".config/wofi".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/wofi/.config/wofi";
-  home.file.".config/yazi".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/yazi/.config/yazi";
-  home.file.".config/zsh".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/zsh/.config/zsh";
-
-  # Symlink individual files
-  home.file.".zshenv".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/zsh/.zshenv";
-  home.file.".config/starship.toml".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/starship/.config/starship.toml";
-  home.file.".config/topgrade.toml".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/topgrade/.config/topgrade.toml";
-  home.file.".config/kwalletrc".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/kwalletrc/.config/kwalletrc";
+    # Individual files
+    ".zshenv"               = linkDot "zsh/.zshenv";
+    ".config/starship.toml" = linkDot "starship/.config/starship.toml";
+    ".config/topgrade.toml" = linkDot "topgrade/.config/topgrade.toml";
+    ".config/kwalletrc"     = linkDot "kwalletrc/.config/kwalletrc";
+  };
+}
 }
