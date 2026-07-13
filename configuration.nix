@@ -3,6 +3,9 @@
 {
     imports = [
       ./hardware-configuration.nix
+
+      # --- DESKTOP MODULES ---
+      ./modules/hyprland.nix
     ];
 
   boot.loader.systemd-boot.enable = true;
