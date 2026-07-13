@@ -18,22 +18,32 @@
     # Enable user-level desktop services
     services.hypridle.enable = true;
     services.hyprsunset.enable = true;
-    programs.waybar.enable = true;
+
+    programs.waybar = {
+      enable = true;
+      systemd.enable = true;
+      targets = [ "hyprland-session.target" ];
+    };
 
     # Desktop specific user utilities
     home.packages = with pkgs; [
-        hypridle
         hyprlock
         hyprpaper
         hyprshot
-        #hyprtoolkitagent
-        #hyprland-guiutils
+        hyprpolkitagent
         hyprutils
-        waybar
         wofi
-        #swaync
+        swaynotificationcenter
         dbus
-        hyprsunset
+
+        xdg-desktop-portal-hyprland
+
+        xdg-desktop-portal
+        xdg-desktop-portal-gtk
+
+        qt5-
+
+        #hyprland-guiutils
     ];
   };
 }
