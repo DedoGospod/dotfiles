@@ -22,7 +22,6 @@
     programs.waybar = {
       enable = true;
       systemd.enable = true;
-      targets = [ "hyprland-session.target" ];
     };
 
     # Desktop specific user utilities
