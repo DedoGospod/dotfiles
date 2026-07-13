@@ -51,7 +51,7 @@ local assignments = {
     { class = "^(com\\.discordapp\\.Discord|steam)$", ws = 4 },
     { class = "^(virt-manager)$",                     ws = 9 },
     { class = "^(com\\.obsproject\\.Studio)$",        ws = "special:magic" },
-    { class = "^(opensnitch_ui)$",                    ws = "special:magic" },
+    -- { class = "^(opensnitch_ui)$",                    ws = "special:magic" },
 }
 
 -- Apply all rules automatically
