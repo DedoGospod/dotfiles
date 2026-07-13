@@ -16,16 +16,27 @@
   home-manager.users.dylan = { pkgs, ... }: {
     
     # Enable user-level desktop services
-    services.hypridle.enable = true;
-    services.hyprsunset.enable = true;
+    services = {
+        hypridle.enable = true;
+        hyprpaper.enable = true;
+        pyprland.enable = true;
+        hyprpolkitagent.enable = true;
+        hyprsunset.enable = true;
+        wayland-pipewire-idle-inhibit.enable = true;
+    };
 
-    programs.waybar = {
-      enable = true;
-      systemd.enable = true;
+    programs = {
+        waybar = {
+            enable = true;
+            systemd.enable = true;
+        };
     };
 
     # Desktop specific user utilities
     home.packages = with pkgs; [
+        hypridle
+        hyprsunset
+        waybar
         hyprlock
         hyprpaper
         hyprshot
@@ -34,6 +45,9 @@
         wofi
         swaynotificationcenter
         dbus
+        pyprland
+        wayland-pipewire-idle-inhibit
+
 
         xdg-desktop-portal-hyprland
 
