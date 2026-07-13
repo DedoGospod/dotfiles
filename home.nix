@@ -1,41 +1,43 @@
 { config, pkgs, ... }:
 
-{
-    imports = [
-        ./modules/neovim.nix
-        ./modules/hyprland.nix
-    ];
+let
+  linkDot = repoPath: {
+    source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/${repoPath}";
+  };
+in {
 
-    home.packages = with pkgs; [
-        # Core desktop
-        hypridle
-        hyprlock
-        hyprpaper
-        hyprpolkitagent
-        #hyprland-guiutils  
-        hyprutils
-        waybar
-        #swaync
-        dbus
-        hyprsunset
+  imports = [
+    #./modules/neovim.nix
+    #./modules/hyprland.nix
+  ];
 
-        # Shell & CLI
-        kitty
-        zsh
-        zsh-completions
-        zsh-syntax-highlighting
-        zsh-autosuggestions
-        starship
-        fzf
-        zoxide
-        fd
-        tmux
-        bat
-        eza
-        ripgrep
-        trash-cli
-    ];
+  home.packages = with pkgs; [
+    # Core desktop
+    hypridle
+    hyprlock
+    hyprpaper
+    hyprpolkitagent
+    hyprutils
+    waybar
+    dbus
+    hyprsunset
 
+    # Shell & CLI
+    kitty
+    zsh
+    zsh-completions
+    zsh-syntax-highlighting
+    zsh-autosuggestions
+    starship
+    fzf
+    zoxide
+    fd
+    tmux
+    bat
+    eza
+    ripgrep
+    trash-cli
+  ];
 
   programs.git.enable = true;
   home.stateVersion = "25.05";
@@ -43,18 +45,13 @@
     enable = true;
   };
 
-# Dotfiles
-let
-  linkDot = repoPath: {
-    source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotfiles/${repoPath}";
-  };
-in {
+  # Dotfiles
   home.file = {
     # Directories
     ".config/backgrounds" = linkDot "backgrounds/.config/backgrounds";
     ".config/fastfetch"   = linkDot "fastfetch/.config/fastfetch";
     ".config/hypr"        = linkDot "hypr/.config/hypr";
-    ".config/pypr"        = linkDot "hypr/.config/pypr"; # Fixed duplicate key
+    ".config/pypr"        = linkDot "hypr/.config/pypr";
     ".config/kitty"       = linkDot "kitty/.config/kitty";
     ".config/MangoHud"    = linkDot "mangohud/.config/MangoHud";
     ".config/mpv"         = linkDot "mpv/.config/mpv";
@@ -77,5 +74,4 @@ in {
     ".config/topgrade.toml" = linkDot "topgrade/.config/topgrade.toml";
     ".config/kwalletrc"     = linkDot "kwalletrc/.config/kwalletrc";
   };
-}
 }
