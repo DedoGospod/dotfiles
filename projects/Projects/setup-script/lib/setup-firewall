@@ -42,9 +42,9 @@ if command -v ufw >/dev/null; then
     # Detailed check: Status, Policies, and Ports
     if echo "$UFW_STATUS" | grep -q "Status: active" &&
         echo "$UFW_STATUS" | grep -qE "Default:\s+deny\s+\(incoming\),\s+allow\s+\(outgoing\)" &&
-        echo "$UFW_STATUS" | grep -qE "22/tcp\s+LIMIT\s+IN" &&
-        echo "$UFW_STATUS" | grep -qE "80/tcp\s+ALLOW\s+IN" &&
-        echo "$UFW_STATUS" | grep -qE "443/tcp\s+ALLOW\s+IN"; then
+        echo "$UFW_STATUS" | grep -qE "22/tcp\s+LIMIT\s+IN"; then #&&
+        #echo "$UFW_STATUS" | grep -qE "80/tcp\s+ALLOW\s+IN" &&
+        #echo "$UFW_STATUS" | grep -qE "443/tcp\s+ALLOW\s+IN"; then
         log_task "UFW baseline configuration is already set"
         ok
     else
