@@ -16,12 +16,13 @@
     extraGroups = [ "wheel" ];
   };
 
-  # Automatic garbage collection
-  gc = {
-    automatic = true;
-    dates = "weekly";
-    options = "--delete-older-than 14d";
+  # Automatic garbage collection and optimization
+  nix = {
+    gc = {
+      automatic = true;
+      dates = "weekly";
+      options = "--delete-older-than 14d";
+    };
+    optimise.automatic = true;
   };
-};
-
 }
