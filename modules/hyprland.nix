@@ -41,8 +41,6 @@
         xdg-desktop-portal
         xdg-desktop-portal-gtk
 
-        qt5-
-
         #hyprland-guiutils
     ];
   };
