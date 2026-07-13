@@ -11,8 +11,9 @@ require("mason-tool-installer").setup({
 		"zls",                    -- zig
 		"ts_ls",                  -- typescript/javascript
 		"clangd",                 -- c/cpp
-   	"csharp-language-server", -- c#
+   	    "csharp-language-server", -- c#
 		"lua_ls",                 -- lua
+        -- "nil_ls",                 -- nix
 		-- Formatters
 		"black", "isort",         -- python
 		"crlfmt",                 -- Go
@@ -21,8 +22,9 @@ require("mason-tool-installer").setup({
 		"clang-format",           -- C, C++, Objective-C, Objective-C++, Java, JavaScript, TypeScript, C#
 		"stylua",                 -- lua
 		"csharpier",              -- c#
+        -- "nixfmt",                 -- nix
 		-- Linters
-    "golangci-lint",          -- GO
+        "golangci-lint",          -- GO
 		"shellcheck",             -- bash
 		"eslint_d",               -- ts_ls/javascript
 	},
@@ -57,7 +59,7 @@ local capabilities = vim.lsp.protocol.make_client_capabilities()
 
 require("mason-lspconfig").setup({
 	handlers = {
-		-- 1. Custom Handler for CLANGD:
+		-- Custom Handler for CLANGD:
 		["clangd"] = function()
 			lspconfig.clangd.setup({
 				capabilities = capabilities,
@@ -69,6 +71,19 @@ require("mason-lspconfig").setup({
 				-- Any other custom clangd settings go here
 			})
 		end,
+
+        -- ["nil_ls"] = function()
+			-- lspconfig.nil_ls.setup({
+				-- capabilities = capabilities,
+				-- settings = {
+					-- ["nil"] = {
+						-- formatting = {
+							-- command = { "nixfmt" },
+						-- },
+					-- },
+				-- },
+			-- })
+		-- end,
 
 		-- Default Handler (applies to all other servers not explicitly defined above)
 		function(server_name)
