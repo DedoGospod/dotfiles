@@ -38,7 +38,7 @@ in {
     trash-cli
 
     # Theme
-    qt6ct
+    #qt6ct
     gnome-themes-extra
 
     # Apps & Utils
@@ -72,7 +72,7 @@ in {
 
     # Power management
     power-profiles-daemon
-    ananicy-cpp
+    #ananicy-cpp
 
     # Containerization
     flatpak
