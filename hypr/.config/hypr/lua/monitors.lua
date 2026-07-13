@@ -11,3 +11,11 @@ hl.monitor({
     bitdepth = 10,
     supports_hdr = 1,
 })
+
+-- Render config
+hl.config({
+    render = {
+        cm_auto_hdr = 1,
+        direct_scanout = 2,
+    }
+})
