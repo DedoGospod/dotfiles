@@ -3,7 +3,7 @@
 {
   imports = [
     ./home/packages.nix
-    ./home/shell.nix
+    #./home/shell.nix
     ./home/services.nix
     ./home/files.nix
 
@@ -15,5 +15,9 @@
     username = "dylan";
     homeDirectory = "/home/dylan";
     stateVersion = "25.05";
+  };
+
+  programs.bash = {
+    enable = true;
   };
 }
