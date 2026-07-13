@@ -12,7 +12,7 @@
   boot.loader.efi.canTouchEfiVariables = true;
 
   networking.hostName = "nixos";
-  networking.networkmanager.enable = true;
+  #networking.networkmanager.enable = true;
 
   time.timeZone = "Australia/Perth";
 
@@ -49,6 +49,18 @@
   hardware = {
     bluetooth.enable = true;
   };
+
+  fonts.packages = with pkgs; [
+    nerd-fonts.caskaydia-cove
+    ubuntu-classic
+    font-awesome
+    dejavu_fonts
+    liberation_ttf
+    croscore-fonts
+    noto-fonts
+    noto-fonts-cjk-sans
+    noto-fonts-color-emoji
+  ];
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
   system.stateVersion = "25.05";
