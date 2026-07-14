@@ -17,4 +17,5 @@
     nvidiaSettings = true;
     package = config.boot.kernelPackages.nvidiaPackages.stable;
   };
+    boot.kernelParams = [ "nvidia_drm.modeset=1" "nvidia_drm_fbdev=1" ];
 }

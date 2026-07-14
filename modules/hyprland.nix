@@ -50,7 +50,6 @@
 
 
         xdg-desktop-portal-hyprland
-
         xdg-desktop-portal
         xdg-desktop-portal-gtk
 

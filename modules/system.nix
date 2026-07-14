@@ -13,7 +13,7 @@
   # User management
   users.users.dylan = {
     isNormalUser = true;
-    extraGroups = [ "wheel" ];
+    extraGroups = [ "wheel" "video" "input" ];
   };
 
   # Automatic garbage collection and optimization
