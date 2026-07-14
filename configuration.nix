@@ -9,6 +9,8 @@
     ./modules/services.nix
     ./modules/security.nix
 
+    ./modules/nvidia.nix
+
     ./modules/virtualization.nix
 
     # --- DESKTOP MODULES
