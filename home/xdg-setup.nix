@@ -11,12 +11,6 @@
 
   # Centralized Environment Variables
   home.sessionVariables = {
-    # Base XDG
-    XDG_DATA_HOME   = "${config.home.homeDirectory}/.local/share";
-    XDG_CONFIG_HOME = "${config.home.homeDirectory}/.config";
-    XDG_STATE_HOME  = "${config.home.homeDirectory}/.local/state";
-    XDG_CACHE_HOME  = "${config.home.homeDirectory}/.cache";
-
     # Application Paths
     CARGO_HOME      = "${config.xdg.dataHome}/cargo";
     RUSTUP_HOME     = "${config.xdg.dataHome}/rustup";
@@ -28,16 +22,16 @@
     PARALLEL_HOME   = "${config.xdg.configHome}/parallel";
 
     # NPM Config
-    NPM_CONFIG_USERCONFIG = "${config.xdg.configHome}/npm/npmrc";
+    NPM_CONFIG_USERCONFIG  = "${config.xdg.configHome}/npm/npmrc";
     NPM_CONFIG_INIT_MODULE = "${config.xdg.configHome}/npm/config/npm-init.js";
-    NPM_CONFIG_CACHE      = "${config.xdg.cacheHome}/npm";
-    NPM_CONFIG_TMP        = "${config.xdg.runtimeDir}/npm/tmp";
+    NPM_CONFIG_CACHE       = "${config.xdg.cacheHome}/npm";
+    NPM_CONFIG_TMP         = "${config.xdg.cacheHome}/npm/tmp";
 
     # Graphics/Misc
-    GTK2_RC_FILES           = "${config.xdg.configHome}/gtk-2.0/gtkrc";
-    CUDA_CACHE_PATH         = "${config.xdg.cacheHome}/nv";
+    GTK2_RC_FILES               = "${config.xdg.configHome}/gtk-2.0/gtkrc";
+    CUDA_CACHE_PATH             = "${config.xdg.cacheHome}/nv";
     __GL_SHADER_DISK_CACHE_PATH = "${config.xdg.cacheHome}/nv";
-    ANDROID_USER_HOME       = "${config.xdg.dataHome}/android";
+    ANDROID_USER_HOME           = "${config.xdg.dataHome}/android";
   };
 
   # Path Management
@@ -46,4 +40,4 @@
     "${config.xdg.dataHome}/cargo/bin"
     "${config.xdg.dataHome}/go/bin"
   ];
-} 
+}
