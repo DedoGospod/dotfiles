@@ -1,6 +1,7 @@
-{ pkgs, ... }: {
+{ ... }: {
 
-  programs.git.enable = true;
-  #programs.zsh.enable = true;
+  # Enable bash
   programs.bash.enable = true;
+  programs.git.enable = true;
+
 }
