@@ -39,8 +39,8 @@
     stremio-linux-shell
     
     # Security
-    gnome-keyring
-    seahorse
+    #gnome-keyring
+    #seahorse
     keepassxc
 
     # Bluetooth
