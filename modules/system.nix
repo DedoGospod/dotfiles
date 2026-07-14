@@ -1,9 +1,15 @@
-{ ... }:
+{ pkgs, ... }:
 
 {
   # Boot configuration
-  boot.loader.systemd-boot.enable = true;
+  #boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
+  boot.loader.grub = {
+    enable = true;
+    efiSupport = true;
+    device = "nodev";
+    #efiInstallAsRemovable = true; #Good for VMs
+  };
 
   # Basic system settings
   networking.hostName = "nixos";
@@ -14,15 +20,14 @@
   users.users.dylan = {
     isNormalUser = true;
     extraGroups = [ "wheel" "video" "input" ];
+    shell = pkgs.zsh;
   };
 
   # Automatic garbage collection and optimization
-  nix = {
-    gc = {
-      automatic = true;
-      dates = "weekly";
-      options = "--delete-older-than 14d";
-    };
-    optimise.automatic = true;
-  };
+  nix.gc.automatic = true;
+  nix.gc.dates = "weekly";
+  nix.gc.options = "--delete-older-than 14d";
+  nix.optimise.automatic = true;
+  systemd.timers."nix-gc".timerConfig.Persistent = true;
+  systemd.timers."nix-optimise".timerConfig.Persistent = true;
 }
