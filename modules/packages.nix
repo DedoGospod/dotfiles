@@ -19,9 +19,11 @@
 
 programs.git = {
   enable = true;
+  package = pkgs.gitFull;
+
   config = {
     user = {
-      name = "DedoGospod";
+      name = "dylan";
       email = "dylanlazarov2002@protonmail.com";
     };
     credential = {
