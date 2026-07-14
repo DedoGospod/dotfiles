@@ -82,10 +82,10 @@ fi
 alias sudo='sudo '                # Always use sudo explicitly
 alias rb='reboot'                 # Reboot system
 alias update-grub="grub-mkconfig -o /boot/grub/grub.cfg" # Update grub
-alias fixpac='sudo DIFFPROG=meld pacdiff' # Fix pacnew files
 
 # Package Management
 alias yay='paru'                  # Use paru as yay alternative
+alias nrs='cd ~/dotfiles && sudo nixos-rebuild switch --flake .#nixos-hyprland'
 
 # Apps
 alias top='btop'                                       # Modern system monitor
