@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ pkgs, ... }:
 
 {
   programs.dconf.enable = true;
@@ -15,8 +15,6 @@
     };
     spiceUSBRedirection.enable = true;
   };
-
-  #environment.systemPackages = with pkgs; [];
 
   users.users.dylan.extraGroups = [ "libvirtd" ];
 }
