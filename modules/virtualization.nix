@@ -8,23 +8,15 @@
     libvirtd = {
       enable = true;
       qemu = {
-        package = pkgs.qemu_kvm;
-        runAsRoot = true;
+        runAsRoot = false;
         swtpm.enable = true;
-        ovmf = {
-          enable = true;
-          packages = [ pkgs.OVMFFull.fd ];
-        };
         vhostUserPackages = [ pkgs.virtiofsd ];
       };
     };
-    
     spiceUSBRedirection.enable = true;
   };
 
-  environment.systemPackages = with pkgs; [
-    dnsmasq 
-  ];
+  #environment.systemPackages = with pkgs; [];
 
   users.users.dylan.extraGroups = [ "libvirtd" ];
 }
