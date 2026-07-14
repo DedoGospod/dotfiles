@@ -8,10 +8,11 @@
     ./modules/system.nix
     ./modules/services.nix
     ./modules/security.nix
-
+	
+    # Drivers
     ./modules/nvidia.nix
 
-    ./modules/virtualization.nix
+    #./modules/virtualization.nix
 
     # --- DESKTOP MODULES
     ./modules/hyprland.nix
@@ -20,5 +21,6 @@
   # Global settings
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
   nixpkgs.config.allowUnfree = true;
-  system.stateVersion = "25.05";
+  system.stateVersion = "26.05";
+
 }
