@@ -21,7 +21,7 @@ programs.git = {
   enable = true;
   config = {
     user = {
-      name = "dylan";
+      name = "DedoGospod";
       email = "dylanlazarov2002@protonmail.com";
     };
     credential = {
