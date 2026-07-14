@@ -19,10 +19,10 @@
     services = {
         hypridle.enable = true;
         hyprpaper.enable = true;
-        pyprland.enable = true;
+        #pyprland.enable = true;
         hyprpolkitagent.enable = true;
         hyprsunset.enable = true;
-        wayland-pipewire-idle-inhibit.enable = true;
+        #wayland-pipewire-idle-inhibit.enable = true;
     };
 
     programs = {
