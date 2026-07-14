@@ -20,6 +20,13 @@
     noto-fonts-color-emoji
     ];
 
+programs.zsh = {
+    enable = true;
+    enableCompletion = true;
+    autosuggestions.enable = true;
+    syntaxHighlighting.enable = true;
+};
+
 programs.git = {
   enable = true;
   package = pkgs.gitFull;
