@@ -10,6 +10,13 @@
     xwayland.enable = true;
   };
 
+  security.pam.services.hyprlock = {};
+
+  xdg_portal = {
+    enable = true;
+    extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
+  };
+
   # ============================================================================
   # User-Level Configuration (Home Manager)
   # ============================================================================
@@ -19,9 +26,9 @@
     services = {
         hypridle.enable = true;
         hyprpaper.enable = true;
-        #pyprland.enable = true;
         hyprpolkitagent.enable = true;
         hyprsunset.enable = true;
+        #pyprland.enable = true;
         #wayland-pipewire-idle-inhibit.enable = true;
     };
 
@@ -35,25 +42,18 @@
     # Desktop specific user utilities
     home.packages = with pkgs; [
         hypridle
-        hyprsunset
-        waybar
-        hyprlock
         hyprpaper
-        hyprshot
         hyprpolkitagent
+        hyprsunset
+        hyprshot
+        hyprlock
         hyprutils
         wofi
         swaynotificationcenter
-        dbus
         pyprland
         wayland-pipewire-idle-inhibit
-
-
-        xdg-desktop-portal-hyprland
-        xdg-desktop-portal
-        xdg-desktop-portal-gtk
-
         #hyprland-guiutils
+        #glib
     ];
   };
 }
