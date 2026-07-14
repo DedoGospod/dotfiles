@@ -16,5 +16,7 @@
     gcc
     #tree-sitter-cli
     imagemagick
+    nil
+    cargo
   ];
 }
