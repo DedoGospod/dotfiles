@@ -4,10 +4,6 @@
   home.packages = with pkgs; [
   # Shell & CLI
     kitty
-    zsh
-    zsh-completions
-    zsh-syntax-highlighting
-    zsh-autosuggestions
     starship
     fzf
     zoxide
