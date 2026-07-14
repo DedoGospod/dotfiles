@@ -72,6 +72,7 @@ if command -v ufw >/dev/null; then
         # -------------------------------
 
         log_task "Enabling UFW"
+        ok
 
         # Ensure the systemd service is ready
         if ! systemctl is-enabled ufw.service >/dev/null; then
