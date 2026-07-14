@@ -1,12 +1,15 @@
-{ config, pkgs, ... }:
+#{ config, pkgs, ... }:
+{ ... }:
 
 {
   imports = [
     ./hardware-configuration.nix
-    ./modules/system-packages.nix
+    ./modules/packages.nix
     ./modules/system.nix
-    ./modules/system-services.nix
+    ./modules/services.nix
     ./modules/security.nix
+
+    ./modules/virtualization.nix
 
     # --- DESKTOP MODULES
     ./modules/hyprland.nix
