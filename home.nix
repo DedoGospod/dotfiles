@@ -1,11 +1,10 @@
-{ config, pkgs, ... }:
+{ ... }:
 
 {
   imports = [
     ./home/packages.nix
-    ./home/shell.nix
     ./home/services.nix
-    ./home/files.nix
+    ./home/dotfiles.nix
     ./home/xdg-setup.nix
 
     # --- CUSTOM MODULES ---
@@ -17,5 +16,4 @@
     homeDirectory = "/home/dylan";
     stateVersion = "26.05";
   };
-
 }
