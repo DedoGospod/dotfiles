@@ -35,8 +35,6 @@
     stremio-linux-shell
     
     # Security
-    #gnome-keyring
-    #seahorse
     keepassxc
 
     # Bluetooth
@@ -48,9 +46,5 @@
     rsync
     rsnapshot
     topgrade
-
-    # Containerization
-    flatpak
-
   ];
 }
