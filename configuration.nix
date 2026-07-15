@@ -8,9 +8,9 @@
     ./modules/services.nix
     ./modules/security.nix
 	
-    # Drivers
-    ./modules/nvidia.nix
+    #./modules/nvidia.nix
 
+    #./modules/gaming.nix
     #./modules/virtualization.nix
 
     # --- DESKTOP MODULES
