@@ -12,11 +12,6 @@
 
   security.pam.services.hyprlock = {};
 
-  xdg_portal = {
-    enable = true;
-    extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
-  };
-
   # ============================================================================
   # User-Level Configuration (Home Manager)
   # ============================================================================
