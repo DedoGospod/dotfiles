@@ -3,7 +3,6 @@
 
 {
   imports = [
-    ./hardware-configuration.nix
     ./modules/packages.nix
     ./modules/system.nix
     ./modules/services.nix
