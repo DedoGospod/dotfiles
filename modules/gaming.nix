@@ -1,4 +1,4 @@
-{ pkgs, inputs, ... }:
+{ ... }:
 
 {
   # ============================================================================
@@ -11,11 +11,16 @@
       dedicatedServer.openFirewall = false;
       localNetworkGameTransfers.openFirewall = false;
     };
-    
-    # Allows games to request a high-performance CPU governor
-    #gamemode.enable = true; 
+    gamemode = {
+      enable = true; 
+      enableRenice = true;
+    };
+    gamescope = {
+      enable = true;
+      capSysNice = true;
+      enableWsi = true;
+    };
 
-    gamescope.enable = true;
   };
 
   # GPU specific hardware configuration
@@ -27,13 +32,12 @@
   # ============================================================================
   # User-Level Configuration (Home Manager)
   # ============================================================================
-  home-manager.users.dylan = { pkgs, ... }: {
+  home-manager.users.dylan = { pkgs,... }: {
     
     # User-specific gaming utilities
-    home.packages = [
-      inputs.scopebuddy.packages.${pkgs.system}.default
-      pkgs.protonup-qt
-      pkgs.mangohud
+    home.packages = with pkgs; [
+      protonup-qt
+      mangohud
     ];
   };
 }
