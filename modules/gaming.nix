@@ -1,6 +1,9 @@
-{ pkgs, ... }:
+{ pkgs, inputs, ... }:
+
 {
-  # Gaming specific optimizations
+  # ============================================================================
+  # System-Level Configuration (NixOS)
+  # ============================================================================
   programs = {
     steam = {
       enable = true;
@@ -13,17 +16,24 @@
     #gamemode.enable = true; 
 
     gamescope.enable = true;
-    mangohud.enable = true;
   };
-
-  # System-wide packages
-  environment.systemPackages = with pkgs; [
-    protonup-qt
-  ];
 
   # GPU specific hardware configuration
   hardware.graphics = {
     enable = true;
     enable32Bit = true;
+  };
+
+  # ============================================================================
+  # User-Level Configuration (Home Manager)
+  # ============================================================================
+  home-manager.users.dylan = { pkgs, ... }: {
+    
+    # User-specific gaming utilities
+    home.packages = [
+      inputs.scopebuddy.packages.${pkgs.system}.default
+      pkgs.protonup-qt
+      pkgs.mangohud
+    ];
   };
 }
