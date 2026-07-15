@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ lib, pkgs, ... }:
 
 {
   # Boot configuration
@@ -10,6 +10,11 @@
     device = "nodev";
     #efiInstallAsRemovable = true; #Good for VMs
   };
+
+  boot.kernelParams = lib.mkBefore [ 
+    "amd_pstate=active" 
+    "initcall_blacklist=acpi_cpufreq_init" 
+  ];
 
   # Basic system settings
   networking.hostName = "nixos";
