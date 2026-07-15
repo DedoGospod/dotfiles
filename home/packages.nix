@@ -14,10 +14,6 @@
     ripgrep
     trash-cli
 
-    # Theme
-    #qt6ct
-    gnome-themes-extra
-
     # Apps & Utils
     nautilus
     yazi
@@ -30,7 +26,6 @@
     pavucontrol
     ffmpeg
     ffmpegthumbnailer
-
     brave
     stremio-linux-shell
     
