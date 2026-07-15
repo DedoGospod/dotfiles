@@ -6,6 +6,7 @@
     ./home/services.nix
     ./home/dotfiles.nix
     ./home/xdg-setup.nix
+    ./home/theme.nix
 
     # --- CUSTOM MODULES ---
     ./modules/neovim.nix
