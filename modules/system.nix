@@ -8,7 +8,8 @@
     enable = true;
     efiSupport = true;
     device = "nodev";
-    #efiInstallAsRemovable = true; #Good for VMs
+    timeout = 5;
+    #useOSProber = true;
   };
 
   boot.kernelParams = lib.mkBefore [ 
