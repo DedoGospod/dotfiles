@@ -2,6 +2,7 @@
 
 {
   environment.systemPackages = with pkgs; [
+    brave
     vim
     git
     zsh-completions
