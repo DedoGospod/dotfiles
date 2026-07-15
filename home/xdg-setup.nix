@@ -28,8 +28,7 @@
     NPM_CONFIG_CACHE       = "${config.xdg.cacheHome}/npm";
     NPM_CONFIG_TMP         = "${config.xdg.cacheHome}/npm/tmp";
 
-    # Graphics/Misc
-    GTK2_RC_FILES               = "${config.xdg.configHome}/gtk-2.0/gtkrc";
+    # Misc
     CUDA_CACHE_PATH             = "${config.xdg.cacheHome}/nv";
     __GL_SHADER_DISK_CACHE_PATH = "${config.xdg.cacheHome}/nv";
     ANDROID_USER_HOME           = "${config.xdg.dataHome}/android";
