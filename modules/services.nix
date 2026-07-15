@@ -31,6 +31,13 @@
     '';
   };
 
+  # XDG Desktop Portals (D-Bus service for DE communication)
+  xdg.portal = {
+    enable = true;
+    extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
+    config.common.default = "*";
+  };
+
   # Grouping related hardware configs
   hardware.bluetooth.enable = true;
 }
