@@ -1,6 +1,5 @@
-{ config, ... }:
+{ config, lib, ... }:
 {
-
   # Enable OpenGL
   hardware.graphics = {
     enable = true;
@@ -17,5 +16,5 @@
     nvidiaSettings = true;
     package = config.boot.kernelPackages.nvidiaPackages.stable;
   };
-    boot.kernelParams = [ "nvidia_drm.modeset=1" "nvidia_drm_fbdev=1" ];
+    boot.kernelParams = lib.mkAfter [ "nvidia_drm.modeset=1" "nvidia_drm_fbdev=1" ];
 }
