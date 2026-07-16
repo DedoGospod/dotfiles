@@ -42,4 +42,15 @@
     rsnapshot
     topgrade
   ];
+
+  programs.git = {
+    enable = true;
+    package = pkgs.gitFull;
+    userName = "DedoGospod";
+    userEmail = "dylanlazarov2002@protonmail.com";
+    extraConfig = {
+      credential.helper = "libsecret";
+    };
+  };
+
 }
