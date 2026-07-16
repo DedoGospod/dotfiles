@@ -93,7 +93,6 @@ alias top='btop'               # Modern system monitor
 alias cat='bat'                # Cat alternative
 alias cls='clear'              # Clear screen
 alias kssh='kitty +kitten ssh' # SSH with kitty terminal features
-alias setup-gh='gh auth login --git-protocol ssh' # Setup github with ssh
 
 # Files
 alias ls='eza -1 --icons --git --group-directories-first --time-style=long-iso'
