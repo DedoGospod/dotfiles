@@ -18,26 +18,11 @@
     noto-fonts-color-emoji
     ];
 
-programs.zsh = {
+  programs.zsh = {
     enable = true;
     enableCompletion = true;
     autosuggestions.enable = true;
     syntaxHighlighting.enable = true;
-};
-
-programs.git = {
-  enable = true;
-  package = pkgs.gitFull;
-
-  config = {
-    user = {
-      name = "dylan";
-      email = "dylanlazarov2002@protonmail.com";
-    };
-    credential = {
-      helper = "libsecret";
-    };
   };
-};
 
 }
