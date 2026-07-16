@@ -5,9 +5,6 @@
     brave
     vim
     git
-    zsh-completions
-    zsh-syntax-highlighting
-    zsh-autosuggestions
   ];
 
   fonts.packages = with pkgs; [
