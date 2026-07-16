@@ -34,13 +34,15 @@ setopt magicequalsubst                           # Filename expansion for argume
 # ======================
 
 # Load plugins via loop to maintain readability and prevent exit on failure
-typeset -a plugins=(
-    "/usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
-    "/usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh"
-)
-for plugin in $plugins; do
-    [[ -r "$plugin" ]] && source "$plugin"
-done
+if [[ -d "/usr/share/zsh/plugins" ]]; then
+    typeset -a plugins=(
+        "/usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+        "/usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh"
+    )
+    for plugin in $plugins; do
+        [[ -r "$plugin" ]] && source "$plugin"
+    done
+fi
 
 # Initialize tools only if binary exists
 (( $+commands[starship] )) && eval "$(starship init zsh)"
@@ -79,19 +81,18 @@ fi
 # ======================
 
 # System
-alias sudo='sudo '                # Always use sudo explicitly
-alias rb='reboot'                 # Reboot system
+alias sudo='sudo '                                       # Always use sudo explicitly
+alias rb='reboot'                                        # Reboot system
 alias update-grub="grub-mkconfig -o /boot/grub/grub.cfg" # Update grub
 
 # Package Management
-alias yay='paru'                  # Use paru as yay alternative
-alias nrs='cd ~/dotfiles && sudo nixos-rebuild switch --flake .#nixos-hyprland'
+alias yay='paru'               # Use paru as yay alternative
 
 # Apps
-alias top='btop'                                       # Modern system monitor
-alias cat='bat'                                        # Cat alternative
-alias cls='clear'                                      # Clear screen
-alias kssh='kitty +kitten ssh'                         # SSH with kitty terminal features
+alias top='btop'               # Modern system monitor
+alias cat='bat'                # Cat alternative
+alias cls='clear'              # Clear screen
+alias kssh='kitty +kitten ssh' # SSH with kitty terminal features
 
 # Files
 alias ls='eza -1 --icons --git --group-directories-first --time-style=long-iso'
