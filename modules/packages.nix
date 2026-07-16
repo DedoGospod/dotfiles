@@ -5,6 +5,7 @@
     brave
     vim
     git
+    gh
   ];
 
   fonts.packages = with pkgs; [
