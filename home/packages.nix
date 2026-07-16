@@ -43,18 +43,15 @@
     topgrade
   ];
 
-programs.git = {
-  enable = true;
-  package = pkgs.gitFull;
-  settings = {
-    user = {
-      name = "DedoGospod";
-      email = "dylanlazarov2002@protonmail.com";
-    };
-    credential = {
-      helper = "libsecret";
+  programs.git = {
+    enable = true;
+    package = pkgs.gitFull;
+    settings = {
+      user = {
+        name = "DedoGospod";
+        email = "dylanlazarov2002@protonmail.com";
+      };
     };
   };
-};
 
 }
