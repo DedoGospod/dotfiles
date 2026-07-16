@@ -4,11 +4,15 @@
   # Boot configuration
   #boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
+
+  boot.loader = {
+    timeout = 5;
+  };
+
   boot.loader.grub = {
     enable = true;
     efiSupport = true;
     device = "nodev";
-    timeout = 5;
     #useOSProber = true;
   };
 
