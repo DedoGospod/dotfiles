@@ -40,6 +40,24 @@
     ncdu
     rsync
     rsnapshot
+
+    # Neovim dependencies
+    neovim
+    #npm
+    nodejs
+    unzip
+    #clang
+    go
+    shellcheck
+    zig
+    luarocks
+    dotnet-sdk
+    cmake
+    gcc
+    #tree-sitter-cli
+    imagemagick
+    cargo
+    nil
   ];
 
   programs.git = {
