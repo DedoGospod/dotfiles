@@ -1,4 +1,4 @@
-{ ... }:
+{ pkgs, ... }:
 
 {
   # ============================================================================
@@ -14,6 +14,20 @@
     gamemode = {
       enable = true; 
       enableRenice = true;
+      settings = {
+        general = {
+          renice = 10;
+          inhibit_screensaver = 1;
+        };
+        gpu = {
+          apply_gpu_optimisations = "accept-responsibility";
+          nv_powermizer_mode = 1;
+        };
+        custom = {
+          start = "${pkgs.bash}/bin/bash /home/dylan/.local/bin/game-handler start";
+          end = "${pkgs.bash}/bin/bash /home/dylan/.local/bin/game-handler end";
+        };
+      };
     };
     gamescope = {
       enable = true;
