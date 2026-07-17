@@ -40,7 +40,6 @@
     ncdu
     rsync
     rsnapshot
-    topgrade
   ];
 
   programs.git = {
