@@ -46,12 +46,14 @@
   # ============================================================================
   # User-Level Configuration (Home Manager)
   # ============================================================================
-  home-manager.users.dylan = { pkgs,... }: {
-    
+  home-manager.users.dylan = { pkgs, inputs, ... }: 
+
+  {
     # User-specific gaming utilities
-    home.packages = with pkgs; [
-      protonup-qt
-      mangohud
+    home.packages = [
+      pkgs.protonup-qt
+      pkgs.mangohud
+      inputs.scopebuddy.packages.${pkgs.stdenv.hostPlatform.system}.default
     ];
   };
 }
