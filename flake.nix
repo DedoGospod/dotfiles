@@ -7,13 +7,13 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    #scopebuddy = {
-    #    url = "github:HikariKnight/ScopeBuddy";
-    #    inputs.nixpkgs.follows = "nixpkgs";
-    #};
+    scopebuddy = {
+        url = "github:HikariKnight/ScopeBuddy";
+        inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, home-manager, ... }: 
+  outputs = { self, nixpkgs, home-manager, ... }@inputs: 
   let
     sharedModules = [
       ./configuration.nix
@@ -24,6 +24,7 @@
           useUserPackages = true;
           users.dylan = import ./home.nix;
           backupFileExtension = "backup";
+          extraSpecialArgs = { inherit inputs; };
         };
       }
     ];
