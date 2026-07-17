@@ -5,11 +5,7 @@
     power-profiles-daemon.enable = true;
     gnome.gnome-keyring.enable = true;
     flatpak.enable = true;
-
-    fstrim = {
-      enable = true;
-      inverval = "weekly";
-    };
+    fstrim.enable = true;
 
     openssh = {
       enable = true;
