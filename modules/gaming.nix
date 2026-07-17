@@ -26,6 +26,13 @@
 
   };
 
+  services.sunshine = {
+    enable = false;
+    autoStart = false;
+    capSysAdmin = true;
+    openFirewall = true;
+  };
+
   # GPU specific hardware configuration
   hardware.graphics = {
     enable = true;
