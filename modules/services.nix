@@ -4,15 +4,7 @@
   services = {
     power-profiles-daemon.enable = true;
     gnome.gnome-keyring.enable = true;
-
-    flatpak = {
-        enable = true;
-        uninstallUnused = true;
-        remotes = [{
-          name = "flathub";
-          location = "https://flathub.org/repo/flathub.flatpakrepo";
-        }];
-    };
+    flatpak.enable = true;
 
     fstrim = {
       enable = true;
