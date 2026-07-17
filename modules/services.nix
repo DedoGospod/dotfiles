@@ -2,12 +2,28 @@
 
 {
   services = {
-    openssh.enable = true;
-    fstrim.enable = true;
     power-profiles-daemon.enable = true;
     gnome.gnome-keyring.enable = true;
-    flatpak.enable = true;
-    
+
+    flatpak = {
+        enable = true;
+        uninstallUnused = true;
+        remotes = [{
+          name = "flathub";
+          location = "https://flathub.org/repo/flathub.flatpakrepo";
+        }];
+    };
+
+    fstrim = {
+      enable = true;
+      inverval = "weekly";
+    };
+
+    openssh = {
+      enable = true;
+      openFirewall = true;
+    };
+
     scx = {
       enable = true;
       scheduler = "scx_lavd";
@@ -23,17 +39,7 @@
 
   };
 
-  security.pam.services.login.enableGnomeKeyring = true;
-
-  systemd.services.flatpak-repo = {
-    wantedBy = [ "multi-user.target" ];
-    path = [ pkgs.flatpak ];
-    script = ''
-      flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-    '';
-  };
-
-  # XDG Desktop Portals (D-Bus service for DE communication)
+  # XDG Desktop Portals
   xdg.portal = {
     enable = true;
     extraPortals = [ pkgs.xdg-desktop-portal-gtk ];

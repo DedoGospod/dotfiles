@@ -1,4 +1,4 @@
-{ ... }:
+{ pkgs, ... }:
 
 {
   # ============================================================================
@@ -16,6 +16,14 @@
       capSysNice = true;
       enableWsi = true;
     };
+    obs-studio = {
+      enable = true;
+      plugins = with pkgs.obs-studio-plugins; [
+        obs-pipewire-audio-capture
+        obs-vkcapture
+      ];
+    };
+
   };
 
   # GPU specific hardware configuration
@@ -34,6 +42,7 @@
     home.packages = [
       pkgs.protonup-qt
       pkgs.mangohud
+      pkgs.obs-cmd
       inputs.scopebuddy.packages.${pkgs.stdenv.hostPlatform.system}.default
     ];
   };
