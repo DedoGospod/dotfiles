@@ -1,0 +1,5 @@
+[user]
+	name = DedoGospod
+	email = dylanlazarov2002@protonmail.com
+[credential]
+	helper = /usr/lib/git-core/git-credential-libsecret
