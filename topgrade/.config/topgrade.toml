@@ -28,7 +28,7 @@ sudo_loop_interval = 240 # 4 minutes (240s); default if sudo_loop enabled
 # sudo_command = "sudo"
 
 # Disable specific steps - same options as the command line flag
-disable = ["git_repos", "hyprpm", "yazi"]
+disable = ["hyprpm", "yazi"]
 
 # Run these steps before all others
 # first = ["chezmoi"]
@@ -270,10 +270,9 @@ disable = ["git_repos", "hyprpm", "yazi"]
 # max_concurrency = 5
 
 # Additional git repositories to pull or fetch
-# repos = [
-#     "~/src/*/",
-#     "~/.config/something"
-# ]
+ #repos = [
+ #    "~/github/xdg-ninja/"
+ #]
 
 # Set to `false` to skip pulling/fetching the predefined git repos
 # pull_predefined = false
