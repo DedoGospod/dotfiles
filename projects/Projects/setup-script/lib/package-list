@@ -40,9 +40,6 @@ PACMAN_PACKAGES=(
     # Containerization
     flatpak 
 
-    # Kernel & Headers
-    ## linux-headers 
-
     # Fonts
     ttf-cascadia-code-nerd ttf-ubuntu-font-family ttf-font-awesome 
     ttf-dejavu ttf-liberation ttf-croscore noto-fonts noto-fonts-cjk noto-fonts-emoji 
@@ -55,4 +52,4 @@ NEOVIM_DEPS=(npm nodejs unzip clang go shellcheck zig luarocks dotnet-sdk cmake 
 FLATPAK_APPS=(com.github.tchx84.Flatseal io.github.ebonjaeger.bluejay com.github.wwmm.easyeffects)
 
 # AUR Packages
-AUR_PACKAGES=(wayland-pipewire-idle-inhibit brave-bin pyprland rebuild-initramfs-dracut-hook downgrade stremio-linux-shell)
+AUR_PACKAGES=(wayland-pipewire-idle-inhibit brave-bin pyprland rebuild-initramfs-dracut-hook downgrade stremio-linux-shell topgrade)
