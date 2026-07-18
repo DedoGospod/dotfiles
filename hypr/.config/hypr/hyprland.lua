@@ -6,7 +6,7 @@ local core_modules = {
     "lua.windowrules",
     "lua.keybinds",
     "lua.misc",
-    -- "lua.events",
+    "lua.events",
 }
 for _, module in ipairs(core_modules) do
     require(module)
