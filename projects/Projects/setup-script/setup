@@ -1,12 +1,10 @@
 #!/usr/bin/env bash
 
 # Source functions
-LIB_DIR="$HOME/dotfiles/scripts/.local/lib"
-if [[ -d "$LIB_DIR" ]]; then
+FUNC_DIR="$HOME/dotfiles/projects/Projects/setup-script/lib/functions"
+if [[ -d "$FUNC_DIR" ]]; then
     # shellcheck source=/dev/null
-    source "$LIB_DIR/xdg_setup"
-    # shellcheck source=/dev/null
-    source "$HOME/dotfiles/projects/Projects/setup-script/lib/functions/setup-functions"
+    source "$FUNC_DIR/setup-functions"
 fi
 
 # Permission check
