@@ -28,6 +28,8 @@ export GTK2_RC_FILES="$XDG_CONFIG_HOME/gtk-2.0/gtkrc"
 export CUDA_CACHE_PATH="$XDG_CACHE_HOME/nv"
 export __GL_SHADER_DISK_CACHE_PATH="$XDG_CACHE_HOME/nv"
 export ANDROID_USER_HOME="$XDG_DATA_HOME/android"
+export PULSE_COOKIE="$XDG_CONFIG_HOME/pulse/cookie"
+export GIT_CONFIG_GLOBAL="$XDG_CONFIG_HOME/git/config"
 
 # Nvidia specific
 if [[ -d "/sys/module/nvidia" ]]; then
