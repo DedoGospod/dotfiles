@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+
+# Track state for cleanup
+OBS_STARTED_BY_SCRIPT=0
+
+# Helper to run commands only if they exist
+run_if_exists() {
+    if command -v "$1" >/dev/null; then
+        "$@"
+    fi
+}
+
+# Cleanup function
+cleanup() {
+    # Stop the replay buffer
+    run_if_exists obs-cmd replay stop
+
+    # Stop the OBS service only if this script started it
+    if [[ "$OBS_STARTED_BY_SCRIPT" -eq 1 ]]; then
+        systemctl --user stop obs.service
+    fi
+}
+
+# Cleanup trap
+trap cleanup EXIT INT TERM HUP QUIT
+
+main() {
+    # Start OBS if it's not already running
+    if ! pgrep -x "obs" >/dev/null; then
+        systemctl --user start obs.service
+        OBS_STARTED_BY_SCRIPT=1
+    fi
+    run_if_exists obs-cmd replay start
+
+    # Run the game
+    if command -v scopebuddy >/dev/null; then
+        scopebuddy -- "$@"
+    else
+        "$@"
+    fi
+}
+
+# Pass all script arguments into main
+main "$@"
