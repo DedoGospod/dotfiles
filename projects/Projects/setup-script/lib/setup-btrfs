@@ -82,38 +82,5 @@ if [[ ${#MISSING_PACKAGES[@]} -gt 0 ]]; then
     ok
 fi
 
-# Check if snapshots already exist in /etc/fstab
-if ! grep -q "/.snapshots" /etc/fstab; then
-    
-    # Get UUID directly for the mount point. 
-    UUID=$(findmnt -n -o UUID -T /)
-    
-    # Append to fstab
-    echo "UUID=$UUID /.snapshots btrfs subvol=@snapshots,rw,noatime,compress=zstd 0 0" | sudo tee -a /etc/fstab
-    
-    # Mount everything
-    sudo mount -a
-fi
-
-# Automated snapper-rollback.conf setup
-log_task "Configuring /etc/snapper-rollback.conf"
-UUID=$(findmnt -n -o UUID -T /)
-cat <<EOF | sudo tee /etc/snapper-rollback.conf >/dev/null
-[root]
-subvol_main = @
-subvol_snapshots = @snapshots
-mountpoint = /
-dev = /dev/disk/by-uuid/$UUID
-EOF
-ok
-
 # Enable all systemd units
 run_task "Enabling Btrfs and Snapper systemd units" sudo systemctl enable --now "${btrfs_units[@]}"
-
-# Final verification
-if mountpoint -q /.snapshots; then
-    log "Successfully mounted @snapshots to /.snapshots"
-else
-    error "Failed to mount @snapshots"
-    exit 1
-fi

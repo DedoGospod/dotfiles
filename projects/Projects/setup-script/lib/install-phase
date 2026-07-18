@@ -57,20 +57,20 @@ mapfile -t MISSING_FLATPAKS < <(
 # Install missing official pkgs
 if [[ ${#MISSING_PACKAGES[@]} -gt 0 ]]; then
     log_task "Installing missing official packages"
-    sudo pacman -S --needed --noconfirm "${MISSING_PACKAGES[@]}" >/dev/null
+    sudo pacman -S --needed --noconfirm "${MISSING_PACKAGES[@]}"
     ok
 fi
 
 # Install missing AUR pkgs
 if [[ ${#MISSING_AUR[@]} -gt 0 ]]; then
     log_task "Installing missing AUR packages"
-    sudo pacman -S --needed --noconfirm "${MISSING_AUR[@]}" >/dev/null
+    sudo pacman -S --needed --noconfirm "${MISSING_AUR[@]}"
     ok
 fi
 
 # Install missing flatpaks
 if [[ ${#MISSING_FLATPAKS[@]} -gt 0 ]]; then
     log_task "Installing or updating flatpaks"
-    flatpak install -y --noninteractive --or-update flathub "${FLATPAK_APPS[@]}" >/dev/null
+    flatpak install -y --noninteractive --or-update flathub "${FLATPAK_APPS[@]}"
     ok
 fi
