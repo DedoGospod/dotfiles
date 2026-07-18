@@ -28,6 +28,7 @@ in {
     ".config/yazi"                          = linkDot "yazi/.config/yazi";
     ".config/zsh"                           = linkDot "zsh/.config/zsh";
     ".config/wayland-pipewire-idle-inhibit" = linkDot "wayland-pipewire-idle-inhibit/.config/wayland-pipewire-idle-inhibit";
+    ".config/systemd/user"                  = linkDot "systemd-user/.config/systemd/user";
 
     # Individual files
     ".zshenv"                               = linkDot "zsh/.zshenv";
