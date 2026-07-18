@@ -24,6 +24,7 @@ export HISTFILE="$XDG_STATE_HOME/zsh/history"
 typeset -Ugx path
 path=(
   "$HOME/.local/bin"
+  "$HOME/.local/lib/system-configure/"
   "${CARGO_HOME:-$XDG_DATA_HOME/cargo}/bin"
   "${GOPATH:-$HOME/go}/bin"
   $path
