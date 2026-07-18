@@ -12,72 +12,25 @@ run_if_exists() {
 
 # Cleanup function
 cleanup() {
-    if [[ -n "${HYPRLAND_INSTANCE_SIGNATURE:-}" ]]; then
+    # Stop the replay buffer
+    run_if_exists obs-cmd replay stop
 
-        # Reset hyprland, notifications and stop the replay buffer
-        run_if_exists obs-cmd replay stop
-        run_if_exists hyprctl reload
-        run_if_exists swaync-client -df
-
-        # Stop the OBS service only if this script started it
-        if [[ "$OBS_STARTED_BY_SCRIPT" -eq 1 ]]; then
-            systemctl --user stop obs.service
-        fi
-
-        # Reset blue light filter and brightness
-        if ! pgrep -x "hyprsunset" >/dev/null; then
-            systemctl --user start hyprsunset.service
-        fi
+    # Stop the OBS service only if this script started it
+    if [[ "$OBS_STARTED_BY_SCRIPT" -eq 1 ]]; then
+        systemctl --user stop obs.service
     fi
-    # Reset brightness back down to 50%
-    run_if_exists ddcutil setvcp 10 50 --async
 }
 
 # Cleanup trap
 trap cleanup EXIT INT TERM HUP QUIT
 
 main() {
-    # Check if we are in hyprland
-    if [[ -n "${HYPRLAND_INSTANCE_SIGNATURE:-}" ]]; then
-
-        # Enable performance mode
-        run_if_exists hyprctl eval '
-            hl.config({
-                animations = {
-                    enabled = false,
-                    animation = { { "borderangle", false } }
-                },
-                decoration = {
-                    shadow = { enabled = false },
-                    blur = { enabled = false },
-                    fullscreen_opacity = 1.0,
-                    rounding = 0
-                },
-                general = {
-                    gaps_in = 0,
-                    gaps_out = 0,
-                    border_size = 1
-                }
-            })
-        '
-
-        # Stop notifications
-        run_if_exists swaync-client -dn
-
-        # Start OBS if it's not already running
-        if ! pgrep -x "obs" >/dev/null; then
-            systemctl --user start obs.service
-            OBS_STARTED_BY_SCRIPT=1
-        fi
-        run_if_exists obs-cmd replay start
-
-        # Disable blue light filter and maximize brightness
-        if pgrep -x "hyprsunset" >/dev/null; then
-            systemctl --user stop hyprsunset.service
-        fi
+    # Start OBS if it's not already running
+    if ! pgrep -x "obs" >/dev/null; then
+        systemctl --user start obs.service
+        OBS_STARTED_BY_SCRIPT=1
     fi
-    # Set brightness to 100%
-    run_if_exists ddcutil setvcp 10 100 --async
+    run_if_exists obs-cmd replay start
 
     # Run the game
     if command -v scopebuddy >/dev/null; then
