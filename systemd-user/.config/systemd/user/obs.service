@@ -5,12 +5,12 @@ After=graphical-session.target
 
 [Service]
 Type=simple
-ExecStartPre=/usr/bin/env bash -c 'rm -rf ~/.config/obs-studio/.sentinel'
+ExecStartPre=/usr/bin/env bash -c 'rm -rf %h/.config/obs-studio/.sentinel'
 ExecStart=/usr/bin/obs 
 ; ExecStart=/usr/bin/obs --startreplaybuffer
 Restart=on-failure
 RestartSec=5s
-StartLimitIntervalSec=60s
+StartLimitIntervalSec=60
 StartLimitBurst=5
 KillSignal=SIGKILL
 
