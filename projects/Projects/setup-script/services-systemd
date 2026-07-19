@@ -33,6 +33,7 @@ manage "NetworkManager.service"         ""  "Network Management"
 manage "bluetooth.service"              ""  "Bluetooth"
 manage "power-profiles-daemon.service"  ""  "Power Management"
 manage "sshd.service"                   ""  "SSH Daemon"
+manage "rkit.service"                   ""  "rkit audio enhancements"
 
 # User Services
 header "User services"
@@ -41,7 +42,6 @@ manage "syncthing.service"    "--user"    "Syncthing"
 
 run_user_service "Configuring dark theme" theme.service
 run_user_service "Starting idle inhibitor" wayland-pipewire-idle-inhibit.service 
-run_user_service "Starting easyeffects" easyeffects.service
 run_user_service "Starting systemd failed unit checker" failed-units-check.timer
 
 # Environment specific services
