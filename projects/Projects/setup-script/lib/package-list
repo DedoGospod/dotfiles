@@ -49,7 +49,7 @@ PACMAN_PACKAGES=(
 NEOVIM_DEPS=(npm nodejs unzip clang go shellcheck zig luarocks dotnet-sdk cmake gcc tree-sitter-cli imagemagick)
 
 # Flatpaks
-FLATPAK_APPS=(com.github.tchx84.Flatseal io.github.ebonjaeger.bluejay com.github.wwmm.easyeffects)
+FLATPAK_APPS=(com.github.tchx84.Flatseal io.github.ebonjaeger.bluejay)
 
 # AUR Packages
 AUR_PACKAGES=(wayland-pipewire-idle-inhibit brave-bin pyprland rebuild-initramfs-dracut-hook downgrade stremio-linux-shell topgrade)
