@@ -57,7 +57,7 @@ sync_root_tree() {
 STOW_FOLDERS=(
     backgrounds kwalletrc fastfetch wayland-pipewire-idle-inhibit hypr kitty
     mpv nvim starship swaync waybar wofi yazi zsh tmux uwsm systemd-user scopebuddy
-    mangohud scripts projects topgrade gitconfig
+    mangohud scripts projects topgrade gitconfig dcli
 )
 
 # Dotfiles
