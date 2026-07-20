@@ -62,8 +62,8 @@ hl.bind(modPlus ..  "C",  hl.dsp.window.close())
 hl.bind(modShift .. "M",  hl.dsp.exit())
 hl.bind(modShift .. "V",  hl.dsp.window.float({ action = "toggle" }))
 hl.bind(modShift .. "T",  hl.dsp.layout("togglesplit"))
-hl.bind(modShift .. "F",  hl.dsp.window.fullscreen({ state = 3 }))
-hl.bind(modPlus ..  "F",  hl.dsp.window.fullscreen({ state = 1 }))
+hl.bind(modPlus ..  "F",  hl.dsp.window.fullscreen_state({ internal = 1, client = 1, action = "toggle" }))
+hl.bind(modShift .. "F",  hl.dsp.window.fullscreen_state({ internal = 3, client = 3, action = "toggle" }))
 
 -- Special Workspace
 hl.bind(modPlus .. "S",  hl.dsp.workspace.toggle_special(SPECIAL_WS))
