@@ -26,7 +26,7 @@ hl.config({
             enabled      = true,
             range        = 4,
             render_power = 3,
-            color        = 0xee1a1a1a,
+            color        = "0xee1a1a1a",
         },
         blur = {
             enabled   = true,
@@ -55,12 +55,12 @@ hl.config({
 
 -- Animation curves
 local animation_curves = {
-    { name = "easeOutQuint",   type = "bezier", points = { {0.23, 1},    {0.32, 1}    } },
-    { name = "easeInOutCubic", type = "bezier", points = { {0.65, 0.05}, {0.36, 1}    } },
-    { name = "linear",         type = "bezier", points = { {0, 0},       {1, 1}       } },
-    { name = "almostLinear",   type = "bezier", points = { {0.5, 0.5},   {0.75, 1}    } },
-    { name = "quick",          type = "bezier", points = { {0.15, 0},    {0.1, 1}     } },
-    { name = "easy",           type = "spring", mass = 1, stiffness = 71.2633, dampening = 15.8273644 },
+    { name = "easeOutQuint",     type = "bezier", points = { {0.23, 1},    {0.32, 1}    } },
+    { name = "easeInOutCubic",   type = "bezier", points = { {0.65, 0.05}, {0.36, 1}    } },
+    { name = "linear",           type = "bezier", points = { {0, 0},        {1, 1}       } },
+    { name = "almostLinear",     type = "bezier", points = { {0.5, 0.5},    {0.75, 1}    } },
+    { name = "quick",            type = "bezier", points = { {0.15, 0},    {0.1, 1}     } },
+    { name = "easy",             type = "spring", mass = 1, stiffness = 500.0, dampening = 41.0 },
 }
 
 -- Animations
