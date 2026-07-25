@@ -2,8 +2,8 @@
 # Note: This file relies on variables and functions defined in the main script.
 
 configure_arch_services() { 
-    header "Arch linux specific"
     grep -qE "ID=arch|ID_LIKE=arch" /etc/os-release || return 0
+    header "Arch linux specific"
 
     local services=(
         # USER
