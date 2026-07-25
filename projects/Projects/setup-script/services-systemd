@@ -33,7 +33,6 @@ manage "NetworkManager.service"         ""  "Network Management"
 manage "bluetooth.service"              ""  "Bluetooth"
 manage "power-profiles-daemon.service"  ""  "Power Management"
 manage "sshd.service"                   ""  "SSH Daemon"
-manage "rkit.service"                   ""  "rkit audio enhancements"
 
 # User Services
 header "User services"
