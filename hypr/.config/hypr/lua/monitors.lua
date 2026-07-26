@@ -16,6 +16,6 @@ hl.monitor({
 hl.config({
     render = {
         cm_auto_hdr = 1,
-        direct_scanout = 2,
+        direct_scanout = 0, -- Off for now because causing issues with nvidia
     }
 })
