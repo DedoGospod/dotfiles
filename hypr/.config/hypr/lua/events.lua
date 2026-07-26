@@ -1,20 +1,5 @@
 -- .config/hypr/lua/events.lua
 
--- local is_stremio_focused = false
--- hl.on("window.active", function(window)
-    -- if window ~= nil and window.class == "com.stremio.Stremio" then
-        -- if not is_stremio_focused then
-            -- hl.exec_cmd("ddcutil setvcp 10 100 --async")
-            -- is_stremio_focused = true
-        -- end
-    -- else
-        -- if is_stremio_focused then
-            -- hl.exec_cmd("ddcutil setvcp 10 50 --async")
-            -- is_stremio_focused = false
-        -- end
-    -- end
--- end)
-
 local is_game_active = false
 hl.on("window.active", function(window)
     if window ~= nil and window.content_type == "game" then
@@ -33,3 +18,36 @@ hl.on("window.active", function(window)
         end
     end
 end)
+
+local is_game_opened = nil
+hl.on("window.open", function(window)
+    if window ~= nil and window.content_type == "game" and is_game_opened == nil then
+        is_game_opened = window.address
+        hl.exec_cmd("systemctl --user start obs.service")
+        hl.exec_cmd("obs-cmd replay start")
+    end
+end)
+
+hl.on("window.close", function(window)
+    if window ~= nil and window.address == is_game_opened then
+        is_game_opened = nil
+        hl.exec_cmd("obs-cmd replay stop")
+        hl.exec_cmd("systemctl --user stop obs.service")
+    end
+end)
+
+
+-- local is_stremio_focused = false
+-- hl.on("window.active", function(window)
+    -- if window ~= nil and window.class == "com.stremio.Stremio" then
+        -- if not is_stremio_focused then
+            -- hl.exec_cmd("ddcutil setvcp 10 100 --async")
+            -- is_stremio_focused = true
+        -- end
+    -- else
+        -- if is_stremio_focused then
+            -- hl.exec_cmd("ddcutil setvcp 10 50 --async")
+            -- is_stremio_focused = false
+        -- end
+    -- end
+-- end)
