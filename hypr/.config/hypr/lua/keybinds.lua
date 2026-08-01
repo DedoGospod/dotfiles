@@ -75,8 +75,11 @@ hl.bind(modPlus .. "mouse_up",   hl.dsp.focus({ workspace = "e-1" }))
 hl.bind(modPlus .. "mouse:272",  hl.dsp.window.drag(), { mouse = true })
 
 -- Keybinding passthrough
-local obs_match = "class:^(com\\.obsproject\\.Studio)$"
-hl.bind("CTRL + SHIFT + backslash", hl.dsp.exec_cmd(string.format("hyprctl dispatch pass '%s' && %s/obs-replay-notification", obs_match, scripts)))
+local obs_match = "class:^com%.obsproject%.Studio$"
+hl.bind("CTRL + SHIFT + backslash", function()
+    hl.dispatch(hl.dsp.pass({ window = obs_match }))
+    hl.dispatch(hl.dsp.exec_cmd(scripts .. "/obs-replay-notification"))
+end)
 
 --------------------------------------------------------------------------------
 ---- BINDING ENGINE ----
