@@ -31,7 +31,7 @@ local window_rules = {
     {
         -- Gaming rules
         name = "gaming_rules",
-        match = { class = "^(steam_app_\\d+|steam_proton.*|gamescope|tf_linux64|cs2)$" },
+        match = { class = "^(steam_app_\\d+|steam_proton.*|gamescope|tf_linux64|cs2|huntgame.exe)$" },
         immediate  = true,
         workspace  = tostring(10) .. " silent",
         fullscreen = 1,
