@@ -38,7 +38,7 @@ PACMAN_PACKAGES=(
     power-profiles-daemon 
 
     # Containerization
-    flatpak 
+    flatpak wine
 
     # Fonts
     ttf-cascadia-code-nerd ttf-ubuntu-font-family ttf-font-awesome 
